@@ -331,6 +331,37 @@ Training create body (required: `auditorId`, `title`): `provider`, `plannedOn`, 
 
 Assessment create body (required: `auditorId`, `assessedOn`): `assessorName`, `standardId`, `schemeId`, `competencyId`, `notes`. `competencyId` must belong to the same auditor and tenant.
 
+## Phase 14 endpoints
+
+Complaints `CMP-%06d`, appeals `APL-%06d`, risks `RSK-%06d`, impartiality `IMP-%06d`. Complaint status: `OPEN` → review `IN_REVIEW` → close `CLOSED` (body `{ resolution }` required). Closed complaints cannot be patched. Appeal status: `OPEN` → review `UNDER_REVIEW` → decide `UPHELD` or `DISMISSED`. Decided appeals cannot be changed. Risk status: `OPEN` → mitigate `MITIGATING` → `CLOSED`. Score is `likelihood × impact` when both 1–5 values are present. Impartiality status: `OPEN` → review `REVIEWED` → `CLOSED`. Open dashboard counts include `OPEN` and `IN_REVIEW` complaints, and `OPEN` and `UNDER_REVIEW` appeals.
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| GET/POST | `/api/v1/complaints` | `COMPLAINT_VIEW` / `COMPLAINT_UPDATE` | Paginated list (`clientId`/`status`) or create (201) |
+| GET/PATCH | `/api/v1/complaints/{id}` | `COMPLAINT_VIEW` / `COMPLAINT_UPDATE` | Detail; patch only while not `CLOSED` |
+| POST | `/api/v1/complaints/{id}/review` | `COMPLAINT_UPDATE` | `OPEN` → `IN_REVIEW` |
+| POST | `/api/v1/complaints/{id}/close` | `COMPLAINT_UPDATE` | Close; body `{ resolution }` |
+| GET/POST | `/api/v1/appeals` | `APPEAL_VIEW` / `APPEAL_UPDATE` | Paginated list (`clientId`/`status`) or create (201) |
+| GET/PATCH | `/api/v1/appeals/{id}` | `APPEAL_VIEW` / `APPEAL_UPDATE` | Detail; patch only while open/under review |
+| POST | `/api/v1/appeals/{id}/review` | `APPEAL_UPDATE` | `OPEN` → `UNDER_REVIEW` |
+| POST | `/api/v1/appeals/{id}/decide` | `APPEAL_UPDATE` | Body `{ outcome: UPHELD\|DISMISSED, notes? }` |
+| GET/POST | `/api/v1/risks` | `RISK_VIEW` / `RISK_UPDATE` | Paginated list (`status`) or create (201) |
+| GET/PATCH | `/api/v1/risks/{id}` | `RISK_VIEW` / `RISK_UPDATE` | Detail; patch only while not `CLOSED` |
+| POST | `/api/v1/risks/{id}/mitigate` | `RISK_UPDATE` | `OPEN` → `MITIGATING` |
+| POST | `/api/v1/risks/{id}/close` | `RISK_UPDATE` | Close |
+| GET/POST | `/api/v1/impartiality-records` | `RISK_VIEW` / `RISK_UPDATE` | Paginated list (`status`) or create (201) |
+| GET/PATCH | `/api/v1/impartiality-records/{id}` | `RISK_VIEW` / `RISK_UPDATE` | Detail; patch only while not `CLOSED` |
+| POST | `/api/v1/impartiality-records/{id}/review` | `RISK_UPDATE` | `OPEN` → `REVIEWED` |
+| POST | `/api/v1/impartiality-records/{id}/close` | `RISK_UPDATE` | Close |
+
+Complaint create body (required: `subject`): `clientId`, `source` (`CLIENT`, `INTERESTED_PARTY`, `INTERNAL`, `REGULATOR`, `OTHER`), `receivedOn`, `description`.
+
+Appeal create body (required: `subject`): `clientId`, `certificateId`, `findingId`, `receivedOn`, `description`. Certificate must belong to the same client when both are supplied.
+
+Risk create body (required: `title`): `category`, `likelihood`, `impact`, `description`.
+
+Impartiality create body (required: `title`): `auditorId`, `clientId`, `identifiedOn`, `description`.
+
 ## Status codes
 
 | Code | Use |

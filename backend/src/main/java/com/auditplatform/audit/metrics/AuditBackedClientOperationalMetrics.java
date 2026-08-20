@@ -13,6 +13,10 @@ import com.auditplatform.crm.metrics.ClientOperationalMetricsPort;
 import com.auditplatform.document.repository.DocumentRepository;
 import com.auditplatform.finance.domain.InvoiceStatus;
 import com.auditplatform.finance.repository.InvoiceRepository;
+import com.auditplatform.governance.domain.AppealStatus;
+import com.auditplatform.governance.domain.ComplaintStatus;
+import com.auditplatform.governance.repository.AppealRepository;
+import com.auditplatform.governance.repository.ComplaintRepository;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
@@ -33,6 +37,8 @@ public class AuditBackedClientOperationalMetrics implements ClientOperationalMet
     private final CertificateRepository certificateRepository;
     private final DocumentRepository documentRepository;
     private final InvoiceRepository invoiceRepository;
+    private final ComplaintRepository complaintRepository;
+    private final AppealRepository appealRepository;
     private final Clock clock;
 
     public AuditBackedClientOperationalMetrics(
@@ -42,6 +48,8 @@ public class AuditBackedClientOperationalMetrics implements ClientOperationalMet
             CertificateRepository certificateRepository,
             DocumentRepository documentRepository,
             InvoiceRepository invoiceRepository,
+            ComplaintRepository complaintRepository,
+            AppealRepository appealRepository,
             Clock clock
     ) {
         this.auditRepository = auditRepository;
@@ -50,6 +58,8 @@ public class AuditBackedClientOperationalMetrics implements ClientOperationalMet
         this.certificateRepository = certificateRepository;
         this.documentRepository = documentRepository;
         this.invoiceRepository = invoiceRepository;
+        this.complaintRepository = complaintRepository;
+        this.appealRepository = appealRepository;
         this.clock = clock;
     }
 
@@ -94,6 +104,16 @@ public class AuditBackedClientOperationalMetrics implements ClientOperationalMet
                 clientId,
                 List.of(InvoiceStatus.ISSUED, InvoiceStatus.PARTIALLY_PAID)
         );
+        long openComplaints = complaintRepository.countByTenantIdAndClientIdAndStatusInAndDeletedAtIsNull(
+                tenantId,
+                clientId,
+                List.of(ComplaintStatus.OPEN, ComplaintStatus.IN_REVIEW)
+        );
+        long openAppeals = appealRepository.countByTenantIdAndClientIdAndStatusInAndDeletedAtIsNull(
+                tenantId,
+                clientId,
+                List.of(AppealStatus.OPEN, AppealStatus.UNDER_REVIEW)
+        );
         return new ClientOperationalMetrics(
                 upcoming,
                 completed,
@@ -103,8 +123,8 @@ public class AuditBackedClientOperationalMetrics implements ClientOperationalMet
                 expiringSoon,
                 outstandingPayments,
                 documents,
-                0,
-                0
+                openComplaints,
+                openAppeals
         );
     }
 }

@@ -35,6 +35,11 @@ import { UsersPage } from './pages/UsersPage'
 import { TrainingPage } from './pages/TrainingPage'
 import { TrainingRecordDetailPage } from './pages/TrainingRecordDetailPage'
 import { AssessmentDetailPage } from './pages/AssessmentDetailPage'
+import { GovernancePage } from './pages/GovernancePage'
+import { ComplaintDetailPage } from './pages/ComplaintDetailPage'
+import { AppealDetailPage } from './pages/AppealDetailPage'
+import { RiskDetailPage } from './pages/RiskDetailPage'
+import { ImpartialityDetailPage } from './pages/ImpartialityDetailPage'
 
 export default function App() {
   return (
@@ -76,6 +81,11 @@ export default function App() {
         <Route path="/training" element={<TrainingPage />} />
         <Route path="/training-records/:id" element={<TrainingRecordDetailPage />} />
         <Route path="/assessments/:id" element={<AssessmentDetailPage />} />
+        <Route path="/governance" element={<GovernancePage />} />
+        <Route path="/complaints/:id" element={<ComplaintDetailPage />} />
+        <Route path="/appeals/:id" element={<AppealDetailPage />} />
+        <Route path="/risks/:id" element={<RiskDetailPage />} />
+        <Route path="/impartiality/:id" element={<ImpartialityDetailPage />} />
         <Route path="/users" element={<UsersPage />} />
         <Route path="/roles" element={<RolesPage />} />
         <Route path="/tenants" element={<TenantsPage />} />

@@ -573,6 +573,73 @@ export interface AssessmentSummary {
   notes: string | null
 }
 
+export type ComplaintStatus = 'OPEN' | 'IN_REVIEW' | 'CLOSED'
+export type ComplaintSource = 'CLIENT' | 'INTERESTED_PARTY' | 'INTERNAL' | 'REGULATOR' | 'OTHER'
+export type AppealStatus = 'OPEN' | 'UNDER_REVIEW' | 'UPHELD' | 'DISMISSED'
+export type AppealOutcome = 'UPHELD' | 'DISMISSED'
+export type RiskStatus = 'OPEN' | 'MITIGATING' | 'CLOSED'
+export type RiskCategory = 'OPERATIONAL' | 'IMPARTIALITY' | 'FINANCIAL' | 'COMPLIANCE' | 'OTHER'
+export type ImpartialityStatus = 'OPEN' | 'REVIEWED' | 'CLOSED'
+
+export interface ComplaintSummary {
+  id: string
+  tenantId: string
+  complaintNumber: string
+  clientId: string | null
+  subject: string
+  source: ComplaintSource
+  receivedOn: string
+  status: ComplaintStatus
+  description: string | null
+  resolution: string | null
+  closedOn: string | null
+}
+
+export interface AppealSummary {
+  id: string
+  tenantId: string
+  appealNumber: string
+  clientId: string | null
+  certificateId: string | null
+  findingId: string | null
+  subject: string
+  receivedOn: string
+  status: AppealStatus
+  outcome: AppealOutcome | null
+  description: string | null
+  decisionNotes: string | null
+  decidedOn: string | null
+}
+
+export interface RiskSummary {
+  id: string
+  tenantId: string
+  riskNumber: string
+  title: string
+  category: RiskCategory
+  likelihood: number | null
+  impact: number | null
+  score: number | null
+  status: RiskStatus
+  description: string | null
+  mitigation: string | null
+  closedOn: string | null
+}
+
+export interface ImpartialitySummary {
+  id: string
+  tenantId: string
+  impartialityNumber: string
+  title: string
+  auditorId: string | null
+  clientId: string | null
+  identifiedOn: string
+  status: ImpartialityStatus
+  description: string | null
+  reviewNotes: string | null
+  closedOn: string | null
+}
+
 export interface AuthSession {
   id: string
   ipAddress: string | null

@@ -4,6 +4,13 @@
 
 Stack: JUnit 5, Mockito, Spring MockMvc, Testcontainers MySQL 8.
 
+Phase 14 coverage:
+
+- `COMPLAINT_VIEW` required to list complaints; other authorities are 403; unauthenticated is 401
+- Tenant A cannot `get` Tenant B's complaint (`AUTH_TENANT_MISMATCH`)
+- Closing an already `CLOSED` complaint is `SYS_VALIDATION`
+- Deciding an already decided appeal is `SYS_VALIDATION`
+
 Phase 13 coverage:
 
 - `TRAINING_VIEW` required to list training records; other authorities are 403; unauthenticated is 401
@@ -92,7 +99,7 @@ Phase 2 coverage:
 
 ## Frontend
 
-Vitest + Testing Library for the shell, health client, login form, client directory, leads directory, standards catalogue, auditor directory, programme directory, scheduled-audit fieldwork action, findings directory, certificates directory, documents directory, finance directory, and training directory.
+Vitest + Testing Library for the shell, health client, login form, client directory, leads directory, standards catalogue, auditor directory, programme directory, scheduled-audit fieldwork action, findings directory, certificates directory, documents directory, finance directory, training directory, and governance directory.
 
 ## Critical scenarios (later phases)
 
@@ -108,6 +115,7 @@ Documented here so they are not lost:
 - Unauthorized user cannot download another tenant's file (Phase 10 isolation + `DOCUMENT_DOWNLOAD`)
 - Overdue payment identified (Phase 12 `overdue` flag; payment cannot exceed amount due)
 - Expired completed training identified (Phase 13 `expired` flag; recorded assessments cannot be changed)
+- Closed complaint cannot be changed; decided appeal cannot be re-decided (Phase 14)
 
 ## Running
 
