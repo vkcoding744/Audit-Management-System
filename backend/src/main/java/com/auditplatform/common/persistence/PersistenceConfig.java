@@ -27,4 +27,9 @@ public class PersistenceConfig {
             return Optional.of(name);
         };
     }
+
+    @Bean
+    public java.time.Clock clock() {
+        return java.time.Clock.systemUTC();
+    }
 }

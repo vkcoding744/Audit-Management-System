@@ -1,6 +1,8 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { RequireAuth } from './auth/RequireAuth'
 import { AppShell } from './layout/AppShell'
+import { AuditorDetailPage } from './pages/AuditorDetailPage'
+import { AuditorsPage } from './pages/AuditorsPage'
 import { ChecklistDetailPage } from './pages/ChecklistDetailPage'
 import { ClientDetailPage } from './pages/ClientDetailPage'
 import { ClientsPage } from './pages/ClientsPage'
@@ -38,6 +40,8 @@ export default function App() {
         <Route path="/schemes" element={<SchemesPage />} />
         <Route path="/schemes/:id" element={<SchemeDetailPage />} />
         <Route path="/checklists/:id" element={<ChecklistDetailPage />} />
+        <Route path="/auditors" element={<AuditorsPage />} />
+        <Route path="/auditors/:id" element={<AuditorDetailPage />} />
         <Route path="/users" element={<UsersPage />} />
         <Route path="/roles" element={<RolesPage />} />
         <Route path="/tenants" element={<TenantsPage />} />

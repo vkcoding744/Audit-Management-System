@@ -215,6 +215,74 @@ export interface ChecklistSummary {
   items: ChecklistItemSummary[]
 }
 
+export type AuditorStatus = 'ACTIVE' | 'INACTIVE' | 'SUSPENDED'
+export type EmploymentType = 'EMPLOYEE' | 'CONTRACTOR'
+export type CompetencyRole = 'LEAD' | 'TEAM' | 'TECHNICAL_EXPERT' | 'TRAINEE'
+export type CompetencyRecordStatus = 'ACTIVE' | 'SUSPENDED' | 'REVOKED'
+export type AvailabilityKind = 'AVAILABLE' | 'UNAVAILABLE'
+
+export interface AuditorSummary {
+  id: string
+  tenantId: string
+  userId: string | null
+  employeeNumber: string
+  firstName: string
+  lastName: string
+  email: string | null
+  phone: string | null
+  jobTitle: string | null
+  employmentType: EmploymentType
+  status: AuditorStatus
+  baseLocation: string | null
+  country: string | null
+  notes: string | null
+}
+
+export interface QualificationSummary {
+  id: string
+  tenantId: string
+  auditorId: string
+  title: string
+  issuer: string | null
+  issuedOn: string | null
+  expiresOn: string | null
+  notes: string | null
+}
+
+export interface CompetencySummary {
+  id: string
+  tenantId: string
+  auditorId: string
+  standardId: string | null
+  schemeId: string | null
+  competencyRole: CompetencyRole
+  status: CompetencyRecordStatus
+  validFrom: string
+  validTo: string | null
+  expired: boolean
+  current: boolean
+  notes: string | null
+}
+
+export interface AvailabilitySummary {
+  id: string
+  tenantId: string
+  auditorId: string
+  startOn: string
+  endOn: string
+  kind: AvailabilityKind
+  reason: string | null
+}
+
+export interface EligibilitySummary {
+  auditorId: string
+  standardId: string | null
+  schemeId: string | null
+  on: string
+  eligible: boolean
+  reasons: string[]
+}
+
 export interface AuthSession {
   id: string
   ipAddress: string | null

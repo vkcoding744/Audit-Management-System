@@ -10,6 +10,7 @@ const nav = [
   { to: '/clients', label: 'Clients', permission: 'CLIENT_VIEW' },
   { to: '/standards', label: 'Standards', permission: 'STANDARD_VIEW' },
   { to: '/schemes', label: 'Schemes', permission: 'SCHEME_VIEW' },
+  { to: '/auditors', label: 'Auditors', permission: 'AUDITOR_VIEW' },
   { to: '/users', label: 'Users', permission: 'USER_VIEW' },
   { to: '/roles', label: 'Roles', permission: 'ROLE_VIEW' },
   { to: '/tenants', label: 'Tenants', permission: 'TENANT_VIEW' },
@@ -69,8 +70,8 @@ export function AppShell() {
       <div className="flex min-h-screen flex-col">
         <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
           <div>
-            <p className="text-xs text-slate-500">Catalogue</p>
-            <p className="text-sm font-medium">Phase 4 · Standards, schemes, and checklists</p>
+            <p className="text-xs text-slate-500">People</p>
+            <p className="text-sm font-medium">Phase 5 · Auditors, competency, and availability</p>
           </div>
           <div className="flex items-center gap-3">
             {user?.platformAdmin && (

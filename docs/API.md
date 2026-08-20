@@ -143,6 +143,27 @@ Checklists belong to a scheme. Optional `standardId` must already be linked. Ite
 | POST | `/api/v1/checklists/{id}/items` | `CHECKLIST_UPDATE` | Add item (201) |
 | PATCH/DELETE | `/api/v1/checklist-items/{id}` | `CHECKLIST_UPDATE` | Update or soft-delete item |
 
+## Phase 5 endpoints
+
+Auditor profiles are tenant-scoped. Employee numbers are `AUD-%06d`. Competency must name a standard and/or scheme and has `validFrom`/`validTo`. `GET .../eligibility` is the assignment gate: expired, suspended, missing competency, inactive auditor, or an `UNAVAILABLE` window returns `eligible: false` with reason codes. Phase 6 planning must call this rather than inventing a second rule.
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| GET/POST | `/api/v1/auditors` | `AUDITOR_VIEW` / `AUDITOR_CREATE` | List (paginated, `q`/`status`) or create |
+| GET/PATCH | `/api/v1/auditors/{id}` | `AUDITOR_VIEW` / `AUDITOR_UPDATE` | Profile |
+| GET | `/api/v1/auditors/{id}/eligibility` | `AUDITOR_VIEW` | Query `standardId` and/or `schemeId`, optional `on` (ISO date) |
+| DELETE | `/api/v1/auditors/{id}` | `AUDITOR_DELETE` | Soft-delete (204) |
+| GET/POST | `/api/v1/auditors/{id}/qualifications` | `AUDITOR_VIEW` / `AUDITOR_UPDATE` | Qualifications |
+| DELETE | `/api/v1/auditors/qualifications/{id}` | `AUDITOR_UPDATE` | Soft-delete qualification |
+| GET/POST | `/api/v1/auditors/{id}/competencies` | `AUDITOR_VIEW` / `AUDITOR_UPDATE` | Competencies |
+| POST | `/api/v1/competencies/{id}/suspend` | `AUDITOR_UPDATE` | Suspend |
+| POST | `/api/v1/competencies/{id}/revoke` | `AUDITOR_UPDATE` | Revoke |
+| DELETE | `/api/v1/competencies/{id}` | `AUDITOR_UPDATE` | Soft-delete competency |
+| GET/POST | `/api/v1/auditors/{id}/availability` | `AUDITOR_VIEW` / `AUDITOR_UPDATE` | Availability windows |
+| DELETE | `/api/v1/availability/{id}` | `AUDITOR_UPDATE` | Soft-delete window |
+
+Eligibility reasons: `AUDITOR_INACTIVE`, `AUDITOR_SUSPENDED`, `NO_COMPETENCY`, `COMPETENCY_EXPIRED`, `COMPETENCY_SUSPENDED`, `UNAVAILABLE`.
+
 ## Status codes
 
 | Code | Use |

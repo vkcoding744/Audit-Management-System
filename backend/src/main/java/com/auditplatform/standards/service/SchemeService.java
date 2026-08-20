@@ -221,7 +221,7 @@ public class SchemeService {
         auditLogService.record("SCHEME_DELETE", "Scheme", scheme.getId(), scheme.getCode(), null, null, null);
     }
 
-    Scheme requireScheme(String id) {
+    public Scheme requireScheme(String id) {
         Scheme scheme = schemeRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new ApiException(ErrorCode.SYS_NOT_FOUND, "Scheme not found"));
         isolationService.assertCanAccessTenant(scheme.getTenantId());

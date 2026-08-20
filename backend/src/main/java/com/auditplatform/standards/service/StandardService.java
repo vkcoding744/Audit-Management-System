@@ -178,7 +178,7 @@ public class StandardService {
         auditLogService.record("STANDARD_DELETE", "Standard", standard.getId(), standard.getCode(), null, null, null);
     }
 
-    Standard requireStandard(String id) {
+    public Standard requireStandard(String id) {
         Standard standard = standardRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new ApiException(ErrorCode.SYS_NOT_FOUND, "Standard not found"));
         isolationService.assertCanAccessTenant(standard.getTenantId());

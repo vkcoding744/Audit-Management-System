@@ -89,6 +89,28 @@ Versioned checklists (`version_label`) under a scheme, optional `standard_id`. I
 
 No ISO/IEC (or other) clause libraries are inserted. Tenants enter their own text.
 
+## Phase 5 auditor schema
+
+Flyway `V5__auditor_profiles_competency.sql` adds:
+
+### `auditors`
+
+Staff/contractor profiles. Unique `(tenant_id, employee_number)`. Optional `user_id` link to a login. Status: `ACTIVE`, `INACTIVE`, `SUSPENDED`. Employment: `EMPLOYEE`, `CONTRACTOR`.
+
+### `auditor_qualifications`
+
+Named credentials (title, issuer, dates) not tied to a standard.
+
+### `auditor_competencies`
+
+Standard and/or scheme competence with `competency_role` (`LEAD`, `TEAM`, `TECHNICAL_EXPERT`, `TRAINEE`), `valid_from`/`valid_to`, and status `ACTIVE`/`SUSPENDED`/`REVOKED`. A row with `valid_to` in the past is treated as expired even if status is `ACTIVE`.
+
+### `auditor_availability`
+
+Inclusive date windows, `AVAILABLE` or `UNAVAILABLE`. An overlapping `UNAVAILABLE` window blocks eligibility.
+
+Employee numbers reuse the named-sequence table (`crm_sequences`, name `AUDITOR`).
+
 ## Isolation rules
 
 - Tenant-owned tables **must** include `tenant_id` and an index on it.

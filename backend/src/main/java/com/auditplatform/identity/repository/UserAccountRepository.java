@@ -11,6 +11,8 @@ import java.util.Optional;
 
 public interface UserAccountRepository extends JpaRepository<UserAccount, String> {
 
+    Optional<UserAccount> findByIdAndDeletedAtIsNull(String id);
+
     Optional<UserAccount> findByEmailIgnoreCaseAndDeletedAtIsNull(String email);
 
     boolean existsByEmailIgnoreCase(String email);
