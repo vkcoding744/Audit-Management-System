@@ -6,7 +6,7 @@
 
 ## Current phase
 
-**Phase 13** adds training records and competency assessments. Training numbers are `TRN-%06d`; assessment numbers are `ASM-%06d`. Planned training can be completed or cancelled. Completed training with `expiresOn` before today (UTC) is flagged `expired`. Assessments move `DRAFT` → `RECORDED` with a `PASS` or `FAIL` result. Recorded assessments cannot be patched. Training and assessments are evidence only: they do not mutate auditor competencies used for assignment.
+**Phase 14** adds complaints, appeals, risks, and impartiality records. Complaint numbers are `CMP-%06d`; appeals `APL-%06d`; risks `RSK-%06d`; impartiality `IMP-%06d`. Complaints move `OPEN` → `IN_REVIEW` → `CLOSED` (resolution required to close). Appeals move `OPEN` → `UNDER_REVIEW` → `UPHELD` or `DISMISSED`. Closed complaints and decided appeals cannot be changed. Client dashboard open-complaint and open-appeal counts are live.
 
 Phase 1 foundation remains: modular monolith, Flyway, API envelope, CORS/headers, health, tenant discriminator columns.
 
@@ -115,7 +115,7 @@ Authentication is JWT access tokens plus rotating opaque refresh tokens (Phase 2
 
 ## Frontend
 
-React 18 + Vite + TypeScript + Tailwind. The UI calls live APIs for health, identity, clients, leads, standards, schemes, checklists, auditors, programmes, audits, fieldwork, findings, CAPA, certificates, decisions, surveillance, documents, quotes, invoices, payments, training records, and competency assessments. Client dashboard upcoming/completed audit counts, open findings, overdue CAPA, active certificates, certificates expiring within 90 days, documents, and outstanding invoices come from persisted rows. It does not mock certification data or copyrighted clause text.
+React 18 + Vite + TypeScript + Tailwind. The UI calls live APIs for health, identity, clients, leads, standards, schemes, checklists, auditors, programmes, audits, fieldwork, findings, CAPA, certificates, decisions, surveillance, documents, quotes, invoices, payments, training records, competency assessments, complaints, appeals, risks, and impartiality. Client dashboard upcoming/completed audit counts, open findings, overdue CAPA, active certificates, certificates expiring within 90 days, documents, outstanding invoices, open complaints, and open appeals come from persisted rows. It does not mock certification data or copyrighted clause text.
 
 ## Infrastructure
 
@@ -123,10 +123,10 @@ Docker Compose runs MySQL 8, backend, and frontend (Nginx). Optional profiles: `
 
 AWS-ready: 12-factor config, health probes, no baked secrets, object storage SPI (local filesystem or S3).
 
-## Explicit non-goals for Phase 13
+## Explicit non-goals for Phase 14
 
-- LMS, SCORM, exam banks, and e-learning delivery
-- Auto-updating auditor competency or eligibility from training or assessment results
-- Complaints, appeals, and impartiality (Phase 14)
+- Email/SMS notifications and SLA clocks (Phase 15)
+- Legal case management and regulator portal filing
+- Automatic certificate status change from an upheld appeal
 - Bundled ISO/IEC clause libraries
 - AI providers, Elasticsearch

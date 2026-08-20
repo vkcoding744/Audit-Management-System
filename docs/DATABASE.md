@@ -235,6 +235,30 @@ Numbers reuse `crm_sequences` (`TRAINING` → `TRN-%06d`, `ASSESSMENT` → `ASM-
 
 `TRAINING_UPDATE` is granted in V13; `TRAINING_VIEW` already exists in V2.
 
+## Phase 14 governance schema
+
+Flyway `V14__governance.sql` adds:
+
+### `complaints`
+
+Tenant-owned complaints. Unique `(tenant_id, complaint_number)`. Status: `OPEN`, `IN_REVIEW`, `CLOSED`. Source: `CLIENT`, `INTERESTED_PARTY`, `INTERNAL`, `REGULATOR`, `OTHER`. Optional `client_id`.
+
+### `appeals`
+
+Tenant-owned appeals against a decision, certificate, or finding. Unique `(tenant_id, appeal_number)`. Status: `OPEN`, `UNDER_REVIEW`, `UPHELD`, `DISMISSED`. Optional `client_id`, `certificate_id`, `finding_id`.
+
+### `risks`
+
+Tenant-owned risk register. Unique `(tenant_id, risk_number)`. Status: `OPEN`, `MITIGATING`, `CLOSED`. Category: `OPERATIONAL`, `IMPARTIALITY`, `FINANCIAL`, `COMPLIANCE`, `OTHER`. Optional likelihood/impact 1–5.
+
+### `impartiality_records`
+
+Tenant-owned impartiality issues. Unique `(tenant_id, impartiality_number)`. Status: `OPEN`, `REVIEWED`, `CLOSED`. Optional `auditor_id`, `client_id`.
+
+Numbers reuse `crm_sequences` (`COMPLAINT` → `CMP-%06d`, `APPEAL` → `APL-%06d`, `RISK` → `RSK-%06d`, `IMPARTIALITY` → `IMP-%06d`).
+
+`COMPLAINT_UPDATE`, `APPEAL_UPDATE`, and `RISK_UPDATE` are granted in V14; the matching `*_VIEW` permissions already exist in V2.
+
 ## Isolation rules
 
 - Tenant-owned tables **must** include `tenant_id` and an index on it.
