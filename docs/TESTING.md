@@ -4,6 +4,13 @@
 
 Stack: JUnit 5, Mockito, Spring MockMvc, Testcontainers MySQL 8.
 
+Phase 13 coverage:
+
+- `TRAINING_VIEW` required to list training records; other authorities are 403; unauthenticated is 401
+- Tenant A cannot `get` Tenant B's training record (`AUTH_TENANT_MISMATCH`)
+- Completing an already `RECORDED` assessment is `SYS_VALIDATION`
+- `expired` is true for a `COMPLETED` training record whose `expiresOn` is before today (UTC)
+
 Phase 12 coverage:
 
 - `INVOICE_VIEW` required to list invoices; other authorities are 403; unauthenticated is 401
@@ -85,7 +92,7 @@ Phase 2 coverage:
 
 ## Frontend
 
-Vitest + Testing Library for the shell, health client, login form, client directory, leads directory, standards catalogue, auditor directory, programme directory, scheduled-audit fieldwork action, findings directory, certificates directory, documents directory, and finance directory.
+Vitest + Testing Library for the shell, health client, login form, client directory, leads directory, standards catalogue, auditor directory, programme directory, scheduled-audit fieldwork action, findings directory, certificates directory, documents directory, finance directory, and training directory.
 
 ## Critical scenarios (later phases)
 
@@ -100,6 +107,7 @@ Documented here so they are not lost:
 - Expired certificate identified (Phase 9 `expired` flag)
 - Unauthorized user cannot download another tenant's file (Phase 10 isolation + `DOCUMENT_DOWNLOAD`)
 - Overdue payment identified (Phase 12 `overdue` flag; payment cannot exceed amount due)
+- Expired completed training identified (Phase 13 `expired` flag; recorded assessments cannot be changed)
 
 ## Running
 

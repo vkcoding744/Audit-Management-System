@@ -536,6 +536,43 @@ export interface InvoiceSummary {
   payments: PaymentSummary[]
 }
 
+export type TrainingStatus = 'PLANNED' | 'COMPLETED' | 'CANCELLED'
+export type AssessmentStatus = 'DRAFT' | 'RECORDED'
+export type CompetencyAssessmentResult = 'PASS' | 'FAIL'
+
+export interface TrainingRecordSummary {
+  id: string
+  tenantId: string
+  trainingNumber: string
+  auditorId: string
+  title: string
+  provider: string | null
+  plannedOn: string | null
+  completedOn: string | null
+  hours: number | null
+  expiresOn: string | null
+  standardId: string | null
+  schemeId: string | null
+  status: TrainingStatus
+  expired: boolean
+  notes: string | null
+}
+
+export interface AssessmentSummary {
+  id: string
+  tenantId: string
+  assessmentNumber: string
+  auditorId: string
+  competencyId: string | null
+  standardId: string | null
+  schemeId: string | null
+  assessedOn: string
+  assessorName: string | null
+  result: CompetencyAssessmentResult | null
+  status: AssessmentStatus
+  notes: string | null
+}
+
 export interface AuthSession {
   id: string
   ipAddress: string | null

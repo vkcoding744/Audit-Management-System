@@ -113,7 +113,7 @@ public class CompetencyService {
         competencyRepository.save(competency);
     }
 
-    AuditorCompetency requireCompetency(String id) {
+    public AuditorCompetency requireCompetency(String id) {
         AuditorCompetency competency = competencyRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new ApiException(ErrorCode.SYS_NOT_FOUND, "Competency not found"));
         isolationService.assertCanAccessTenant(competency.getTenantId());

@@ -56,7 +56,7 @@ springdoc:
 audit:
   api:
     docs-enabled: ${AUDIT_PLATFORM_API_DOCS_ENABLED:false}
-    version: 0.12.0
+    version: 0.13.0
   cors:
     allowed-origins: ${AUDIT_PLATFORM_CORS_ORIGINS:http://localhost:5173}
   rate-limit:
@@ -93,7 +93,7 @@ logging:
 audit:
   api:
     docs-enabled: true
-    version: 0.12.0
+    version: 0.13.0
   auth:
     expose-dev-tokens: true
 

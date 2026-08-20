@@ -219,6 +219,22 @@ Numbers reuse `crm_sequences` (`QUOTE` → `QUOTE-%06d`, `INVOICE` → `INV-%06d
 
 `INVOICE_VIEW` is granted in V12; `INVOICE_CREATE` and `PAYMENT_RECORD` already exist in V2.
 
+## Phase 13 training schema
+
+Flyway `V13__training_assessments.sql` adds:
+
+### `training_records`
+
+Tenant-owned training evidence for an auditor. Unique `(tenant_id, training_number)`. Status: `PLANNED`, `COMPLETED`, `CANCELLED`. Optional `standard_id` / `scheme_id`.
+
+### `competency_assessments`
+
+Tenant-owned assessment records. Unique `(tenant_id, assessment_number)`. Status: `DRAFT`, `RECORDED`. Result: `PASS`, `FAIL` (null until recorded). Optional `competency_id` must reference a competency of the same auditor.
+
+Numbers reuse `crm_sequences` (`TRAINING` → `TRN-%06d`, `ASSESSMENT` → `ASM-%06d`).
+
+`TRAINING_UPDATE` is granted in V13; `TRAINING_VIEW` already exists in V2.
+
 ## Isolation rules
 
 - Tenant-owned tables **must** include `tenant_id` and an index on it.

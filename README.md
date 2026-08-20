@@ -4,7 +4,7 @@ Multi-tenant SaaS for professional audit, inspection, testing, and certification
 
 This repository is a **modular monolith**: Spring Boot 3 / Java 21 API, React + TypeScript SPA, MySQL 8, Flyway, and Docker Compose.
 
-Phase 12 (current) adds quotes, invoices, and payments. Payments cannot exceed the amount due; overdue invoices are flagged. Phases 2–11 remain. Set `AUDIT_PLATFORM_BOOTSTRAP_ADMIN_EMAIL` and `AUDIT_PLATFORM_BOOTSTRAP_ADMIN_PASSWORD` before first start to create the platform super admin. Platform admins must choose a tenant (header `X-Tenant-Id`) before creating clients, standards, auditors, or programmes.
+Phase 13 (current) adds training records and competency assessments. Completing training or recording a pass does not change assignment competency. Phases 2–12 remain. Set `AUDIT_PLATFORM_BOOTSTRAP_ADMIN_EMAIL` and `AUDIT_PLATFORM_BOOTSTRAP_ADMIN_PASSWORD` before first start to create the platform super admin. Platform admins must choose a tenant (header `X-Tenant-Id`) before creating clients, standards, auditors, or programmes.
 
 ## Documentation
 

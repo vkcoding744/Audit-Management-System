@@ -141,6 +141,15 @@ export function AuditorDetailPage() {
       <p className="mt-1 text-sm text-slate-600">
         {auditor.employeeNumber} · {auditor.status} · {auditor.employmentType}
         {auditor.jobTitle ? ` · ${auditor.jobTitle}` : ''}
+        {hasPermission('TRAINING_VIEW') ? (
+          <>
+            {' '}
+            ·{' '}
+            <Link className="text-brand-500 underline" to="/training">
+              Training
+            </Link>
+          </>
+        ) : null}
       </p>
 
       <h3 className="mt-8 text-lg font-medium">Qualifications</h3>

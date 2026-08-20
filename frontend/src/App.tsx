@@ -32,6 +32,9 @@ import { StandardsPage } from './pages/StandardsPage'
 import { SystemStatusPage } from './pages/SystemStatusPage'
 import { TenantsPage } from './pages/TenantsPage'
 import { UsersPage } from './pages/UsersPage'
+import { TrainingPage } from './pages/TrainingPage'
+import { TrainingRecordDetailPage } from './pages/TrainingRecordDetailPage'
+import { AssessmentDetailPage } from './pages/AssessmentDetailPage'
 
 export default function App() {
   return (
@@ -70,6 +73,9 @@ export default function App() {
         <Route path="/finance" element={<FinancePage />} />
         <Route path="/quotes/:id" element={<QuoteDetailPage />} />
         <Route path="/invoices/:id" element={<InvoiceDetailPage />} />
+        <Route path="/training" element={<TrainingPage />} />
+        <Route path="/training-records/:id" element={<TrainingRecordDetailPage />} />
+        <Route path="/assessments/:id" element={<AssessmentDetailPage />} />
         <Route path="/users" element={<UsersPage />} />
         <Route path="/roles" element={<RolesPage />} />
         <Route path="/tenants" element={<TenantsPage />} />
