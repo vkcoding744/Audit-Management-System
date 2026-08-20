@@ -191,8 +191,8 @@ export function ClientDetailPage() {
 
       <h3 className="mt-8 text-lg font-medium">Dashboard</h3>
       <p className="text-xs text-slate-500">
-        Site and contact counts are live. Audit, certificate, finance, document, complaint, and appeal counts stay at zero
-        until those modules persist data.
+        Site and contact counts are live. Audit, finding, CAPA, certificate, and document counts come from persisted
+        rows. Finance, complaint, and appeal counts stay at zero until those modules persist data.
       </p>
       <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {metrics.map((item) => (

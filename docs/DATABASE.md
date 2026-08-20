@@ -175,6 +175,18 @@ Certificate numbers reuse `crm_sequences` (`CERTIFICATE` → `CERT-%06d`).
 
 `CERTIFICATE_VIEW` is granted in V9; `CERTIFICATE_ISSUE`, `CERTIFICATE_SUSPEND`, and `CERTIFICATE_WITHDRAW` already exist in V2.
 
+## Phase 10 documents schema
+
+Flyway `V10__documents.sql` adds:
+
+### `documents`
+
+Tenant-owned file metadata. Unique `(tenant_id, document_number)` and `(tenant_id, storage_key)`. Optional `client_id`. Polymorphic link via `linked_type` + `linked_id` (no FK on `linked_id`). Category: `EVIDENCE`, `CONTROLLED`, `REPORT`, `OTHER`. Soft delete via `deleted_at`. Bytes live in object storage, not in MySQL.
+
+Document numbers reuse `crm_sequences` (`DOCUMENT` → `DOC-%06d`).
+
+`DOCUMENT_VIEW` is granted in V10; `DOCUMENT_UPLOAD`, `DOCUMENT_DOWNLOAD`, and `DOCUMENT_DELETE` already exist in V2.
+
 ## Isolation rules
 
 - Tenant-owned tables **must** include `tenant_id` and an index on it.

@@ -80,7 +80,7 @@ Phase 1 tenant hint: `X-Tenant-Id` is honoured **only** for platform super admin
 
 Clients, sites, and contacts are tenant-scoped. Platform super admins must send `X-Tenant-Id` to list or create. Tenant users are bound to the JWT `tid` claim. Client numbers are assigned as `CLIENT-000001` per tenant via a locked sequence.
 
-Dashboard operational counts for audits, findings, CAPA, and certificates come from live rows via `ClientOperationalMetricsPort`. Payments, documents, complaints, and appeals remain zero until those modules persist data. Site and contact counts are live queries.
+Dashboard operational counts for audits, findings, CAPA, certificates, and documents come from live rows via `ClientOperationalMetricsPort`. Payments, complaints, and appeals remain zero until those modules persist data. Site and contact counts are live queries.
 
 `DELETE` responses are HTTP 204 with no envelope.
 
@@ -254,6 +254,20 @@ Status: `DRAFT` → issue `ACTIVE` → suspend `SUSPENDED` → reinstate `ACTIVE
 | POST | `/api/v1/surveillance/{id}/complete` | `CERTIFICATE_ISSUE` | `PLANNED` → `COMPLETED` |
 
 Create body (required: `auditId`, `expiresOn`): `validFrom` (defaults to today UTC), `scopeText`, `nextSurveillanceOn`, `notes`. `expiresOn` cannot be before `validFrom`.
+
+## Phase 10 endpoints
+
+Documents are numbered `DOC-%06d` per tenant. Upload is `multipart/form-data` with a required `file` part. Bytes are stored through `ObjectStoragePort` (local filesystem or S3). Download returns the raw file (not the JSON envelope) and requires `DOCUMENT_DOWNLOAD`. Delete is HTTP 204 and soft-deletes metadata after removing the blob.
+
+Link types: `GENERAL`, `CLIENT`, `AUDIT`, `FINDING`, `CERTIFICATE`. Non-`GENERAL` uploads require `linkedId` of a record in the same tenant; `clientId` is copied from that record. Categories: `EVIDENCE`, `CONTROLLED`, `REPORT`, `OTHER`. Allowed types include PDF, common images, Office/OpenDocument, CSV, plain text, and zip. Executables are rejected.
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| GET | `/api/v1/documents` | `DOCUMENT_VIEW` | Paginated list (`clientId` / `linkedType` / `linkedId`) |
+| POST | `/api/v1/documents` | `DOCUMENT_UPLOAD` | Upload (201); form fields: `title`, `clientId`, `linkedType`, `linkedId`, `category`, `notes` |
+| GET | `/api/v1/documents/{id}` | `DOCUMENT_VIEW` | Metadata |
+| GET | `/api/v1/documents/{id}/content` | `DOCUMENT_DOWNLOAD` | File bytes (`Content-Disposition: attachment`) |
+| DELETE | `/api/v1/documents/{id}` | `DOCUMENT_DELETE` | Soft-delete metadata and remove blob (204) |
 
 ## Status codes
 

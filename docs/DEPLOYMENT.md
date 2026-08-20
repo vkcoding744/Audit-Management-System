@@ -16,7 +16,7 @@ Set secrets in `.env`. Never bake them into images.
 | --- | --- |
 | Compute | ECS Fargate or EKS (backend + frontend tasks) |
 | Database | RDS MySQL 8 (Multi-AZ) |
-| Files | S3 (storage SPI in Phase 10) |
+| Files | S3 via `ObjectStoragePort` (`audit.storage.provider=s3`) or local disk in non-AWS environments |
 | Secrets | SSM Parameter Store / Secrets Manager |
 | TLS / HTTP | ALB + ACM |
 | Cache / rate limit | ElastiCache Redis (later) |

@@ -56,12 +56,18 @@ springdoc:
 audit:
   api:
     docs-enabled: ${AUDIT_PLATFORM_API_DOCS_ENABLED:false}
-    version: 0.9.0
+    version: 0.10.0
   cors:
     allowed-origins: ${AUDIT_PLATFORM_CORS_ORIGINS:http://localhost:5173}
   rate-limit:
     enabled: ${AUDIT_PLATFORM_RATE_LIMIT_ENABLED:false}
     requests-per-minute: ${AUDIT_PLATFORM_RATE_LIMIT_REQUESTS_PER_MINUTE:120}
+  storage:
+    provider: ${AUDIT_PLATFORM_STORAGE_PROVIDER:local}
+    local-root: ${AUDIT_PLATFORM_STORAGE_LOCAL_ROOT:${java.io.tmpdir}/audit-platform-files}
+    s3-bucket: ${AUDIT_PLATFORM_STORAGE_S3_BUCKET:}
+    s3-region: ${AUDIT_PLATFORM_STORAGE_S3_REGION:us-east-1}
+    s3-endpoint: ${AUDIT_PLATFORM_STORAGE_S3_ENDPOINT:}
   auth:
     jwt-secret: ${AUDIT_PLATFORM_JWT_SECRET:change-me-in-env-jwt-secret-32b!!}
     access-token-minutes: ${AUDIT_PLATFORM_ACCESS_TOKEN_MINUTES:15}
@@ -87,7 +93,7 @@ logging:
 audit:
   api:
     docs-enabled: true
-    version: 0.9.0
+    version: 0.10.0
   auth:
     expose-dev-tokens: true
 

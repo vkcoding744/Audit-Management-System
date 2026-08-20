@@ -4,6 +4,13 @@
 
 Stack: JUnit 5, Mockito, Spring MockMvc, Testcontainers MySQL 8.
 
+Phase 10 coverage:
+
+- `DOCUMENT_VIEW` required to list documents; other authorities are 403; unauthenticated is 401
+- Tenant A cannot `get` Tenant B's document (`AUTH_TENANT_MISMATCH`)
+- Upload of a disallowed content type is `SYS_VALIDATION`
+- Local object storage round-trips bytes and rejects `..` keys
+
 Phase 9 coverage:
 
 - `CERTIFICATE_VIEW` required to list certificates; other authorities are 403; unauthenticated is 401
@@ -64,7 +71,7 @@ Phase 2 coverage:
 
 ## Frontend
 
-Vitest + Testing Library for the shell, health client, login form, client directory, standards catalogue, auditor directory, programme directory, scheduled-audit fieldwork action, findings directory, and certificates directory.
+Vitest + Testing Library for the shell, health client, login form, client directory, standards catalogue, auditor directory, programme directory, scheduled-audit fieldwork action, findings directory, certificates directory, and documents directory.
 
 ## Critical scenarios (later phases)
 
@@ -77,6 +84,7 @@ Documented here so they are not lost:
 - Closed finding cannot be edited outside workflow (Phase 8)
 - Certificate issue requires a completed audit and closed major/minor findings (Phase 9)
 - Expired certificate identified (Phase 9 `expired` flag)
+- Unauthorized user cannot download another tenant's file (Phase 10 isolation + `DOCUMENT_DOWNLOAD`)
 - Overdue payment calculated
 
 ## Running

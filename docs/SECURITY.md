@@ -22,6 +22,7 @@
 | CORS allowlist / security headers | Phase 1 |
 | CSRF | Disabled: Bearer API, no cookie session |
 | Default Spring user | Disabled |
+| Object storage keys namespaced by tenant; downloads authenticated | Phase 10 |
 
 ## Authentication
 

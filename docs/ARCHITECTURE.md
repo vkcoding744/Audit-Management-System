@@ -6,7 +6,7 @@
 
 ## Current phase
 
-**Phase 9** adds certificates, certification decisions, and surveillance visits. A draft is created from a completed audit. Issue is blocked while major or minor findings on that audit remain open. Status is `DRAFT` → `ACTIVE` (issue) → `SUSPENDED` / `WITHDRAWN`, with reinstate back to `ACTIVE`. At most one `ACTIVE` certificate is allowed per tenant, client, and scheme. Client dashboard active-certificate and expiring-soon (next 90 days) counts are live.
+**Phase 10** adds document metadata, authenticated upload/download/delete, and an object-storage SPI. The default adapter writes to the local filesystem; `audit.storage.provider=s3` uses S3 (or a path-style endpoint such as MinIO). Files may be linked to a client, audit, finding, or certificate. Executables and unknown types are rejected. Client dashboard document counts are live for rows with a `client_id`.
 
 Phase 1 foundation remains: modular monolith, Flyway, API envelope, CORS/headers, health, tenant discriminator columns.
 
@@ -115,18 +115,20 @@ Authentication is JWT access tokens plus rotating opaque refresh tokens (Phase 2
 
 ## Frontend
 
-React 18 + Vite + TypeScript + Tailwind. The UI calls live APIs for health, identity, clients, standards, schemes, checklists, auditors, programmes, audits, fieldwork, findings, CAPA, certificates, decisions, and surveillance. Client dashboard upcoming/completed audit counts, open findings, overdue CAPA, active certificates, and certificates expiring within 90 days come from persisted rows. Finance still reports zero. It does not mock certification data or copyrighted clause text.
+React 18 + Vite + TypeScript + Tailwind. The UI calls live APIs for health, identity, clients, standards, schemes, checklists, auditors, programmes, audits, fieldwork, findings, CAPA, certificates, decisions, surveillance, and documents. Client dashboard upcoming/completed audit counts, open findings, overdue CAPA, active certificates, certificates expiring within 90 days, and document counts come from persisted rows. Finance still reports zero. It does not mock certification data or copyrighted clause text.
 
 ## Infrastructure
 
 Docker Compose runs MySQL 8, backend, and frontend (Nginx). Optional profiles: `redis`, `mailhog`.
 
-AWS-ready: 12-factor config, health probes, no baked secrets, object storage SPI later (local vs S3).
+AWS-ready: 12-factor config, health probes, no baked secrets, object storage SPI (local filesystem or S3).
 
-## Explicit non-goals for Phase 9
+## Explicit non-goals for Phase 10
 
 - PDF certificate templates and public verification portals
-- Document storage and evidence attachments (document module)
+- Full QMS controlled-document revision/approval workflows
+- Antivirus/malware scanning and OCR
+- Public unauthenticated file URLs
 - Finance, complaints, appeals
 - Bundled ISO/IEC clause libraries
 - AI providers, Elasticsearch

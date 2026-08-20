@@ -64,6 +64,8 @@ npm test
 | `test` | Automated tests |
 | `prod` | JSON logs, docs off, stricter actuator |
 
+Object storage: default `audit.storage.provider=local` writes under `AUDIT_PLATFORM_STORAGE_LOCAL_ROOT` (or the JVM temp dir). Set `AUDIT_PLATFORM_STORAGE_PROVIDER=s3` plus bucket/region (optional `AUDIT_PLATFORM_STORAGE_S3_ENDPOINT` for MinIO).
+
 ## Conventions
 
 - Do not put business logic in controllers.
