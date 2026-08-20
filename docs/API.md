@@ -80,7 +80,7 @@ Phase 1 tenant hint: `X-Tenant-Id` is honoured **only** for platform super admin
 
 Clients, sites, and contacts are tenant-scoped. Platform super admins must send `X-Tenant-Id` to list or create. Tenant users are bound to the JWT `tid` claim. Client numbers are assigned as `CLIENT-000001` per tenant via a locked sequence.
 
-Dashboard operational counts for audits, findings, CAPA, certificates, and documents come from live rows via `ClientOperationalMetricsPort`. Payments, complaints, and appeals remain zero until those modules persist data. Site and contact counts are live queries.
+Dashboard operational counts for audits, findings, CAPA, certificates, documents, and outstanding invoices come from live rows via `ClientOperationalMetricsPort`. Complaints and appeals remain zero until those modules persist data. Site and contact counts are live queries.
 
 `DELETE` responses are HTTP 204 with no envelope.
 
@@ -284,6 +284,32 @@ Source: `WEBSITE`, `REFERRAL`, `TENDER`, `EVENT`, `OTHER` (default). Status: `OP
 | POST | `/api/v1/leads/{id}/convert` | `LEAD_UPDATE` and `CLIENT_CREATE` | Create prospect client; `CONVERTED` |
 
 Create body (required: `organisationName`): `contactName`, `email`, `phone`, `source`, `notes`.
+
+## Phase 12 endpoints
+
+Quotes `QUOTE-%06d`, invoices `INV-%06d`, payments `PAY-%06d`. Amounts are `DECIMAL(15,2)`. Currency is ISO 4217 (default `USD`). Line totals are `quantity × unitAmount` rounded half-up to 2 decimals. Header total equals the line subtotal (no tax engine).
+
+Quote status: `DRAFT` → issue `ISSUED` → `ACCEPTED` or `DECLINED`. `expired` is true when status is `ISSUED` and `validUntil` is before today (UTC). Invoice from quote requires `ACCEPTED` and at most one invoice per quote (`SYS_CONFLICT` otherwise).
+
+Invoice status: `DRAFT` → issue `ISSUED` → payments `PARTIALLY_PAID` / `PAID`, or `VOID` if `amountPaid` is zero. `overdue` is true when status is `ISSUED` or `PARTIALLY_PAID` and `dueOn` is before today. A payment larger than `amountDue` is `SYS_VALIDATION`.
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| GET/POST | `/api/v1/quotes` | `INVOICE_VIEW` / `INVOICE_CREATE` | Paginated list (`clientId`/`status`) or create (201) |
+| GET | `/api/v1/quotes/{id}` | `INVOICE_VIEW` | Detail includes lines |
+| POST | `/api/v1/quotes/{id}/issue` | `INVOICE_CREATE` | `DRAFT` → `ISSUED` |
+| POST | `/api/v1/quotes/{id}/accept` | `INVOICE_CREATE` | `ISSUED` → `ACCEPTED` |
+| POST | `/api/v1/quotes/{id}/decline` | `INVOICE_CREATE` | `ISSUED` → `DECLINED` |
+| POST | `/api/v1/quotes/{id}/invoice` | `INVOICE_CREATE` | Create draft invoice from accepted quote (201) |
+| GET/POST | `/api/v1/invoices` | `INVOICE_VIEW` / `INVOICE_CREATE` | Paginated list (`clientId`/`status`) or create (201) |
+| GET | `/api/v1/invoices/{id}` | `INVOICE_VIEW` | Detail includes lines and payments |
+| POST | `/api/v1/invoices/{id}/issue` | `INVOICE_CREATE` | `DRAFT` → `ISSUED` (`dueOn` defaults to today+30) |
+| POST | `/api/v1/invoices/{id}/void` | `INVOICE_CREATE` | Draft or unpaid issued → `VOID` |
+| POST | `/api/v1/invoices/{id}/payments` | `PAYMENT_RECORD` | Record payment (201) |
+
+Quote/invoice create body (required: `clientId`, `lines[]` with `description`, `quantity`, `unitAmount`): `currency`, `validUntil` or `dueOn`, `notes`.
+
+Payment body (required: `amount`): `paidOn` (defaults to today UTC), `method` (`BANK_TRANSFER`, `CARD`, `CHEQUE`, `OTHER`), `reference`, `notes`.
 
 ## Status codes
 

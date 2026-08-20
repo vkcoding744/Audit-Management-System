@@ -11,6 +11,8 @@ import com.auditplatform.certification.repository.CertificateRepository;
 import com.auditplatform.crm.metrics.ClientOperationalMetrics;
 import com.auditplatform.crm.metrics.ClientOperationalMetricsPort;
 import com.auditplatform.document.repository.DocumentRepository;
+import com.auditplatform.finance.domain.InvoiceStatus;
+import com.auditplatform.finance.repository.InvoiceRepository;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +32,7 @@ public class AuditBackedClientOperationalMetrics implements ClientOperationalMet
     private final CapaActionRepository capaRepository;
     private final CertificateRepository certificateRepository;
     private final DocumentRepository documentRepository;
+    private final InvoiceRepository invoiceRepository;
     private final Clock clock;
 
     public AuditBackedClientOperationalMetrics(
@@ -38,6 +41,7 @@ public class AuditBackedClientOperationalMetrics implements ClientOperationalMet
             CapaActionRepository capaRepository,
             CertificateRepository certificateRepository,
             DocumentRepository documentRepository,
+            InvoiceRepository invoiceRepository,
             Clock clock
     ) {
         this.auditRepository = auditRepository;
@@ -45,6 +49,7 @@ public class AuditBackedClientOperationalMetrics implements ClientOperationalMet
         this.capaRepository = capaRepository;
         this.certificateRepository = certificateRepository;
         this.documentRepository = documentRepository;
+        this.invoiceRepository = invoiceRepository;
         this.clock = clock;
     }
 
@@ -84,6 +89,11 @@ public class AuditBackedClientOperationalMetrics implements ClientOperationalMet
                         today.plusDays(90)
                 );
         long documents = documentRepository.countByTenantIdAndClientIdAndDeletedAtIsNull(tenantId, clientId);
+        long outstandingPayments = invoiceRepository.countByTenantIdAndClientIdAndStatusInAndDeletedAtIsNull(
+                tenantId,
+                clientId,
+                List.of(InvoiceStatus.ISSUED, InvoiceStatus.PARTIALLY_PAID)
+        );
         return new ClientOperationalMetrics(
                 upcoming,
                 completed,
@@ -91,7 +101,7 @@ public class AuditBackedClientOperationalMetrics implements ClientOperationalMet
                 overdueCapa,
                 activeCertificates,
                 expiringSoon,
-                0,
+                outstandingPayments,
                 documents,
                 0,
                 0

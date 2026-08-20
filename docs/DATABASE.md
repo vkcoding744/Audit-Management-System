@@ -199,6 +199,26 @@ Lead numbers reuse `crm_sequences` (`LEAD` → `LEAD-%06d`).
 
 `LEAD_UPDATE` is granted in V11; `LEAD_VIEW` and `LEAD_CREATE` already exist in V2.
 
+## Phase 12 finance schema
+
+Flyway `V12__quotes_invoices_payments.sql` adds:
+
+### `quotes` / `quote_lines`
+
+Tenant-owned commercial offers. Unique `(tenant_id, quote_number)`. Status: `DRAFT`, `ISSUED`, `ACCEPTED`, `DECLINED`. Amounts `DECIMAL(15,2)`.
+
+### `invoices` / `invoice_lines`
+
+Bills to a client. Unique `(tenant_id, invoice_number)`. Optional unique `quote_id`. Status: `DRAFT`, `ISSUED`, `PARTIALLY_PAID`, `PAID`, `VOID`. `amount_paid` is the sum of payments.
+
+### `payments`
+
+Receipts against an invoice. Unique `(tenant_id, payment_number)`. Method: `BANK_TRANSFER`, `CARD`, `CHEQUE`, `OTHER`.
+
+Numbers reuse `crm_sequences` (`QUOTE` → `QUOTE-%06d`, `INVOICE` → `INV-%06d`, `PAYMENT` → `PAY-%06d`).
+
+`INVOICE_VIEW` is granted in V12; `INVOICE_CREATE` and `PAYMENT_RECORD` already exist in V2.
+
 ## Isolation rules
 
 - Tenant-owned tables **must** include `tenant_id` and an index on it.

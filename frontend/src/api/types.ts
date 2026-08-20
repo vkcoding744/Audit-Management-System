@@ -477,6 +477,65 @@ export interface DocumentSummary {
   createdAt: string
 }
 
+export type QuoteStatus = 'DRAFT' | 'ISSUED' | 'ACCEPTED' | 'DECLINED'
+export type InvoiceStatus = 'DRAFT' | 'ISSUED' | 'PARTIALLY_PAID' | 'PAID' | 'VOID'
+export type PaymentMethod = 'BANK_TRANSFER' | 'CARD' | 'CHEQUE' | 'OTHER'
+
+export interface FinanceLine {
+  id: string
+  description: string
+  quantity: number
+  unitAmount: number
+  lineAmount: number
+}
+
+export interface QuoteSummary {
+  id: string
+  tenantId: string
+  quoteNumber: string
+  clientId: string
+  currency: string
+  status: QuoteStatus
+  validUntil: string | null
+  expired: boolean
+  subtotal: number
+  totalAmount: number
+  notes: string | null
+  lines: FinanceLine[]
+}
+
+export interface PaymentSummary {
+  id: string
+  tenantId: string
+  paymentNumber: string
+  invoiceId: string
+  amount: number
+  paidOn: string
+  method: PaymentMethod
+  reference: string | null
+  notes: string | null
+}
+
+export interface InvoiceSummary {
+  id: string
+  tenantId: string
+  invoiceNumber: string
+  clientId: string
+  quoteId: string | null
+  currency: string
+  status: InvoiceStatus
+  issuedOn: string | null
+  dueOn: string | null
+  overdue: boolean
+  subtotal: number
+  totalAmount: number
+  amountPaid: number
+  amountDue: number
+  notes: string | null
+  lines: FinanceLine[]
+  payments: PaymentSummary[]
+}
+
 export interface AuthSession {
   id: string
   ipAddress: string | null

@@ -15,6 +15,9 @@ import { DocumentDetailPage } from './pages/DocumentDetailPage'
 import { DocumentsPage } from './pages/DocumentsPage'
 import { FindingDetailPage } from './pages/FindingDetailPage'
 import { FindingsPage } from './pages/FindingsPage'
+import { FinancePage } from './pages/FinancePage'
+import { InvoiceDetailPage } from './pages/InvoiceDetailPage'
+import { QuoteDetailPage } from './pages/QuoteDetailPage'
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage'
 import { LoginPage } from './pages/LoginPage'
 import { ResetPasswordPage } from './pages/ResetPasswordPage'
@@ -64,6 +67,9 @@ export default function App() {
         <Route path="/certificates/:id" element={<CertificateDetailPage />} />
         <Route path="/documents" element={<DocumentsPage />} />
         <Route path="/documents/:id" element={<DocumentDetailPage />} />
+        <Route path="/finance" element={<FinancePage />} />
+        <Route path="/quotes/:id" element={<QuoteDetailPage />} />
+        <Route path="/invoices/:id" element={<InvoiceDetailPage />} />
         <Route path="/users" element={<UsersPage />} />
         <Route path="/roles" element={<RolesPage />} />
         <Route path="/tenants" element={<TenantsPage />} />
