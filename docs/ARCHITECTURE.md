@@ -6,20 +6,9 @@
 
 ## Current phase
 
-Phase 1 delivers the **project foundation** only:
+**Phase 2** adds authentication, JWT sessions, RBAC (permission authorities), and tenant isolation on the authenticated principal.
 
-- Repository layout
-- Spring Boot 3 modular monolith
-- React + TypeScript SPA shell
-- MySQL 8 + Flyway
-- Docker Compose
-- Security baseline (stateless API, CORS, headers)
-- Global exception handling and API envelope
-- Correlation IDs and structured logging
-- Actuator health/readiness
-- Tenant-aware persistence primitives (no authentication product yet)
-
-Phase 2 (authentication, JWT, RBAC) must not start until Phase 1 builds, tests, and migrations are verified.
+Phase 1 foundation remains: modular monolith, Flyway, API envelope, CORS/headers, health, tenant discriminator columns.
 
 ## Style of architecture
 
@@ -61,7 +50,12 @@ Rationale for Phase 1:
 
 Every tenant-owned row includes `tenant_id`. Platform-level rows (the `tenants` table itself, global settings) have no tenant owner.
 
-`TenantContext` is a thread-local set from `X-Tenant-Id` in Phase 1. Phase 2 will bind tenant from the authenticated principal (JWT claim) and **ignore** a mismatched header for non-platform admins.
+`TenantContext` is bound from the JWT after authentication:
+
+- Tenant users: tenant id comes from the token. A mismatched `X-Tenant-Id` is **403**.
+- Platform super admins: `tenant_id` on the user is null. They may send `X-Tenant-Id` to operate in a tenant. The header is ignored for everyone else.
+
+Cross-tenant access is a defect. Services load by id then `IsolationService.assertSameTenant`.
 
 Cross-tenant access is a defect. Tests in later phases must prove Tenant A cannot read Tenant B.
 

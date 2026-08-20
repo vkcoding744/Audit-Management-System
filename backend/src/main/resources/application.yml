@@ -56,12 +56,22 @@ springdoc:
 audit:
   api:
     docs-enabled: ${AUDIT_PLATFORM_API_DOCS_ENABLED:false}
-    version: 0.1.0
+    version: 0.2.0
   cors:
     allowed-origins: ${AUDIT_PLATFORM_CORS_ORIGINS:http://localhost:5173}
   rate-limit:
     enabled: ${AUDIT_PLATFORM_RATE_LIMIT_ENABLED:false}
     requests-per-minute: ${AUDIT_PLATFORM_RATE_LIMIT_REQUESTS_PER_MINUTE:120}
+  auth:
+    jwt-secret: ${AUDIT_PLATFORM_JWT_SECRET:change-me-in-env-jwt-secret-32b!!}
+    access-token-minutes: ${AUDIT_PLATFORM_ACCESS_TOKEN_MINUTES:15}
+    refresh-token-days: ${AUDIT_PLATFORM_REFRESH_TOKEN_DAYS:7}
+    max-failed-logins: ${AUDIT_PLATFORM_MAX_FAILED_LOGINS:5}
+    lockout-minutes: ${AUDIT_PLATFORM_LOCKOUT_MINUTES:15}
+    expose-dev-tokens: false
+    require-email-verified: false
+    bootstrap-admin-email: ${AUDIT_PLATFORM_BOOTSTRAP_ADMIN_EMAIL:}
+    bootstrap-admin-password: ${AUDIT_PLATFORM_BOOTSTRAP_ADMIN_PASSWORD:}
 ---
 spring:
   config:
@@ -77,6 +87,9 @@ logging:
 audit:
   api:
     docs-enabled: true
+    version: 0.2.0
+  auth:
+    expose-dev-tokens: true
 
 springdoc:
   api-docs:

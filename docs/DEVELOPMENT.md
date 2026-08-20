@@ -29,6 +29,8 @@ cp ../.env.example ../.env
 ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
+Set `AUDIT_PLATFORM_BOOTSTRAP_ADMIN_EMAIL` and `AUDIT_PLATFORM_BOOTSTRAP_ADMIN_PASSWORD` (12+ characters, mixed case and a digit) to create the first platform user when the database has no users.
+
 ## Frontend only
 
 ```bash

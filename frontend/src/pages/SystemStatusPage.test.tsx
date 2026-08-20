@@ -15,7 +15,7 @@ vi.mock('../api/system', () => ({
   fetchSystemInfo: () =>
     Promise.resolve({
       success: true,
-      data: { application: 'audit-platform', apiVersion: '0.1.0', environment: 'test' },
+      data: { application: 'audit-platform', apiVersion: '0.2.0', environment: 'test' },
       error: null,
       meta: { correlationId: 'test', timestamp: new Date().toISOString() },
     }),
@@ -33,7 +33,7 @@ describe('SystemStatusPage', () => {
     )
 
     expect(await screen.findByText('Database')).toBeInTheDocument()
-    expect(screen.getByText('0.1.0')).toBeInTheDocument()
+    expect(screen.getByText('0.2.0')).toBeInTheDocument()
     expect(screen.getAllByText('UP').length).toBeGreaterThan(0)
   })
 })

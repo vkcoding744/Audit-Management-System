@@ -50,7 +50,13 @@ class PlatformMysqlIT {
         registry.add("audit.api.version", () -> "0.1.0");
         registry.add("audit.cors.allowed-origins", () -> "http://localhost:5173");
         registry.add("audit.rate-limit.enabled", () -> "false");
-        registry.add("audit.rate-limit.requests-per-minute", () -> "120");
+        registry.add("audit.auth.jwt-secret", () -> "unit-test-jwt-secret-key-32chars!!");
+        registry.add("audit.auth.access-token-minutes", () -> "15");
+        registry.add("audit.auth.refresh-token-days", () -> "7");
+        registry.add("audit.auth.max-failed-logins", () -> "5");
+        registry.add("audit.auth.lockout-minutes", () -> "15");
+        registry.add("audit.auth.expose-dev-tokens", () -> "false");
+        registry.add("audit.auth.require-email-verified", () -> "false");
     }
 
     @Autowired

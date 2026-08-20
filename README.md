@@ -4,7 +4,7 @@ Multi-tenant SaaS for professional audit, inspection, testing, and certification
 
 This repository is a **modular monolith**: Spring Boot 3 / Java 21 API, React + TypeScript SPA, MySQL 8, Flyway, and Docker Compose.
 
-Phase 1 (current) is the **project foundation** only: repository layout, security baseline, API envelope, logging, health endpoints, tenant persistence primitives, and the application shell. Authentication and business modules start in Phase 2.
+Phase 2 (current) adds login, JWT, RBAC, and tenant isolation. Set `AUDIT_PLATFORM_BOOTSTRAP_ADMIN_EMAIL` and `AUDIT_PLATFORM_BOOTSTRAP_ADMIN_PASSWORD` before first start to create the platform super admin.
 
 ## Documentation
 
@@ -26,7 +26,7 @@ cp .env.example .env
 docker compose up --build
 ```
 
-- Web: http://localhost:8080
+- Web: http://localhost:8080 (sign in with the bootstrap admin after first boot)
 - API health: http://localhost:8081/api/v1/system/health
 - OpenAPI (dev): http://localhost:8081/swagger-ui.html
 

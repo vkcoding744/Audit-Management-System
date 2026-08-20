@@ -42,7 +42,7 @@ Error:
 
 Send and receive `X-Correlation-Id`. If omitted, the server generates one.
 
-Phase 1 tenant hint: `X-Tenant-Id` (UUID). After Phase 2 this is informational for platform admins only.
+Phase 1 tenant hint: `X-Tenant-Id` is honoured **only** for platform super admins after login. Tenant users are bound to the JWT `tid` claim.
 
 ## Phase 1 endpoints
 
@@ -54,7 +54,27 @@ Phase 1 tenant hint: `X-Tenant-Id` (UUID). After Phase 2 this is informational f
 | GET | `/actuator/health/readiness` | Public | Readiness including DB |
 | GET | `/actuator/info` | Public | Build info when available |
 
-All other `/api/**` routes return **401** until Phase 2.
+## Phase 2 endpoints
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| POST | `/api/v1/auth/login` | Public | Issue access + refresh tokens |
+| POST | `/api/v1/auth/refresh` | Public | Rotate refresh token |
+| POST | `/api/v1/auth/logout` | Authenticated | Revoke current refresh token |
+| POST | `/api/v1/auth/logout-all` | Authenticated | Revoke all sessions |
+| POST | `/api/v1/auth/forgot-password` | Public | Queue reset (always generic) |
+| POST | `/api/v1/auth/reset-password` | Public | Set new password |
+| POST | `/api/v1/auth/verify-email` | Public | Confirm email token |
+| GET | `/api/v1/auth/me` | Authenticated | Current user |
+| GET | `/api/v1/auth/sessions` | Authenticated | Device sessions |
+| DELETE | `/api/v1/auth/sessions/{id}` | Authenticated | Revoke a session |
+| GET/POST | `/api/v1/users` | `USER_VIEW` / `USER_CREATE` | User directory |
+| PATCH | `/api/v1/users/{id}` | `USER_UPDATE` | Update profile/roles |
+| POST | `/api/v1/users/{id}/activate` | `USER_DEACTIVATE` | Enable account |
+| POST | `/api/v1/users/{id}/deactivate` | `USER_DEACTIVATE` | Disable account |
+| GET | `/api/v1/roles` | `ROLE_VIEW` | System roles |
+| GET | `/api/v1/permissions` | `PERMISSION_VIEW` | Permission catalog |
+| GET/POST | `/api/v1/tenants` | `TENANT_VIEW` / `TENANT_CREATE` | Tenants |
 
 ## Status codes
 

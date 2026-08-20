@@ -3,40 +3,44 @@
 ## Secrets
 
 - Never commit secrets. Use `.env` (gitignored) from `.env.example`.
-- Spring configuration binds `AUDIT_PLATFORM_*` and standard `SPRING_DATASOURCE_*` variables.
-- Passwords are never logged. JWT material is not present in Phase 1.
+- Spring configuration binds `AUDIT_PLATFORM_*` variables.
+- Passwords, refresh tokens, reset tokens, and JWT secrets are never logged.
+- JWT signing key: `AUDIT_PLATFORM_JWT_SECRET` (min 32 characters). Production refuses the documented placeholder.
 
-## Phase 1 controls
+## Controls
 
 | Control | Status |
 | --- | --- |
-| BCrypt password hashing | Phase 2 (dependency not used yet) |
-| JWT access/refresh | Phase 2 |
-| RBAC / permission checks | Phase 2 |
-| Tenant discriminator columns | Phase 1 schema + context |
-| CORS allowlist | Phase 1 |
-| Security HTTP headers | Phase 1 |
-| CSRF | Disabled: API is stateless Bearer (no cookie auth) |
-| SQL injection | JPA parameterized queries only |
+| BCrypt password hashing (strength 12) | Phase 2 |
+| JWT access + rotating refresh tokens | Phase 2 |
+| Permission authorities (`hasAuthority`) | Phase 2 |
+| Tenant isolation from principal | Phase 2 |
+| Login lockout | Phase 2 |
+| Password reset / email verification tokens (hashed) | Phase 2 |
+| Session/device list + revoke | Phase 2 |
+| MFA columns + login hook | Ready; TOTP not issued yet |
+| CORS allowlist / security headers | Phase 1 |
+| CSRF | Disabled: Bearer API, no cookie session |
 | Default Spring user | Disabled |
-| Rate limiting | In-memory filter, disabled by default |
-| Actuator | Only health/info exposed; no heapdump/env |
 
-## CSRF
+## Authentication
 
-Browser cookie sessions are not used. The SPA will send `Authorization: Bearer` in Phase 2. CSRF is disabled for the API. If a cookie-based admin session is added later, CSRF must be re-enabled for those routes.
+- Login: `POST /api/v1/auth/login` with email + password.
+- Access token: HMAC-SHA256 JWT, short TTL (default 15 minutes), claims: `sub` (user id), `tid`, `sid`, `plat`, `perms`.
+- Refresh token: opaque, stored as SHA-256, rotated on use. Reuse of a revoked token in the same family revokes the family.
+- Logout revokes the current session; logout-all revokes every session for the user.
+- Passwords: BCrypt. Dummy verify when the email is unknown to reduce timing leakage.
 
-## Headers
+## Authorization
 
-- `X-Content-Type-Options: nosniff`
-- `X-Frame-Options: DENY`
-- Referrer-Policy: `no-referrer`
-- Permissions-Policy: camera/microphone/geolocation disabled at HTTP layer for API responses
+Spring Security method security uses **permission codes**, not role names, for API checks (for example `USER_VIEW`, `TENANT_CREATE`). Roles are bundles of permissions seeded as system roles.
 
-## File uploads
+Platform super admin receives every permission. Tenant-scoped APIs still apply isolation for non-platform users.
 
-Not implemented in Phase 1. Future work: MIME sniffing, size limits, allowlist, storage path never returned, malware scan SPI.
+## Tokens in the browser
 
-## Audit log
+Phase 2 stores access and refresh tokens in `sessionStorage` and sends `Authorization: Bearer`. This is XSS-sensitive; httpOnly cookies are a later hardening option (then CSRF must be re-enabled for those routes).
 
-Immutable audit log table is Phase 2+ (identity events). Correlation IDs are on every request in Phase 1 to support that trail.
+## Email
+
+`OutboundEmailPort` is the only mail API. The default adapter logs that a message was queued (never the token or password). In `dev`, `audit.auth.expose-dev-tokens=true` may return reset/verification tokens in the JSON body so local setup works without SMTP.

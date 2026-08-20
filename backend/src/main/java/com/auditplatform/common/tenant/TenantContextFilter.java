@@ -11,6 +11,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * Ensures ThreadLocals do not leak. Binding is done in {@code TenantBindingFilter} after JWT.
+ */
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE + 10)
 public class TenantContextFilter extends OncePerRequestFilter {
@@ -23,11 +26,6 @@ public class TenantContextFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
-        String tenantId = request.getHeader(TENANT_HEADER);
-        if (tenantId != null && !tenantId.isBlank()) {
-            TenantContext.setTenantId(tenantId.trim());
-            org.slf4j.MDC.put("tenantId", tenantId.trim());
-        }
         try {
             filterChain.doFilter(request, response);
         } finally {

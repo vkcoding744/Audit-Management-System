@@ -23,32 +23,28 @@ SaaS tenant (certification body / paying organization).
 | `deleted_at` | DATETIME(6) | Soft delete |
 | `version` | INT | Optimistic lock |
 
-Indexes: unique `code` where `deleted_at` is null is enforced with unique `code` for Phase 1 (codes are not reused).
-
 ### `platform_settings`
 
-Global or tenant-scoped configuration (feature flags, mail, storage keys **names**, never secret values).
+Global or tenant-scoped configuration (non-secret values only). Unique on generated `tenant_scope` + `setting_key`.
 
-| Column | Type | Notes |
-| --- | --- | --- |
-| `id` | CHAR(36) | PK |
-| `tenant_id` | CHAR(36) | Null = platform-global |
-| `setting_key` | VARCHAR(128) | |
-| `setting_value` | TEXT | Non-secret values only |
-| `created_at` / `updated_at` | DATETIME(6) | |
-| `created_by` / `updated_by` | VARCHAR(64) | |
-| `version` | INT | |
+## Phase 2 identity schema
 
-Unique (`tenant_id`, `setting_key`).
+Flyway `V2__identity_rbac_sessions.sql` adds:
 
-## Planned (not in Phase 1)
+- `permissions`, `roles`, `role_permissions`
+- `users`, `user_roles`
+- `auth_sessions` (hashed refresh tokens, rotation family)
+- `password_reset_tokens`, `email_verification_tokens`
+- `audit_logs` (append-only)
 
-See the master entity list in the product brief: users, roles, clients, audits, findings, certificates, documents, invoices, etc. Each will be introduced with its own versioned Flyway script.
+System roles and permission grants are seeded. No user passwords are stored in Flyway. The first platform admin is created at boot when `AUDIT_PLATFORM_BOOTSTRAP_ADMIN_EMAIL` and `AUDIT_PLATFORM_BOOTSTRAP_ADMIN_PASSWORD` are set and the user table is empty.
+
+`users.tenant_id` is null for platform super admins.
 
 ## Isolation rules
 
 - Tenant-owned tables **must** include `tenant_id` and an index on it.
-- Queries **must** filter by tenant from `TenantContext` / principal, never from an unverified client-supplied id alone after Phase 2.
+- Queries **must** filter by tenant from the authenticated principal.
 - Do not create cross-tenant foreign keys except to `tenants.id`.
 
 ## Local databases

@@ -8,7 +8,8 @@ import java.util.List;
 public record AuditPlatformProperties(
         Api api,
         Cors cors,
-        RateLimit rateLimit
+        RateLimit rateLimit,
+        Auth auth
 ) {
     public record Api(boolean docsEnabled, String version) {
     }
@@ -27,5 +28,18 @@ public record AuditPlatformProperties(
     }
 
     public record RateLimit(boolean enabled, int requestsPerMinute) {
+    }
+
+    public record Auth(
+            String jwtSecret,
+            int accessTokenMinutes,
+            int refreshTokenDays,
+            int maxFailedLogins,
+            int lockoutMinutes,
+            boolean exposeDevTokens,
+            boolean requireEmailVerified,
+            String bootstrapAdminEmail,
+            String bootstrapAdminPassword
+    ) {
     }
 }

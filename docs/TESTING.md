@@ -4,7 +4,12 @@
 
 Stack: JUnit 5, Mockito, Spring MockMvc, Testcontainers MySQL 8.
 
-Phase 1 coverage:
+Phase 2 coverage:
+
+- Login public, `/me` requires auth
+- Permission `USER_VIEW` required to list users; other authorities are 403
+- Tenant isolation helper rejects cross-tenant access
+- JWT round-trip
 
 - Public system health/info
 - Unauthenticated `/api/v1/**` (non-public) returns 401

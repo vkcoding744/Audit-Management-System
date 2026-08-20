@@ -3,11 +3,14 @@ package com.auditplatform.system.web;
 import com.auditplatform.common.config.AuditPlatformProperties;
 import com.auditplatform.common.security.JsonAccessDeniedHandler;
 import com.auditplatform.common.security.JsonAuthenticationEntryPoint;
+import com.auditplatform.common.security.JwtAuthenticationFilter;
 import com.auditplatform.common.security.RateLimitFilter;
 import com.auditplatform.common.security.SecurityConfig;
+import com.auditplatform.common.security.TenantBindingFilter;
 import com.auditplatform.common.tenant.TenantContextFilter;
 import com.auditplatform.common.web.CorrelationId;
 import com.auditplatform.common.web.CorrelationIdFilter;
+import com.auditplatform.identity.service.JwtService;
 import com.auditplatform.system.api.SystemHealthResponse;
 import com.auditplatform.system.service.SystemHealthService;
 import org.junit.jupiter.api.Test;
@@ -42,15 +45,27 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         JsonAccessDeniedHandler.class,
         CorrelationIdFilter.class,
         TenantContextFilter.class,
-        RateLimitFilter.class
+        RateLimitFilter.class,
+        JwtAuthenticationFilter.class,
+        TenantBindingFilter.class,
+        JwtService.class
 })
 @EnableConfigurationProperties(AuditPlatformProperties.class)
 @TestPropertySource(properties = {
         "audit.api.docs-enabled=false",
-        "audit.api.version=0.1.0",
+        "audit.api.version=0.2.0",
         "audit.cors.allowed-origins=http://localhost:5173",
         "audit.rate-limit.enabled=false",
-        "audit.rate-limit.requests-per-minute=120"
+        "audit.rate-limit.requests-per-minute=120",
+        "audit.auth.jwt-secret=unit-test-jwt-secret-key-32chars!!",
+        "audit.auth.access-token-minutes=15",
+        "audit.auth.refresh-token-days=7",
+        "audit.auth.max-failed-logins=5",
+        "audit.auth.lockout-minutes=15",
+        "audit.auth.expose-dev-tokens=false",
+        "audit.auth.require-email-verified=false",
+        "audit.auth.bootstrap-admin-email=",
+        "audit.auth.bootstrap-admin-password="
 })
 class SystemControllerTest {
 
@@ -90,7 +105,7 @@ class SystemControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.application").value("audit-platform"))
-                .andExpect(jsonPath("$.data.apiVersion").value("0.1.0"));
+                .andExpect(jsonPath("$.data.apiVersion").value("0.2.0"));
     }
 
     @Test
