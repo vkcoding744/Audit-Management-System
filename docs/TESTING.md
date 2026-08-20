@@ -4,6 +4,13 @@
 
 Stack: JUnit 5, Mockito, Spring MockMvc, Testcontainers MySQL 8.
 
+Phase 11 coverage:
+
+- `LEAD_VIEW` required to list leads; other authorities are 403; unauthenticated is 401
+- Tenant A cannot `get` Tenant B's lead (`AUTH_TENANT_MISMATCH`)
+- Convert of an already converted lead is `SYS_CONFLICT`
+- Convert of an open lead creates a prospect client and sets `convertedClientId`
+
 Phase 10 coverage:
 
 - `DOCUMENT_VIEW` required to list documents; other authorities are 403; unauthenticated is 401
@@ -71,7 +78,7 @@ Phase 2 coverage:
 
 ## Frontend
 
-Vitest + Testing Library for the shell, health client, login form, client directory, standards catalogue, auditor directory, programme directory, scheduled-audit fieldwork action, findings directory, certificates directory, and documents directory.
+Vitest + Testing Library for the shell, health client, login form, client directory, leads directory, standards catalogue, auditor directory, programme directory, scheduled-audit fieldwork action, findings directory, certificates directory, and documents directory.
 
 ## Critical scenarios (later phases)
 

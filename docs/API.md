@@ -269,6 +269,22 @@ Link types: `GENERAL`, `CLIENT`, `AUDIT`, `FINDING`, `CERTIFICATE`. Non-`GENERAL
 | GET | `/api/v1/documents/{id}/content` | `DOCUMENT_DOWNLOAD` | File bytes (`Content-Disposition: attachment`) |
 | DELETE | `/api/v1/documents/{id}` | `DOCUMENT_DELETE` | Soft-delete metadata and remove blob (204) |
 
+## Phase 11 endpoints
+
+Leads are numbered `LEAD-%06d` per tenant. Create starts as `OPEN`. Qualify is `OPEN` → `QUALIFIED`. Convert (`LEAD_UPDATE` and `CLIENT_CREATE`) creates a `PROSPECT` client and sets `convertedClientId`. A second convert is `SYS_CONFLICT`. Lost and converted leads cannot be patched. Lose requires `{ reason }`.
+
+Source: `WEBSITE`, `REFERRAL`, `TENDER`, `EVENT`, `OTHER` (default). Status: `OPEN`, `QUALIFIED`, `CONVERTED`, `LOST`.
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| GET/POST | `/api/v1/leads` | `LEAD_VIEW` / `LEAD_CREATE` | Paginated list (`status`) or create (201) |
+| GET/PATCH | `/api/v1/leads/{id}` | `LEAD_VIEW` / `LEAD_UPDATE` | Detail; patch only while `OPEN` or `QUALIFIED` |
+| POST | `/api/v1/leads/{id}/qualify` | `LEAD_UPDATE` | `OPEN` → `QUALIFIED` |
+| POST | `/api/v1/leads/{id}/lose` | `LEAD_UPDATE` | `OPEN` or `QUALIFIED` → `LOST`; body `{ reason }` |
+| POST | `/api/v1/leads/{id}/convert` | `LEAD_UPDATE` and `CLIENT_CREATE` | Create prospect client; `CONVERTED` |
+
+Create body (required: `organisationName`): `contactName`, `email`, `phone`, `source`, `notes`.
+
 ## Status codes
 
 | Code | Use |

@@ -100,6 +100,25 @@ export interface ClientSummary {
   notes: string | null
 }
 
+export type LeadStatus = 'OPEN' | 'QUALIFIED' | 'CONVERTED' | 'LOST'
+export type LeadSource = 'WEBSITE' | 'REFERRAL' | 'TENDER' | 'EVENT' | 'OTHER'
+
+export interface LeadSummary {
+  id: string
+  tenantId: string
+  leadNumber: string
+  organisationName: string
+  contactName: string | null
+  email: string | null
+  phone: string | null
+  source: LeadSource
+  status: LeadStatus
+  convertedClientId: string | null
+  convertedAt: string | null
+  lostReason: string | null
+  notes: string | null
+}
+
 export interface SiteSummary {
   id: string
   tenantId: string
