@@ -4,6 +4,13 @@
 
 Stack: JUnit 5, Mockito, Spring MockMvc, Testcontainers MySQL 8.
 
+Phase 9 coverage:
+
+- `CERTIFICATE_VIEW` required to list certificates; other authorities are 403; unauthenticated is 401
+- Tenant A cannot `get` Tenant B's certificate (`AUTH_TENANT_MISMATCH`)
+- Issue is `SYS_VALIDATION` while an open major or minor finding exists on the source audit
+- `expired` is true for an `ACTIVE` certificate whose `expiresOn` is before today (UTC)
+
 Phase 8 coverage:
 
 - `AUDIT_VIEW` required to list findings; other authorities are 403
@@ -57,7 +64,7 @@ Phase 2 coverage:
 
 ## Frontend
 
-Vitest + Testing Library for the shell, health client, login form, client directory, standards catalogue, auditor directory, programme directory, scheduled-audit fieldwork action, and findings directory.
+Vitest + Testing Library for the shell, health client, login form, client directory, standards catalogue, auditor directory, programme directory, scheduled-audit fieldwork action, findings directory, and certificates directory.
 
 ## Critical scenarios (later phases)
 
@@ -68,8 +75,8 @@ Documented here so they are not lost:
 - Missing permission denied
 - Expired auditor competency blocks assignment (Phase 5 eligibility API and Phase 6 assign)
 - Closed finding cannot be edited outside workflow (Phase 8)
-- Certificate issue requires approvals
-- Expired certificate identified
+- Certificate issue requires a completed audit and closed major/minor findings (Phase 9)
+- Expired certificate identified (Phase 9 `expired` flag)
 - Overdue payment calculated
 
 ## Running

@@ -155,6 +155,26 @@ Corrective actions under a finding. Unique `(tenant_id, capa_number)`. Status: `
 
 Finding and CAPA numbers reuse `crm_sequences` (`FINDING`, `CAPA`).
 
+## Phase 9 certificates schema
+
+Flyway `V9__certificates_decisions.sql` adds:
+
+### `certificates`
+
+Issued (or drafted) against a completed audit. Unique `(tenant_id, certificate_number)`. Status: `DRAFT`, `ACTIVE`, `SUSPENDED`, `WITHDRAWN`. `valid_from` and `expires_on` are required dates.
+
+### `certification_decisions`
+
+Append-only decision log. `decision_type`: `ISSUE`, `SUSPEND`, `REINSTATE`, `WITHDRAW`.
+
+### `certificate_surveillance`
+
+Planned or completed surveillance visits. Status: `PLANNED`, `COMPLETED`, `CANCELLED`.
+
+Certificate numbers reuse `crm_sequences` (`CERTIFICATE` → `CERT-%06d`).
+
+`CERTIFICATE_VIEW` is granted in V9; `CERTIFICATE_ISSUE`, `CERTIFICATE_SUSPEND`, and `CERTIFICATE_WITHDRAW` already exist in V2.
+
 ## Isolation rules
 
 - Tenant-owned tables **must** include `tenant_id` and an index on it.

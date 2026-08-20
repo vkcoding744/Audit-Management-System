@@ -395,6 +395,49 @@ export interface FindingSummary {
   capa: CapaSummary[]
 }
 
+export type CertificateStatus = 'DRAFT' | 'ACTIVE' | 'SUSPENDED' | 'WITHDRAWN'
+export type DecisionType = 'ISSUE' | 'SUSPEND' | 'REINSTATE' | 'WITHDRAW'
+export type SurveillanceStatus = 'PLANNED' | 'COMPLETED' | 'CANCELLED'
+
+export interface DecisionSummary {
+  id: string
+  tenantId: string
+  certificateId: string
+  decisionType: DecisionType
+  reason: string | null
+  decidedOn: string
+}
+
+export interface SurveillanceSummary {
+  id: string
+  tenantId: string
+  certificateId: string
+  plannedOn: string
+  completedOn: string | null
+  status: SurveillanceStatus
+  notes: string | null
+}
+
+export interface CertificateSummary {
+  id: string
+  tenantId: string
+  certificateNumber: string
+  clientId: string
+  schemeId: string
+  standardId: string | null
+  programmeId: string | null
+  auditId: string
+  scopeText: string | null
+  status: CertificateStatus
+  validFrom: string
+  expiresOn: string
+  nextSurveillanceOn: string | null
+  expired: boolean
+  notes: string | null
+  decisions: DecisionSummary[]
+  surveillance: SurveillanceSummary[]
+}
+
 export interface AuthSession {
   id: string
   ipAddress: string | null
