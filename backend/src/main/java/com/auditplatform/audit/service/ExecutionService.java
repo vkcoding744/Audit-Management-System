@@ -176,7 +176,7 @@ public class ExecutionService {
         return audit;
     }
 
-    AuditChecklistResponse requireResponse(String id) {
+    public AuditChecklistResponse requireResponse(String id) {
         AuditChecklistResponse response = responseRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new ApiException(ErrorCode.SYS_NOT_FOUND, "Checklist response not found"));
         isolationService.assertCanAccessTenant(response.getTenantId());

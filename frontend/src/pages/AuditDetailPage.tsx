@@ -16,6 +16,7 @@ import {
   updateAuditItem,
   updateExecutionNotes,
 } from '../api/audits'
+import { createFinding, fetchAuditFindings } from '../api/findings'
 import { fetchAuditors } from '../api/auditors'
 import { fetchSites } from '../api/clients'
 import type { ApiResponse, AssessmentResult } from '../api/types'
@@ -30,6 +31,11 @@ const notesSchema = z.object({
   openingNotes: z.string().optional(),
   closingNotes: z.string().optional(),
 })
+const findingSchema = z.object({
+  title: z.string().min(1).max(255),
+  description: z.string().min(1),
+  severity: z.enum(['MAJOR', 'MINOR', 'OBSERVATION', 'OFI']),
+})
 
 export function AuditDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -42,6 +48,11 @@ export function AuditDetailPage() {
     queryKey: ['audit-responses', id],
     queryFn: () => fetchAuditResponses(id!),
     enabled: Boolean(id) && fieldwork,
+  })
+  const findingsQuery = useQuery({
+    queryKey: ['audit-findings', id],
+    queryFn: () => fetchAuditFindings(id!),
+    enabled: Boolean(id),
   })
   const sitesQuery = useQuery({
     queryKey: ['client-sites', audit?.clientId],
@@ -56,6 +67,7 @@ export function AuditDetailPage() {
   const clientSites = sitesQuery.data?.data ?? []
   const auditors = auditorsQuery.data?.data?.content ?? []
   const items = responsesQuery.data?.data ?? []
+  const findings = findingsQuery.data?.data ?? []
   const siteForm = useForm({ resolver: zodResolver(siteSchema), defaultValues: { siteId: '' } })
   const assignForm = useForm({
     resolver: zodResolver(assignSchema),
@@ -64,6 +76,10 @@ export function AuditDetailPage() {
   const notesForm = useForm({
     resolver: zodResolver(notesSchema),
     values: { openingNotes: audit?.openingNotes ?? '', closingNotes: audit?.closingNotes ?? '' },
+  })
+  const findingForm = useForm({
+    resolver: zodResolver(findingSchema),
+    defaultValues: { title: '', description: '', severity: 'MINOR' as const },
   })
   const addSite = useMutation({
     mutationFn: (values: z.infer<typeof siteSchema>) => addAuditSite(id!, values.siteId),
@@ -112,6 +128,17 @@ export function AuditDetailPage() {
     mutationFn: (payload: { responseId: string; result: AssessmentResult; comment?: string }) =>
       updateAuditItem(payload.responseId, { result: payload.result, comment: payload.comment }),
     onSuccess: () => void queryClient.invalidateQueries({ queryKey: ['audit-responses', id] }),
+  })
+  const raiseFinding = useMutation({
+    mutationFn: (values: z.infer<typeof findingSchema>) => createFinding({ auditId: id!, ...values }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['audit-findings', id] })
+      void queryClient.invalidateQueries({ queryKey: ['findings'] })
+      findingForm.reset({ title: '', description: '', severity: 'MINOR' })
+    },
+    onError: (error: AxiosError<ApiResponse<unknown>>) => {
+      findingForm.setError('root', { message: error.response?.data?.error?.message ?? 'Could not raise finding' })
+    },
   })
 
   if (auditQuery.isError || !id) {
@@ -312,6 +339,51 @@ export function AuditDetailPage() {
             </form>
           )}
         </>
+      )}
+
+      <h3 className="mt-8 text-lg font-medium">Findings</h3>
+      <ul className="mt-2 space-y-2">
+        {findings.map((finding) => (
+          <li key={finding.id} className="rounded-lg border border-slate-200 bg-white p-3 text-sm">
+            <Link className="font-medium text-brand-500 underline" to={`/findings/${finding.id}`}>
+              {finding.findingNumber} · {finding.title}
+            </Link>
+            <p className="text-slate-500">
+              {finding.severity} · {finding.status}
+            </p>
+          </li>
+        ))}
+        {findings.length === 0 && <li className="text-sm text-slate-500">No findings raised on this audit.</li>}
+      </ul>
+      {hasPermission('FINDING_CREATE') && (audit.status === 'IN_PROGRESS' || audit.status === 'COMPLETED') && (
+        <form
+          className="mt-4 max-w-xl space-y-3 rounded-lg border border-slate-200 bg-white p-4"
+          onSubmit={findingForm.handleSubmit((values) => raiseFinding.mutate(values))}
+          aria-label="Raise finding"
+        >
+          <h4 className="text-base font-medium">Raise finding</h4>
+          <input className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm" placeholder="Title" {...findingForm.register('title')} />
+          <textarea
+            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+            rows={3}
+            placeholder="Description"
+            {...findingForm.register('description')}
+          />
+          <select className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm" {...findingForm.register('severity')}>
+            <option value="MAJOR">Major</option>
+            <option value="MINOR">Minor</option>
+            <option value="OBSERVATION">Observation</option>
+            <option value="OFI">Opportunity for improvement</option>
+          </select>
+          {findingForm.formState.errors.root && (
+            <p className="text-sm text-red-700" role="alert">
+              {findingForm.formState.errors.root.message}
+            </p>
+          )}
+          <button type="submit" className="rounded-md bg-brand-500 px-4 py-2 text-sm text-white">
+            Raise finding
+          </button>
+        </form>
       )}
     </section>
   )

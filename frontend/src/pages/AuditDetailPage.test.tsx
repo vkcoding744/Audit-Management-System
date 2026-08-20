@@ -63,6 +63,11 @@ vi.mock('../api/clients', () => ({
   fetchSites: () => Promise.resolve({ success: true, data: [], error: null, meta: {} }),
 }))
 
+vi.mock('../api/findings', () => ({
+  fetchAuditFindings: () => Promise.resolve({ success: true, data: [], error: null, meta: {} }),
+  createFinding: vi.fn(),
+}))
+
 describe('AuditDetailPage', () => {
   it('offers start fieldwork for a scheduled audit', async () => {
     const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })

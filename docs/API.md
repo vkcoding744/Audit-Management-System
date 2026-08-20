@@ -216,6 +216,26 @@ Results: `NOT_ASSESSED`, `CONFORMING`, `NONCONFORMING`, `NOT_APPLICABLE`, `OBSER
 
 Patch response body (required: `result`): `comment`.
 
+## Phase 8 endpoints
+
+Findings belong to an audit and inherit its client. Raise only when the audit is `IN_PROGRESS` or `COMPLETED`. Closed findings cannot be patched. Major and minor findings require at least one CAPA, and no open CAPA, before `POST .../close`. Observations and OFIs can close without CAPA. Overdue CAPA is an open action whose `dueOn` is before today.
+
+Numbers: `FIND-%06d`, `CAPA-%06d`. Severity: `MAJOR`, `MINOR`, `OBSERVATION`, `OFI`. Finding status: `OPEN`, `CLOSED`. CAPA status: `OPEN`, `COMPLETED`, `CANCELLED`.
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| GET/POST | `/api/v1/findings` | `AUDIT_VIEW` / `FINDING_CREATE` | Paginated list (`clientId`/`status`) or create (201) |
+| GET/PATCH | `/api/v1/findings/{id}` | `AUDIT_VIEW` / `FINDING_UPDATE` | Detail includes CAPA; patch only while `OPEN` |
+| POST | `/api/v1/findings/{id}/close` | `FINDING_CLOSE` | `OPEN` → `CLOSED` |
+| GET | `/api/v1/audits/{id}/findings` | `AUDIT_VIEW` | Findings for one audit |
+| GET/POST | `/api/v1/findings/{id}/capa` | `AUDIT_VIEW` / `FINDING_UPDATE` | List or add CAPA (201) |
+| PATCH | `/api/v1/capa/{id}` | `FINDING_UPDATE` | Update open CAPA |
+| POST | `/api/v1/capa/{id}/complete` | `FINDING_UPDATE` | `OPEN` → `COMPLETED` |
+
+Create finding body (required: `auditId`, `title`, `description`): `severity` (`MINOR` default), `siteId`, `responseId`, `clauseId`, `notes`.
+
+Create CAPA body (required: `description`, `dueOn`): `notes`.
+
 ## Status codes
 
 | Code | Use |

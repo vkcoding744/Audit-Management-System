@@ -24,6 +24,16 @@ public class AuditNumberService {
         return next(tenantId, "AUDIT", "AUDIT-%06d");
     }
 
+    @Transactional
+    public String nextFinding(String tenantId) {
+        return next(tenantId, "FINDING", "FIND-%06d");
+    }
+
+    @Transactional
+    public String nextCapa(String tenantId) {
+        return next(tenantId, "CAPA", "CAPA-%06d");
+    }
+
     private String next(String tenantId, String name, String pattern) {
         CrmSequence sequence = crmSequenceRepository.findForUpdate(tenantId, name).orElseGet(() -> {
             CrmSequence created = new CrmSequence();

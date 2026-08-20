@@ -141,6 +141,20 @@ Flyway `V7__audit_execution.sql` adds `actual_start_on`, `actual_end_on`, `openi
 
 Per-visit copy of checklist items. Unique `(audit_id, checklist_item_id)`. `result` is `NOT_ASSESSED`, `CONFORMING`, `NONCONFORMING`, `NOT_APPLICABLE`, or `OBSERVATION`. Title and guidance are stored so later template edits do not rewrite an in-flight visit.
 
+## Phase 8 findings schema
+
+Flyway `V8__findings_capa.sql` adds:
+
+### `findings`
+
+Raised against an audit. Unique `(tenant_id, finding_number)`. Severity: `MAJOR`, `MINOR`, `OBSERVATION`, `OFI`. Status: `OPEN`, `CLOSED`. Optional `site_id`, `response_id` (checklist snapshot), `clause_id`.
+
+### `capa_actions`
+
+Corrective actions under a finding. Unique `(tenant_id, capa_number)`. Status: `OPEN`, `COMPLETED`, `CANCELLED`. Overdue means `OPEN` and `due_on` before today.
+
+Finding and CAPA numbers reuse `crm_sequences` (`FINDING`, `CAPA`).
+
 ## Isolation rules
 
 - Tenant-owned tables **must** include `tenant_id` and an index on it.
