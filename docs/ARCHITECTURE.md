@@ -6,7 +6,7 @@
 
 ## Current phase
 
-**Phase 12** adds quotes, invoices, and payments. Quotes move `DRAFT` → `ISSUED` → `ACCEPTED` or `DECLINED`. Accepted quotes can become one invoice. Payments cannot exceed the amount due. An invoice is overdue when it is `ISSUED` or `PARTIALLY_PAID` and `dueOn` is before today (UTC). Client dashboard outstanding-invoice counts are live.
+**Phase 13** adds training records and competency assessments. Training numbers are `TRN-%06d`; assessment numbers are `ASM-%06d`. Planned training can be completed or cancelled. Completed training with `expiresOn` before today (UTC) is flagged `expired`. Assessments move `DRAFT` → `RECORDED` with a `PASS` or `FAIL` result. Recorded assessments cannot be patched. Training and assessments are evidence only: they do not mutate auditor competencies used for assignment.
 
 Phase 1 foundation remains: modular monolith, Flyway, API envelope, CORS/headers, health, tenant discriminator columns.
 
@@ -115,7 +115,7 @@ Authentication is JWT access tokens plus rotating opaque refresh tokens (Phase 2
 
 ## Frontend
 
-React 18 + Vite + TypeScript + Tailwind. The UI calls live APIs for health, identity, clients, leads, standards, schemes, checklists, auditors, programmes, audits, fieldwork, findings, CAPA, certificates, decisions, surveillance, documents, quotes, invoices, and payments. Client dashboard upcoming/completed audit counts, open findings, overdue CAPA, active certificates, certificates expiring within 90 days, documents, and outstanding invoices come from persisted rows. It does not mock certification data or copyrighted clause text.
+React 18 + Vite + TypeScript + Tailwind. The UI calls live APIs for health, identity, clients, leads, standards, schemes, checklists, auditors, programmes, audits, fieldwork, findings, CAPA, certificates, decisions, surveillance, documents, quotes, invoices, payments, training records, and competency assessments. Client dashboard upcoming/completed audit counts, open findings, overdue CAPA, active certificates, certificates expiring within 90 days, documents, and outstanding invoices come from persisted rows. It does not mock certification data or copyrighted clause text.
 
 ## Infrastructure
 
@@ -123,11 +123,10 @@ Docker Compose runs MySQL 8, backend, and frontend (Nginx). Optional profiles: `
 
 AWS-ready: 12-factor config, health probes, no baked secrets, object storage SPI (local filesystem or S3).
 
-## Explicit non-goals for Phase 12
+## Explicit non-goals for Phase 13
 
-- Tax engines, multi-currency conversion, and payment gateways (Stripe and similar)
-- PDF invoice/quote templates and e-invoicing networks
-- Credit notes and dunning campaigns
-- Training records, complaints, appeals
+- LMS, SCORM, exam banks, and e-learning delivery
+- Auto-updating auditor competency or eligibility from training or assessment results
+- Complaints, appeals, and impartiality (Phase 14)
 - Bundled ISO/IEC clause libraries
 - AI providers, Elasticsearch

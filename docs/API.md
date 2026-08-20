@@ -311,6 +311,26 @@ Quote/invoice create body (required: `clientId`, `lines[]` with `description`, `
 
 Payment body (required: `amount`): `paidOn` (defaults to today UTC), `method` (`BANK_TRANSFER`, `CARD`, `CHEQUE`, `OTHER`), `reference`, `notes`.
 
+## Phase 13 endpoints
+
+Training records `TRN-%06d`, competency assessments `ASM-%06d`. Training status: `PLANNED` → complete `COMPLETED` or cancel `CANCELLED`. Create with `completedOn` starts as `COMPLETED`. `expired` is true when status is `COMPLETED` and `expiresOn` is before today (UTC). Assessment status: `DRAFT` → complete `RECORDED` with `result` `PASS` or `FAIL`. Recorded assessments cannot be patched (`SYS_VALIDATION`). Completing training or recording a pass does not create or extend `auditor_competencies`.
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| GET/POST | `/api/v1/training-records` | `TRAINING_VIEW` / `TRAINING_UPDATE` | Paginated list (`auditorId`/`status`) or create (201) |
+| GET/PATCH | `/api/v1/training-records/{id}` | `TRAINING_VIEW` / `TRAINING_UPDATE` | Detail; patch only while `PLANNED` |
+| POST | `/api/v1/training-records/{id}/complete` | `TRAINING_UPDATE` | `PLANNED` → `COMPLETED`; body `{ completedOn?, notes? }` |
+| POST | `/api/v1/training-records/{id}/cancel` | `TRAINING_UPDATE` | `PLANNED` → `CANCELLED` |
+| GET | `/api/v1/auditors/{id}/training-records` | `TRAINING_VIEW` | Paginated list for one auditor |
+| GET/POST | `/api/v1/competency-assessments` | `TRAINING_VIEW` / `TRAINING_UPDATE` | Paginated list (`auditorId`/`status`) or create (201) |
+| GET/PATCH | `/api/v1/competency-assessments/{id}` | `TRAINING_VIEW` / `TRAINING_UPDATE` | Detail; patch only while `DRAFT` |
+| POST | `/api/v1/competency-assessments/{id}/complete` | `TRAINING_UPDATE` | `DRAFT` → `RECORDED`; body `{ result, notes? }` |
+| GET | `/api/v1/auditors/{id}/competency-assessments` | `TRAINING_VIEW` | Paginated list for one auditor |
+
+Training create body (required: `auditorId`, `title`): `provider`, `plannedOn`, `completedOn`, `hours`, `expiresOn`, `standardId`, `schemeId`, `notes`.
+
+Assessment create body (required: `auditorId`, `assessedOn`): `assessorName`, `standardId`, `schemeId`, `competencyId`, `notes`. `competencyId` must belong to the same auditor and tenant.
+
 ## Status codes
 
 | Code | Use |
