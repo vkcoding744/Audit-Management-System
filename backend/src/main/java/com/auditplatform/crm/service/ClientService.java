@@ -193,7 +193,7 @@ public class ClientService {
         );
     }
 
-    Client requireClient(String id) {
+    public Client requireClient(String id) {
         Client client = clientRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new ApiException(ErrorCode.SYS_NOT_FOUND, "Client not found"));
         isolationService.assertCanAccessTenant(client.getTenantId());

@@ -111,6 +111,28 @@ Inclusive date windows, `AVAILABLE` or `UNAVAILABLE`. An overlapping `UNAVAILABL
 
 Employee numbers reuse the named-sequence table (`crm_sequences`, name `AUDITOR`).
 
+## Phase 6 audit planning schema
+
+Flyway `V6__audit_programmes_planning.sql` adds:
+
+### `audit_programmes`
+
+Client + scheme (optional standard). Unique `(tenant_id, programme_number)`. Status: `DRAFT`, `ACTIVE`, `COMPLETED`, `CANCELLED`. Soft delete via `deleted_at`.
+
+### `audits`
+
+Visits under a programme. Unique `(tenant_id, audit_number)`. Type: `INITIAL`, `SURVEILLANCE`, `RECERTIFICATION`, `SPECIAL`, `TRANSFER`. Stage: `NOT_APPLICABLE`, `STAGE_1`, `STAGE_2`. Status: `PLANNED`, `SCHEDULED`, `IN_PROGRESS`, `COMPLETED`, `CANCELLED`. Optional checklist must belong to the programme scheme.
+
+### `audit_sites`
+
+Sites in scope for an audit. Unique `(audit_id, site_id)`. Site must belong to the audit client.
+
+### `audit_assignments`
+
+Team members. Unique `(audit_id, auditor_id)`. Role: `LEAD`, `TEAM`, `TECHNICAL_EXPERT`, `TRAINEE`, `OBSERVER`. At most one lead is enforced in the service.
+
+Programme and audit numbers reuse `crm_sequences` (`PROGRAMME`, `AUDIT`).
+
 ## Isolation rules
 
 - Tenant-owned tables **must** include `tenant_id` and an index on it.

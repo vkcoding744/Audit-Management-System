@@ -11,13 +11,14 @@ const nav = [
   { to: '/standards', label: 'Standards', permission: 'STANDARD_VIEW' },
   { to: '/schemes', label: 'Schemes', permission: 'SCHEME_VIEW' },
   { to: '/auditors', label: 'Auditors', permission: 'AUDITOR_VIEW' },
+  { to: '/programmes', label: 'Audits', permission: 'AUDIT_VIEW' },
   { to: '/users', label: 'Users', permission: 'USER_VIEW' },
   { to: '/roles', label: 'Roles', permission: 'ROLE_VIEW' },
   { to: '/tenants', label: 'Tenants', permission: 'TENANT_VIEW' },
   { to: '/sessions', label: 'Sessions', permission: null },
 ]
 
-const upcoming = ['Audits', 'Findings', 'Certificates', 'Documents', 'Finance']
+const upcoming = ['Findings', 'Certificates', 'Documents', 'Finance']
 
 export function AppShell() {
   const { user, logout, hasPermission } = useAuth()
@@ -70,8 +71,8 @@ export function AppShell() {
       <div className="flex min-h-screen flex-col">
         <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
           <div>
-            <p className="text-xs text-slate-500">People</p>
-            <p className="text-sm font-medium">Phase 5 · Auditors, competency, and availability</p>
+            <p className="text-xs text-slate-500">Planning</p>
+            <p className="text-sm font-medium">Phase 6 · Programmes, audits, and assignment</p>
           </div>
           <div className="flex items-center gap-3">
             {user?.platformAdmin && (

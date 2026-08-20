@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { RequireAuth } from './auth/RequireAuth'
 import { AppShell } from './layout/AppShell'
+import { AuditDetailPage } from './pages/AuditDetailPage'
 import { AuditorDetailPage } from './pages/AuditorDetailPage'
 import { AuditorsPage } from './pages/AuditorsPage'
 import { ChecklistDetailPage } from './pages/ChecklistDetailPage'
@@ -9,6 +10,8 @@ import { ClientsPage } from './pages/ClientsPage'
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage'
 import { LoginPage } from './pages/LoginPage'
 import { ResetPasswordPage } from './pages/ResetPasswordPage'
+import { ProgrammeDetailPage } from './pages/ProgrammeDetailPage'
+import { ProgrammesPage } from './pages/ProgrammesPage'
 import { RolesPage } from './pages/RolesPage'
 import { SchemeDetailPage } from './pages/SchemeDetailPage'
 import { SchemesPage } from './pages/SchemesPage'
@@ -42,6 +45,9 @@ export default function App() {
         <Route path="/checklists/:id" element={<ChecklistDetailPage />} />
         <Route path="/auditors" element={<AuditorsPage />} />
         <Route path="/auditors/:id" element={<AuditorDetailPage />} />
+        <Route path="/programmes" element={<ProgrammesPage />} />
+        <Route path="/programmes/:id" element={<ProgrammeDetailPage />} />
+        <Route path="/audits/:id" element={<AuditDetailPage />} />
         <Route path="/users" element={<UsersPage />} />
         <Route path="/roles" element={<RolesPage />} />
         <Route path="/tenants" element={<TenantsPage />} />

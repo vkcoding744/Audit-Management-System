@@ -115,7 +115,7 @@ public class SiteService {
         auditLogService.record("SITE_DELETE", "Site", site.getId(), site.getName(), null, null, null);
     }
 
-    Site requireSite(String id) {
+    public Site requireSite(String id) {
         Site site = siteRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new ApiException(ErrorCode.SYS_NOT_FOUND, "Site not found"));
         isolationService.assertCanAccessTenant(site.getTenantId());

@@ -6,7 +6,7 @@
 
 ## Current phase
 
-**Phase 5** adds auditor profiles, qualifications, standard/scheme competencies with validity dates, availability windows, and an eligibility check. Expired or missing competency is not eligible for assignment.
+**Phase 6** adds audit programmes, planned audits, site scope, and team assignment. Assignment calls the Phase 5 eligibility check; expired or missing competency cannot be assigned. Scheduling requires planned dates and a lead auditor.
 
 Phase 1 foundation remains: modular monolith, Flyway, API envelope, CORS/headers, health, tenant discriminator columns.
 
@@ -115,7 +115,7 @@ Authentication is JWT access tokens plus rotating opaque refresh tokens (Phase 2
 
 ## Frontend
 
-React 18 + Vite + TypeScript + Tailwind. The UI calls live APIs for health, identity, clients, standards, schemes, checklists, and auditors. Dashboard cards for audits and certificates show zero until those modules exist. It does not mock certification data or copyrighted clause text.
+React 18 + Vite + TypeScript + Tailwind. The UI calls live APIs for health, identity, clients, standards, schemes, checklists, auditors, programmes, and planned audits. Client dashboard upcoming/completed audit counts come from persisted audits. Findings, CAPA, certificates, and finance still report zero. It does not mock certification data or copyrighted clause text.
 
 ## Infrastructure
 
@@ -123,9 +123,10 @@ Docker Compose runs MySQL 8, backend, and frontend (Nginx). Optional profiles: `
 
 AWS-ready: 12-factor config, health probes, no baked secrets, object storage SPI later (local vs S3).
 
-## Explicit non-goals for Phase 5
+## Explicit non-goals for Phase 6
 
-- Audit programmes, planning, execution, findings
+- Field execution, in-audit checklists, findings, CAPA
 - Certificates, documents, finance, complaints
+- Starting or completing an audit (status values exist for later phases)
 - Bundled ISO/IEC clause libraries
 - AI providers, Elasticsearch, production certificate PDF templates

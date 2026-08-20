@@ -1,12 +1,13 @@
 package com.auditplatform.crm.metrics;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Component;
 
 /**
- * Later phases replace this adapter with queries against audit, certification, finance,
- * document, and governance tables. Returning zeros is accurate while those tables do not exist.
+ * Fallback while certification/finance tables are absent. Phase 6 supplies a real adapter for audit counts.
  */
 @Component
+@ConditionalOnMissingBean(ClientOperationalMetricsPort.class)
 public class EmptyClientOperationalMetrics implements ClientOperationalMetricsPort {
 
     @Override

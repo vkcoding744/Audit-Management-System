@@ -4,6 +4,12 @@
 
 Stack: JUnit 5, Mockito, Spring MockMvc, Testcontainers MySQL 8.
 
+Phase 6 coverage:
+
+- `AUDIT_VIEW` required to list programmes and audits; other authorities are 403
+- Tenant A cannot `get` Tenant B's programme or audit
+- Assignment with ineligible competency (`COMPETENCY_EXPIRED`) is `SYS_VALIDATION`
+
 Phase 5 coverage:
 
 - `AUDITOR_VIEW` required to list auditors; other authorities are 403
@@ -39,7 +45,7 @@ Phase 2 coverage:
 
 ## Frontend
 
-Vitest + Testing Library for the shell, health client, login form, client directory, standards catalogue, and auditor directory.
+Vitest + Testing Library for the shell, health client, login form, client directory, standards catalogue, auditor directory, and programme directory.
 
 ## Critical scenarios (later phases)
 
@@ -48,7 +54,7 @@ Documented here so they are not lost:
 - Unauthorized user cannot access API
 - Tenant A cannot access Tenant B
 - Missing permission denied
-- Expired auditor competency blocks assignment (Phase 5 eligibility API)
+- Expired auditor competency blocks assignment (Phase 5 eligibility API and Phase 6 assign)
 - Closed finding cannot be edited outside workflow
 - Certificate issue requires approvals
 - Expired certificate identified

@@ -164,6 +164,41 @@ Auditor profiles are tenant-scoped. Employee numbers are `AUD-%06d`. Competency 
 
 Eligibility reasons: `AUDITOR_INACTIVE`, `AUDITOR_SUSPENDED`, `NO_COMPETENCY`, `COMPETENCY_EXPIRED`, `COMPETENCY_SUSPENDED`, `UNAVAILABLE`.
 
+## Phase 6 endpoints
+
+Programmes and audits are tenant-scoped. Numbers are `PROG-%06d` and `AUDIT-%06d` via `crm_sequences`. A programme binds a client and scheme (optional standard that must already be linked to the scheme). Audits start as `PLANNED`. `POST .../schedule` requires planned start/end dates and a `LEAD` assignment. Phase 6 does not start or complete fieldwork.
+
+Assignment calls `AuditorEligibilityService.evaluate` with the audit standard/scheme and the planned start date (or today). Ineligible auditors fail with `SYS_VALIDATION` and the eligibility reason codes. At most one lead per audit.
+
+Client dashboard `upcomingAudits` counts `PLANNED`, `SCHEDULED`, and `IN_PROGRESS`. `completedAudits` counts `COMPLETED`.
+
+`DELETE` responses are HTTP 204 with no envelope.
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| GET/POST | `/api/v1/programmes` | `AUDIT_VIEW` / `AUDIT_CREATE` | Paginated list (`clientId`/`status`) or create (201) |
+| GET/PATCH | `/api/v1/programmes/{id}` | `AUDIT_VIEW` / `AUDIT_UPDATE` | Detail; patch unless completed/cancelled |
+| POST | `/api/v1/programmes/{id}/activate` | `AUDIT_UPDATE` | `DRAFT` → `ACTIVE` |
+| POST | `/api/v1/programmes/{id}/complete` | `AUDIT_UPDATE` | `ACTIVE` → `COMPLETED` |
+| POST | `/api/v1/programmes/{id}/cancel` | `AUDIT_UPDATE` | Cancel unless already completed |
+| DELETE | `/api/v1/programmes/{id}` | `AUDIT_DELETE` | Soft-delete if no audits (204) |
+| GET | `/api/v1/programmes/{id}/audits` | `AUDIT_VIEW` | Audits in the programme |
+| GET/POST | `/api/v1/audits` | `AUDIT_VIEW` / `AUDIT_CREATE` | Paginated list (`clientId`/`status`) or create (201) |
+| GET/PATCH | `/api/v1/audits/{id}` | `AUDIT_VIEW` / `AUDIT_UPDATE` | Detail includes sites and assignments |
+| POST | `/api/v1/audits/{id}/schedule` | `AUDIT_UPDATE` | `PLANNED` → `SCHEDULED` |
+| POST | `/api/v1/audits/{id}/cancel` | `AUDIT_UPDATE` | Cancel unless completed |
+| DELETE | `/api/v1/audits/{id}` | `AUDIT_DELETE` | Soft-delete if `PLANNED` (204) |
+| GET/POST | `/api/v1/audits/{id}/sites` | `AUDIT_VIEW` / `AUDIT_UPDATE` | Sites in scope |
+| DELETE | `/api/v1/audit-sites/{id}` | `AUDIT_UPDATE` | Remove site from scope (204) |
+| GET/POST | `/api/v1/audits/{id}/assignments` | `AUDIT_VIEW` / `AUDIT_ASSIGN` | Team; eligibility enforced on create |
+| DELETE | `/api/v1/assignments/{id}` | `AUDIT_ASSIGN` | Unassign (204) |
+
+Create programme body (required: `clientId`, `schemeId`, `name`): `standardId`, `cycleStartOn`, `cycleEndOn`, `notes`. Status starts `DRAFT`.
+
+Create audit body (required: `programmeId`, `name`): `auditType` (`INITIAL` default), `stage` (`NOT_APPLICABLE` default), `checklistId` (must belong to the programme scheme), `plannedStartOn`, `plannedEndOn`, `notes`.
+
+Create assignment body (required: `auditorId`): `assignmentRole` (`TEAM` default; `LEAD` \| `TEAM` \| `TECHNICAL_EXPERT` \| `TRAINEE` \| `OBSERVER`).
+
 ## Status codes
 
 | Code | Use |

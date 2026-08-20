@@ -251,7 +251,7 @@ public class ChecklistService {
         return checklist;
     }
 
-    Checklist requireChecklist(String id) {
+    public Checklist requireChecklist(String id) {
         Checklist checklist = checklistRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new ApiException(ErrorCode.SYS_NOT_FOUND, "Checklist not found"));
         isolationService.assertCanAccessTenant(checklist.getTenantId());

@@ -283,6 +283,61 @@ export interface EligibilitySummary {
   reasons: string[]
 }
 
+export type ProgrammeStatus = 'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED'
+export type AuditType = 'INITIAL' | 'SURVEILLANCE' | 'RECERTIFICATION' | 'SPECIAL' | 'TRANSFER'
+export type AuditStage = 'NOT_APPLICABLE' | 'STAGE_1' | 'STAGE_2'
+export type AuditStatus = 'PLANNED' | 'SCHEDULED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED'
+export type AssignmentRole = 'LEAD' | 'TEAM' | 'TECHNICAL_EXPERT' | 'TRAINEE' | 'OBSERVER'
+
+export interface ProgrammeSummary {
+  id: string
+  tenantId: string
+  programmeNumber: string
+  clientId: string
+  schemeId: string
+  standardId: string | null
+  name: string
+  status: ProgrammeStatus
+  cycleStartOn: string | null
+  cycleEndOn: string | null
+  notes: string | null
+}
+
+export interface AuditSiteSummary {
+  id: string
+  tenantId: string
+  auditId: string
+  siteId: string
+}
+
+export interface AssignmentSummary {
+  id: string
+  tenantId: string
+  auditId: string
+  auditorId: string
+  assignmentRole: AssignmentRole
+}
+
+export interface AuditSummary {
+  id: string
+  tenantId: string
+  auditNumber: string
+  programmeId: string
+  clientId: string
+  schemeId: string
+  standardId: string | null
+  checklistId: string | null
+  name: string
+  auditType: AuditType
+  stage: AuditStage
+  status: AuditStatus
+  plannedStartOn: string | null
+  plannedEndOn: string | null
+  notes: string | null
+  sites: AuditSiteSummary[]
+  assignments: AssignmentSummary[]
+}
+
 export interface AuthSession {
   id: string
   ipAddress: string | null
