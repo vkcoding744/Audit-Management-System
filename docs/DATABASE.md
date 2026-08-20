@@ -187,6 +187,18 @@ Document numbers reuse `crm_sequences` (`DOCUMENT` → `DOC-%06d`).
 
 `DOCUMENT_VIEW` is granted in V10; `DOCUMENT_UPLOAD`, `DOCUMENT_DOWNLOAD`, and `DOCUMENT_DELETE` already exist in V2.
 
+## Phase 11 leads schema
+
+Flyway `V11__leads.sql` adds:
+
+### `leads`
+
+Tenant-owned sales pipeline records. Unique `(tenant_id, lead_number)`. Status: `OPEN`, `QUALIFIED`, `CONVERTED`, `LOST`. Source: `WEBSITE`, `REFERRAL`, `TENDER`, `EVENT`, `OTHER`. Optional `converted_client_id` after convert.
+
+Lead numbers reuse `crm_sequences` (`LEAD` → `LEAD-%06d`).
+
+`LEAD_UPDATE` is granted in V11; `LEAD_VIEW` and `LEAD_CREATE` already exist in V2.
+
 ## Isolation rules
 
 - Tenant-owned tables **must** include `tenant_id` and an index on it.

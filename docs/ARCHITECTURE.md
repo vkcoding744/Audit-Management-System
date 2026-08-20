@@ -6,7 +6,7 @@
 
 ## Current phase
 
-**Phase 10** adds document metadata, authenticated upload/download/delete, and an object-storage SPI. The default adapter writes to the local filesystem; `audit.storage.provider=s3` uses S3 (or a path-style endpoint such as MinIO). Files may be linked to a client, audit, finding, or certificate. Executables and unknown types are rejected. Client dashboard document counts are live for rows with a `client_id`.
+**Phase 11** adds sales leads in the CRM module. Leads are numbered `LEAD-%06d`. Status is `OPEN` → `QUALIFIED` → `CONVERTED` or `LOST`. Convert creates a `PROSPECT` client and records the link. Converted or lost leads cannot be patched.
 
 Phase 1 foundation remains: modular monolith, Flyway, API envelope, CORS/headers, health, tenant discriminator columns.
 
@@ -115,7 +115,7 @@ Authentication is JWT access tokens plus rotating opaque refresh tokens (Phase 2
 
 ## Frontend
 
-React 18 + Vite + TypeScript + Tailwind. The UI calls live APIs for health, identity, clients, standards, schemes, checklists, auditors, programmes, audits, fieldwork, findings, CAPA, certificates, decisions, surveillance, and documents. Client dashboard upcoming/completed audit counts, open findings, overdue CAPA, active certificates, certificates expiring within 90 days, and document counts come from persisted rows. Finance still reports zero. It does not mock certification data or copyrighted clause text.
+React 18 + Vite + TypeScript + Tailwind. The UI calls live APIs for health, identity, clients, leads, standards, schemes, checklists, auditors, programmes, audits, fieldwork, findings, CAPA, certificates, decisions, surveillance, and documents. Client dashboard upcoming/completed audit counts, open findings, overdue CAPA, active certificates, certificates expiring within 90 days, and document counts come from persisted rows. Finance still reports zero. It does not mock certification data or copyrighted clause text.
 
 ## Infrastructure
 
@@ -123,12 +123,11 @@ Docker Compose runs MySQL 8, backend, and frontend (Nginx). Optional profiles: `
 
 AWS-ready: 12-factor config, health probes, no baked secrets, object storage SPI (local filesystem or S3).
 
-## Explicit non-goals for Phase 10
+## Explicit non-goals for Phase 11
 
+- Quotes, invoices, and payments (finance module)
+- Marketing automation, lead scoring, and CRM integrations
 - PDF certificate templates and public verification portals
-- Full QMS controlled-document revision/approval workflows
-- Antivirus/malware scanning and OCR
-- Public unauthenticated file URLs
-- Finance, complaints, appeals
+- Finance-linked opportunity values
 - Bundled ISO/IEC clause libraries
 - AI providers, Elasticsearch

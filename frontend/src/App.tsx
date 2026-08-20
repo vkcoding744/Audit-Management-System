@@ -9,6 +9,8 @@ import { CertificatesPage } from './pages/CertificatesPage'
 import { ChecklistDetailPage } from './pages/ChecklistDetailPage'
 import { ClientDetailPage } from './pages/ClientDetailPage'
 import { ClientsPage } from './pages/ClientsPage'
+import { LeadDetailPage } from './pages/LeadDetailPage'
+import { LeadsPage } from './pages/LeadsPage'
 import { DocumentDetailPage } from './pages/DocumentDetailPage'
 import { DocumentsPage } from './pages/DocumentsPage'
 import { FindingDetailPage } from './pages/FindingDetailPage'
@@ -44,6 +46,8 @@ export default function App() {
         <Route path="/" element={<SystemStatusPage />} />
         <Route path="/clients" element={<ClientsPage />} />
         <Route path="/clients/:id" element={<ClientDetailPage />} />
+        <Route path="/leads" element={<LeadsPage />} />
+        <Route path="/leads/:id" element={<LeadDetailPage />} />
         <Route path="/standards" element={<StandardsPage />} />
         <Route path="/standards/:id" element={<StandardDetailPage />} />
         <Route path="/schemes" element={<SchemesPage />} />
