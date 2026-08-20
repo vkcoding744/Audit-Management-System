@@ -10,6 +10,7 @@ import com.auditplatform.certification.domain.CertificateStatus;
 import com.auditplatform.certification.repository.CertificateRepository;
 import com.auditplatform.crm.metrics.ClientOperationalMetrics;
 import com.auditplatform.crm.metrics.ClientOperationalMetricsPort;
+import com.auditplatform.document.repository.DocumentRepository;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +29,7 @@ public class AuditBackedClientOperationalMetrics implements ClientOperationalMet
     private final FindingRepository findingRepository;
     private final CapaActionRepository capaRepository;
     private final CertificateRepository certificateRepository;
+    private final DocumentRepository documentRepository;
     private final Clock clock;
 
     public AuditBackedClientOperationalMetrics(
@@ -35,12 +37,14 @@ public class AuditBackedClientOperationalMetrics implements ClientOperationalMet
             FindingRepository findingRepository,
             CapaActionRepository capaRepository,
             CertificateRepository certificateRepository,
+            DocumentRepository documentRepository,
             Clock clock
     ) {
         this.auditRepository = auditRepository;
         this.findingRepository = findingRepository;
         this.capaRepository = capaRepository;
         this.certificateRepository = certificateRepository;
+        this.documentRepository = documentRepository;
         this.clock = clock;
     }
 
@@ -79,6 +83,7 @@ public class AuditBackedClientOperationalMetrics implements ClientOperationalMet
                         today,
                         today.plusDays(90)
                 );
+        long documents = documentRepository.countByTenantIdAndClientIdAndDeletedAtIsNull(tenantId, clientId);
         return new ClientOperationalMetrics(
                 upcoming,
                 completed,
@@ -87,7 +92,7 @@ public class AuditBackedClientOperationalMetrics implements ClientOperationalMet
                 activeCertificates,
                 expiringSoon,
                 0,
-                0,
+                documents,
                 0,
                 0
         );

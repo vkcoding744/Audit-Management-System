@@ -21,6 +21,9 @@ api.interceptors.request.use((config) => {
   if (tenantId) {
     config.headers.set('X-Tenant-Id', tenantId)
   }
+  if (typeof FormData !== 'undefined' && config.data instanceof FormData) {
+    config.headers.delete('Content-Type')
+  }
   return config
 })
 

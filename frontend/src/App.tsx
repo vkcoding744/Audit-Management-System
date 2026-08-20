@@ -9,6 +9,8 @@ import { CertificatesPage } from './pages/CertificatesPage'
 import { ChecklistDetailPage } from './pages/ChecklistDetailPage'
 import { ClientDetailPage } from './pages/ClientDetailPage'
 import { ClientsPage } from './pages/ClientsPage'
+import { DocumentDetailPage } from './pages/DocumentDetailPage'
+import { DocumentsPage } from './pages/DocumentsPage'
 import { FindingDetailPage } from './pages/FindingDetailPage'
 import { FindingsPage } from './pages/FindingsPage'
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage'
@@ -56,6 +58,8 @@ export default function App() {
         <Route path="/findings/:id" element={<FindingDetailPage />} />
         <Route path="/certificates" element={<CertificatesPage />} />
         <Route path="/certificates/:id" element={<CertificateDetailPage />} />
+        <Route path="/documents" element={<DocumentsPage />} />
+        <Route path="/documents/:id" element={<DocumentDetailPage />} />
         <Route path="/users" element={<UsersPage />} />
         <Route path="/roles" element={<RolesPage />} />
         <Route path="/tenants" element={<TenantsPage />} />

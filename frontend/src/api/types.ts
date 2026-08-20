@@ -438,6 +438,26 @@ export interface CertificateSummary {
   surveillance: SurveillanceSummary[]
 }
 
+export type DocumentLinkType = 'GENERAL' | 'CLIENT' | 'AUDIT' | 'FINDING' | 'CERTIFICATE'
+export type DocumentCategory = 'EVIDENCE' | 'CONTROLLED' | 'REPORT' | 'OTHER'
+
+export interface DocumentSummary {
+  id: string
+  tenantId: string
+  documentNumber: string
+  title: string
+  originalFilename: string
+  contentType: string
+  sizeBytes: number
+  checksumSha256: string
+  clientId: string | null
+  linkedType: DocumentLinkType
+  linkedId: string | null
+  category: DocumentCategory
+  notes: string | null
+  createdAt: string
+}
+
 export interface AuthSession {
   id: string
   ipAddress: string | null
