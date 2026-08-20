@@ -1,4 +1,5 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios'
+import { tenantScope } from '../auth/tenantScope'
 import { tokenStore } from '../auth/tokenStore'
 import type { ApiResponse, TokenPayload } from './types'
 
@@ -15,6 +16,10 @@ api.interceptors.request.use((config) => {
   const session = tokenStore.get()
   if (session?.accessToken) {
     config.headers.set('Authorization', `Bearer ${session.accessToken}`)
+  }
+  const tenantId = tenantScope.get()
+  if (tenantId) {
+    config.headers.set('X-Tenant-Id', tenantId)
   }
   return config
 })

@@ -24,7 +24,7 @@ export function SystemStatusPage() {
       <header className="mb-6">
         <h2 className="text-2xl font-semibold text-slate-900">System status</h2>
         <p className="mt-1 max-w-2xl text-sm text-slate-600">
-          Live connectivity to the API and database. Authentication and business modules are introduced in later phases.
+          Live connectivity to the API and database. Client records live in the Clients module.
         </p>
       </header>
 

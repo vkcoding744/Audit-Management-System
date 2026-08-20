@@ -29,6 +29,14 @@ public class IsolationService {
         }
     }
 
+    public String requireTenantScope() {
+        String tenantId = effectiveTenantId();
+        if (tenantId == null || tenantId.isBlank()) {
+            throw new ApiException(ErrorCode.SYS_VALIDATION, "Tenant scope is required (send X-Tenant-Id for platform administrators)");
+        }
+        return tenantId;
+    }
+
     public String effectiveTenantId() {
         PlatformPrincipal principal = requirePrincipal();
         if (principal.platformAdmin()) {

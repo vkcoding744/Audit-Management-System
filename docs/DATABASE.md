@@ -41,6 +41,28 @@ System roles and permission grants are seeded. No user passwords are stored in F
 
 `users.tenant_id` is null for platform super admins.
 
+## Phase 3 CRM schema
+
+Flyway `V3__clients_sites_contacts.sql` adds:
+
+### `clients`
+
+Tenant-owned organisation records. Unique `(tenant_id, client_number)`. Status: `PROSPECT`, `ACTIVE`, `SUSPENDED`, `INACTIVE`. Soft delete via `deleted_at`.
+
+### `sites`
+
+Locations belonging to a client. Status: `ACTIVE`, `INACTIVE`. Indexed `(tenant_id, client_id)`.
+
+### `contacts`
+
+People belonging to a client, optional `site_id`. `primary_contact` is application-enforced (one primary per client).
+
+### `crm_sequences`
+
+Per-tenant named counters (`CLIENT`) used to allocate `CLIENT-%06d` numbers under a pessimistic lock.
+
+V3 also inserts site/contact/client-delete permissions and grants them to admin, sales, and viewer roles as appropriate. Existing `PLATFORM_SUPER_ADMIN` rows receive the new codes via `role_permissions` inserts.
+
 ## Isolation rules
 
 - Tenant-owned tables **must** include `tenant_id` and an index on it.

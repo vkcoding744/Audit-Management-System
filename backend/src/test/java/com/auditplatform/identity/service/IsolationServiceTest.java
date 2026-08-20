@@ -3,6 +3,7 @@ package com.auditplatform.identity.service;
 import com.auditplatform.common.exception.ApiException;
 import com.auditplatform.common.exception.ErrorCode;
 import com.auditplatform.common.security.PlatformPrincipal;
+import com.auditplatform.common.tenant.TenantContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -10,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Set;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class IsolationServiceTest {
@@ -19,6 +21,7 @@ class IsolationServiceTest {
     @AfterEach
     void clear() {
         SecurityContextHolder.clearContext();
+        TenantContext.clear();
     }
 
     @Test
@@ -45,5 +48,21 @@ class IsolationServiceTest {
                 new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities())
         );
         isolationService.assertCanAccessTenant("tenant-b");
+    }
+
+    @Test
+    void platformAdminRequiresTenantHeaderForScopedCrm() {
+        PlatformPrincipal principal = new PlatformPrincipal(
+                "admin", "admin@example.com", null, true, "sid", Set.of("CLIENT_VIEW")
+        );
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities())
+        );
+        assertThatThrownBy(isolationService::requireTenantScope)
+                .isInstanceOf(ApiException.class)
+                .extracting(ex -> ((ApiException) ex).getErrorCode())
+                .isEqualTo(ErrorCode.SYS_VALIDATION);
+        TenantContext.setTenantId("tenant-a");
+        assertThat(isolationService.requireTenantScope()).isEqualTo("tenant-a");
     }
 }

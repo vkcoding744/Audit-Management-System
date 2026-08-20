@@ -6,7 +6,7 @@
 
 ## Current phase
 
-**Phase 2** adds authentication, JWT sessions, RBAC (permission authorities), and tenant isolation on the authenticated principal.
+**Phase 3** adds organisation and client management: clients, sites, contacts, and a client dashboard. Counts for audits, CAPA, certificates, finance, documents, complaints, and appeals are live queries via a metrics port; they stay at zero until those modules persist data.
 
 Phase 1 foundation remains: modular monolith, Flyway, API envelope, CORS/headers, health, tenant discriminator columns.
 
@@ -91,14 +91,15 @@ Envelope:
 
 Errors use the same envelope with `success: false` and `error.code` from a stable enum (`ErrorCode`).
 
-Public Phase 1 routes:
+Public routes:
 
 - `GET /api/v1/system/health`
 - `GET /api/v1/system/info`
+- Auth login/refresh/forgot/reset/verify
 - Actuator liveness/readiness
 - OpenAPI UI (non-production by default)
 
-All other `/api/v1/**` routes require authentication. Phase 1 has no login, so those routes correctly return `401`. That is intentional.
+All other `/api/v1/**` routes require authentication and permission checks.
 
 ## Security baseline (Phase 1)
 
@@ -110,11 +111,11 @@ All other `/api/v1/**` routes require authentication. Phase 1 has no login, so t
 - Secrets only from environment variables
 - Rate limiting filter exists as an in-memory strategy, **off by default** (Redis-backed limiter in a later phase)
 
-Authentication mechanisms (JWT, refresh, MFA hooks) are Phase 2.
+Authentication is JWT access tokens plus rotating opaque refresh tokens (Phase 2). MFA columns exist; TOTP is not enforced yet.
 
 ## Frontend
 
-React 18 + Vite + TypeScript + Tailwind. The Phase 1 UI is a real application shell that calls the system health API. It does not mock certification data.
+React 18 + Vite + TypeScript + Tailwind. The UI calls live APIs for health, identity, and clients. Dashboard cards for audits and certificates show zero until those modules exist. It does not mock certification data.
 
 ## Infrastructure
 
@@ -122,10 +123,8 @@ Docker Compose runs MySQL 8, backend, and frontend (Nginx). Optional profiles: `
 
 AWS-ready: 12-factor config, health probes, no baked secrets, object storage SPI later (local vs S3).
 
-## Explicit non-goals for Phase 1
+## Explicit non-goals for Phase 3
 
-- Login, JWT, users, RBAC
-- Client/audit/certificate business modules
-- AI providers
-- Elasticsearch
-- Production certificate PDF templates
+- Standards/schemes, auditor competency, audit execution
+- Certificates, documents, finance, complaints (dashboard counts stay at zero)
+- AI providers, Elasticsearch, production certificate PDF templates

@@ -4,6 +4,13 @@
 
 Stack: JUnit 5, Mockito, Spring MockMvc, Testcontainers MySQL 8.
 
+Phase 3 coverage:
+
+- `CLIENT_VIEW` required to list clients; other authorities are 403
+- `SITE_VIEW` required to list sites
+- Tenant A cannot `get` Tenant B's client
+- Platform admin `requireTenantScope` needs `X-Tenant-Id`
+
 Phase 2 coverage:
 
 - Login public, `/me` requires auth
@@ -20,7 +27,7 @@ Phase 2 coverage:
 
 ## Frontend
 
-Vitest + Testing Library for the shell and health client.
+Vitest + Testing Library for the shell, health client, login form, and client directory/create form.
 
 ## Critical scenarios (later phases)
 

@@ -35,11 +35,11 @@
 
 Spring Security method security uses **permission codes**, not role names, for API checks (for example `USER_VIEW`, `TENANT_CREATE`). Roles are bundles of permissions seeded as system roles.
 
-Platform super admin receives every permission. Tenant-scoped APIs still apply isolation for non-platform users.
+Platform super admin receives every permission. Tenant-scoped APIs still apply isolation for non-platform users. Creating or listing clients requires an effective tenant: tenant users use JWT `tid`; platform admins must send `X-Tenant-Id`. Cross-tenant client access returns `AUTH_TENANT_MISMATCH`.
 
 ## Tokens in the browser
 
-Phase 2 stores access and refresh tokens in `sessionStorage` and sends `Authorization: Bearer`. This is XSS-sensitive; httpOnly cookies are a later hardening option (then CSRF must be re-enabled for those routes).
+Phase 2 stores access and refresh tokens in `sessionStorage` and sends `Authorization: Bearer`. Platform admins also persist a selected tenant id in `sessionStorage` and send it as `X-Tenant-Id`. This is XSS-sensitive; httpOnly cookies are a later hardening option (then CSRF must be re-enabled for those routes).
 
 ## Email
 

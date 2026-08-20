@@ -4,7 +4,7 @@ Multi-tenant SaaS for professional audit, inspection, testing, and certification
 
 This repository is a **modular monolith**: Spring Boot 3 / Java 21 API, React + TypeScript SPA, MySQL 8, Flyway, and Docker Compose.
 
-Phase 2 (current) adds login, JWT, RBAC, and tenant isolation. Set `AUDIT_PLATFORM_BOOTSTRAP_ADMIN_EMAIL` and `AUDIT_PLATFORM_BOOTSTRAP_ADMIN_PASSWORD` before first start to create the platform super admin.
+Phase 3 (current) adds clients, sites, contacts, and a client dashboard. Phase 2 login, JWT, RBAC, and tenant isolation remain. Set `AUDIT_PLATFORM_BOOTSTRAP_ADMIN_EMAIL` and `AUDIT_PLATFORM_BOOTSTRAP_ADMIN_PASSWORD` before first start to create the platform super admin. Platform admins must choose a tenant (header `X-Tenant-Id`) before creating clients.
 
 ## Documentation
 
@@ -12,7 +12,7 @@ Phase 2 (current) adds login, JWT, RBAC, and tenant isolation. Set `AUDIT_PLATFO
 | --- | --- |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Bounded contexts, tenancy, API/security decisions |
 | [docs/DATABASE.md](docs/DATABASE.md) | Schema and Flyway conventions |
-| [docs/API.md](docs/API.md) | Envelope, Phase 1 routes |
+| [docs/API.md](docs/API.md) | Envelope and versioned routes |
 | [docs/SECURITY.md](docs/SECURITY.md) | Secrets, CSRF, headers |
 | [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) | Local setup |
 | [docs/TESTING.md](docs/TESTING.md) | Test strategy |

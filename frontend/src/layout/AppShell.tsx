@@ -1,18 +1,38 @@
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { NavLink, Outlet } from 'react-router-dom'
+import { fetchTenants } from '../api/identity'
 import { useAuth } from '../auth/AuthProvider'
+import { tenantScope } from '../auth/tenantScope'
+import { useState } from 'react'
 
 const nav = [
   { to: '/', label: 'System status', permission: null },
+  { to: '/clients', label: 'Clients', permission: 'CLIENT_VIEW' },
   { to: '/users', label: 'Users', permission: 'USER_VIEW' },
   { to: '/roles', label: 'Roles', permission: 'ROLE_VIEW' },
   { to: '/tenants', label: 'Tenants', permission: 'TENANT_VIEW' },
   { to: '/sessions', label: 'Sessions', permission: null },
 ]
 
-const upcoming = ['Clients', 'Audits', 'Findings', 'Certificates', 'Documents', 'Finance']
+const upcoming = ['Audits', 'Findings', 'Certificates', 'Documents', 'Finance']
 
 export function AppShell() {
   const { user, logout, hasPermission } = useAuth()
+  const queryClient = useQueryClient()
+  const [selectedTenant, setSelectedTenant] = useState(() => tenantScope.get() ?? '')
+  const tenantsQuery = useQuery({
+    queryKey: ['tenants'],
+    queryFn: fetchTenants,
+    enabled: Boolean(user?.platformAdmin && hasPermission('TENANT_VIEW')),
+  })
+  const tenants = tenantsQuery.data?.data?.content ?? []
+
+  function onTenantChange(value: string) {
+    setSelectedTenant(value)
+    tenantScope.set(value || null)
+    void queryClient.invalidateQueries()
+  }
+
   return (
     <div className="min-h-screen lg:grid lg:grid-cols-[16rem_1fr]">
       <aside className="border-b border-slate-200 bg-brand-900 text-white lg:border-b-0 lg:border-r lg:border-brand-700">
@@ -47,10 +67,28 @@ export function AppShell() {
       <div className="flex min-h-screen flex-col">
         <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
           <div>
-            <p className="text-xs text-slate-500">Identity</p>
-            <p className="text-sm font-medium">Phase 2 · Authentication and RBAC</p>
+            <p className="text-xs text-slate-500">Organisation</p>
+            <p className="text-sm font-medium">Phase 3 · Clients, sites, and contacts</p>
           </div>
           <div className="flex items-center gap-3">
+            {user?.platformAdmin && (
+              <label className="flex items-center gap-2 text-sm text-slate-600">
+                Tenant
+                <select
+                  className="rounded-md border border-slate-300 px-2 py-1 text-sm"
+                  value={selectedTenant}
+                  onChange={(event) => onTenantChange(event.target.value)}
+                  aria-label="Operating tenant"
+                >
+                  <option value="">Select tenant</option>
+                  {tenants.map((tenant) => (
+                    <option key={tenant.id} value={tenant.id}>
+                      {tenant.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            )}
             <span className="text-sm text-slate-600">{user?.email}</span>
             <button
               type="button"

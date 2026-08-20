@@ -76,6 +76,37 @@ Phase 1 tenant hint: `X-Tenant-Id` is honoured **only** for platform super admin
 | GET | `/api/v1/permissions` | `PERMISSION_VIEW` | Permission catalog |
 | GET/POST | `/api/v1/tenants` | `TENANT_VIEW` / `TENANT_CREATE` | Tenants |
 
+## Phase 3 endpoints
+
+Clients, sites, and contacts are tenant-scoped. Platform super admins must send `X-Tenant-Id` to list or create. Tenant users are bound to the JWT `tid` claim. Client numbers are assigned as `CLIENT-000001` per tenant via a locked sequence.
+
+Dashboard operational counts (audits, findings, CAPA, certificates, payments, documents, complaints, appeals) come from `ClientOperationalMetricsPort`. The default adapter returns zeros until those modules persist data. Site and contact counts are live queries.
+
+`DELETE` responses are HTTP 204 with no envelope.
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| GET | `/api/v1/clients` | `CLIENT_VIEW` | Paginated list; `q` searches name/number; `status` filters |
+| GET | `/api/v1/clients/{id}` | `CLIENT_VIEW` | Client detail |
+| GET | `/api/v1/clients/{id}/dashboard` | `CLIENT_VIEW` | Client plus operational counts |
+| POST | `/api/v1/clients` | `CLIENT_CREATE` | Create (201) |
+| PATCH | `/api/v1/clients/{id}` | `CLIENT_UPDATE` | Partial update |
+| POST | `/api/v1/clients/{id}/activate` | `CLIENT_UPDATE` | Status `ACTIVE` |
+| POST | `/api/v1/clients/{id}/suspend` | `CLIENT_UPDATE` | Status `SUSPENDED` |
+| DELETE | `/api/v1/clients/{id}` | `CLIENT_DELETE` | Soft-delete client, sites, contacts (204) |
+| GET/POST | `/api/v1/clients/{id}/sites` | `SITE_VIEW` / `SITE_CREATE` | List or create sites |
+| PATCH | `/api/v1/sites/{id}` | `SITE_UPDATE` | Update site |
+| DELETE | `/api/v1/sites/{id}` | `SITE_DELETE` | Soft-delete site (204) |
+| GET/POST | `/api/v1/clients/{id}/contacts` | `CONTACT_VIEW` / `CONTACT_CREATE` | List or create contacts |
+| PATCH | `/api/v1/contacts/{id}` | `CONTACT_UPDATE` | Update contact |
+| DELETE | `/api/v1/contacts/{id}` | `CONTACT_DELETE` | Soft-delete contact (204) |
+
+Create client body (required: `legalName`): `tradingName`, `registrationNumber`, `taxNumber`, `industry`, `employeeCount`, `email`, `phone`, `website`, `addressLine1`, `addressLine2`, `city`, `state`, `postalCode`, `country`, `status` (`PROSPECT` default), `notes`.
+
+Create site body (required: `name`): address fields, `scope`, `employeeCount`, `processes`, `status` (`ACTIVE` default).
+
+Create contact body (required: `firstName`, `lastName`): `designation`, `email`, `phone`, `department`, `siteId`, `primaryContact`. Setting `primaryContact` true clears the flag on other contacts for that client.
+
 ## Status codes
 
 | Code | Use |
