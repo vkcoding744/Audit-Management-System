@@ -538,7 +538,7 @@ export interface InvoiceSummary {
 
 export type TrainingStatus = 'PLANNED' | 'COMPLETED' | 'CANCELLED'
 export type AssessmentStatus = 'DRAFT' | 'RECORDED'
-export type AssessmentResult = 'PASS' | 'FAIL'
+export type CompetencyAssessmentResult = 'PASS' | 'FAIL'
 
 export interface TrainingRecordSummary {
   id: string
@@ -568,7 +568,7 @@ export interface AssessmentSummary {
   schemeId: string | null
   assessedOn: string
   assessorName: string | null
-  result: AssessmentResult | null
+  result: CompetencyAssessmentResult | null
   status: AssessmentStatus
   notes: string | null
 }

@@ -1,7 +1,7 @@
 import { api } from './client'
 import type {
   ApiResponse,
-  AssessmentResult,
+  CompetencyAssessmentResult,
   AssessmentStatus,
   AssessmentSummary,
   PageResponse,
@@ -68,10 +68,10 @@ export async function createAssessment(body: {
 
 export async function completeAssessment(
   id: string,
-  result: AssessmentResult,
+  result: CompetencyAssessmentResult,
 ): Promise<ApiResponse<AssessmentSummary>> {
   const response = await api.post<ApiResponse<AssessmentSummary>>(`/competency-assessments/${id}/complete`, { result })
   return response.data
 }
 
-export type { AssessmentResult, AssessmentStatus, TrainingStatus }
+export type { CompetencyAssessmentResult as AssessmentResult, AssessmentStatus, TrainingStatus }
