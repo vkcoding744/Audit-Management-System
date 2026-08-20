@@ -6,7 +6,7 @@
 
 ## Current phase
 
-**Phase 11** adds sales leads in the CRM module. Leads are numbered `LEAD-%06d`. Status is `OPEN` → `QUALIFIED` → `CONVERTED` or `LOST`. Convert creates a `PROSPECT` client and records the link. Converted or lost leads cannot be patched.
+**Phase 12** adds quotes, invoices, and payments. Quotes move `DRAFT` → `ISSUED` → `ACCEPTED` or `DECLINED`. Accepted quotes can become one invoice. Payments cannot exceed the amount due. An invoice is overdue when it is `ISSUED` or `PARTIALLY_PAID` and `dueOn` is before today (UTC). Client dashboard outstanding-invoice counts are live.
 
 Phase 1 foundation remains: modular monolith, Flyway, API envelope, CORS/headers, health, tenant discriminator columns.
 
@@ -115,7 +115,7 @@ Authentication is JWT access tokens plus rotating opaque refresh tokens (Phase 2
 
 ## Frontend
 
-React 18 + Vite + TypeScript + Tailwind. The UI calls live APIs for health, identity, clients, leads, standards, schemes, checklists, auditors, programmes, audits, fieldwork, findings, CAPA, certificates, decisions, surveillance, and documents. Client dashboard upcoming/completed audit counts, open findings, overdue CAPA, active certificates, certificates expiring within 90 days, and document counts come from persisted rows. Finance still reports zero. It does not mock certification data or copyrighted clause text.
+React 18 + Vite + TypeScript + Tailwind. The UI calls live APIs for health, identity, clients, leads, standards, schemes, checklists, auditors, programmes, audits, fieldwork, findings, CAPA, certificates, decisions, surveillance, documents, quotes, invoices, and payments. Client dashboard upcoming/completed audit counts, open findings, overdue CAPA, active certificates, certificates expiring within 90 days, documents, and outstanding invoices come from persisted rows. It does not mock certification data or copyrighted clause text.
 
 ## Infrastructure
 
@@ -123,11 +123,11 @@ Docker Compose runs MySQL 8, backend, and frontend (Nginx). Optional profiles: `
 
 AWS-ready: 12-factor config, health probes, no baked secrets, object storage SPI (local filesystem or S3).
 
-## Explicit non-goals for Phase 11
+## Explicit non-goals for Phase 12
 
-- Quotes, invoices, and payments (finance module)
-- Marketing automation, lead scoring, and CRM integrations
-- PDF certificate templates and public verification portals
-- Finance-linked opportunity values
+- Tax engines, multi-currency conversion, and payment gateways (Stripe and similar)
+- PDF invoice/quote templates and e-invoicing networks
+- Credit notes and dunning campaigns
+- Training records, complaints, appeals
 - Bundled ISO/IEC clause libraries
 - AI providers, Elasticsearch

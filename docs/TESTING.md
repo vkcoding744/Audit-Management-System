@@ -4,6 +4,13 @@
 
 Stack: JUnit 5, Mockito, Spring MockMvc, Testcontainers MySQL 8.
 
+Phase 12 coverage:
+
+- `INVOICE_VIEW` required to list invoices; other authorities are 403; unauthenticated is 401
+- Tenant A cannot `get` Tenant B's invoice (`AUTH_TENANT_MISMATCH`)
+- Payment exceeding amount due is `SYS_VALIDATION`
+- `overdue` is true for an issued invoice whose `dueOn` is before today (UTC)
+
 Phase 11 coverage:
 
 - `LEAD_VIEW` required to list leads; other authorities are 403; unauthenticated is 401
@@ -78,7 +85,7 @@ Phase 2 coverage:
 
 ## Frontend
 
-Vitest + Testing Library for the shell, health client, login form, client directory, leads directory, standards catalogue, auditor directory, programme directory, scheduled-audit fieldwork action, findings directory, certificates directory, and documents directory.
+Vitest + Testing Library for the shell, health client, login form, client directory, leads directory, standards catalogue, auditor directory, programme directory, scheduled-audit fieldwork action, findings directory, certificates directory, documents directory, and finance directory.
 
 ## Critical scenarios (later phases)
 
@@ -92,7 +99,7 @@ Documented here so they are not lost:
 - Certificate issue requires a completed audit and closed major/minor findings (Phase 9)
 - Expired certificate identified (Phase 9 `expired` flag)
 - Unauthorized user cannot download another tenant's file (Phase 10 isolation + `DOCUMENT_DOWNLOAD`)
-- Overdue payment calculated
+- Overdue payment identified (Phase 12 `overdue` flag; payment cannot exceed amount due)
 
 ## Running
 
