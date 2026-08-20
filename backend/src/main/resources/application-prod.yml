@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: ${AUDIT_PLATFORM_DATASOURCE_URL}
+    username: ${AUDIT_PLATFORM_DATASOURCE_USERNAME}
+    password: ${AUDIT_PLATFORM_DATASOURCE_PASSWORD}
+    hikari:
+      pool-name: audit-platform-prod
+      maximum-pool-size: 30
+      minimum-idle: 5
+      connection-timeout: 30000
+  jpa:
+    show-sql: false
+
+server:
+  shutdown: graceful
+
+audit:
+  api:
+    docs-enabled: false

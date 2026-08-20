@@ -1,0 +1,121 @@
+spring:
+  application:
+    name: audit-platform
+  profiles:
+    default: dev
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+        format_sql: false
+  datasource:
+    url: ${AUDIT_PLATFORM_DATASOURCE_URL:jdbc:mysql://localhost:3306/audit_platform?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=utf8}
+    username: ${AUDIT_PLATFORM_DATASOURCE_USERNAME:audit_platform}
+    password: ${AUDIT_PLATFORM_DATASOURCE_PASSWORD:change-me}
+    hikari:
+      pool-name: audit-platform
+      maximum-pool-size: 10
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 25MB
+
+server:
+  port: ${SERVER_PORT:8081}
+  error:
+    include-stacktrace: never
+    include-message: never
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: when_authorized
+  info:
+    env:
+      enabled: true
+
+springdoc:
+  api-docs:
+    enabled: ${AUDIT_PLATFORM_API_DOCS_ENABLED:false}
+  swagger-ui:
+    enabled: ${AUDIT_PLATFORM_API_DOCS_ENABLED:false}
+
+audit:
+  api:
+    docs-enabled: ${AUDIT_PLATFORM_API_DOCS_ENABLED:false}
+    version: 0.7.0
+  cors:
+    allowed-origins: ${AUDIT_PLATFORM_CORS_ORIGINS:http://localhost:5173}
+  rate-limit:
+    enabled: ${AUDIT_PLATFORM_RATE_LIMIT_ENABLED:false}
+    requests-per-minute: ${AUDIT_PLATFORM_RATE_LIMIT_REQUESTS_PER_MINUTE:120}
+  auth:
+    jwt-secret: ${AUDIT_PLATFORM_JWT_SECRET:change-me-in-env-jwt-secret-32b!!}
+    access-token-minutes: ${AUDIT_PLATFORM_ACCESS_TOKEN_MINUTES:15}
+    refresh-token-days: ${AUDIT_PLATFORM_REFRESH_TOKEN_DAYS:7}
+    max-failed-logins: ${AUDIT_PLATFORM_MAX_FAILED_LOGINS:5}
+    lockout-minutes: ${AUDIT_PLATFORM_LOCKOUT_MINUTES:15}
+    expose-dev-tokens: false
+    require-email-verified: false
+    bootstrap-admin-email: ${AUDIT_PLATFORM_BOOTSTRAP_ADMIN_EMAIL:}
+    bootstrap-admin-password: ${AUDIT_PLATFORM_BOOTSTRAP_ADMIN_PASSWORD:}
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+logging:
+  level:
+    root: INFO
+    com.auditplatform: DEBUG
+    org.springframework.security: INFO
+
+audit:
+  api:
+    docs-enabled: true
+    version: 0.7.0
+  auth:
+    expose-dev-tokens: true
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    root: INFO
+    com.auditplatform: INFO
+
+audit:
+  api:
+    docs-enabled: false
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
