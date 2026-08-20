@@ -133,6 +133,14 @@ Team members. Unique `(audit_id, auditor_id)`. Role: `LEAD`, `TEAM`, `TECHNICAL_
 
 Programme and audit numbers reuse `crm_sequences` (`PROGRAMME`, `AUDIT`).
 
+## Phase 7 execution schema
+
+Flyway `V7__audit_execution.sql` adds `actual_start_on`, `actual_end_on`, `opening_notes`, and `closing_notes` on `audits`, plus:
+
+### `audit_checklist_responses`
+
+Per-visit copy of checklist items. Unique `(audit_id, checklist_item_id)`. `result` is `NOT_ASSESSED`, `CONFORMING`, `NONCONFORMING`, `NOT_APPLICABLE`, or `OBSERVATION`. Title and guidance are stored so later template edits do not rewrite an in-flight visit.
+
 ## Isolation rules
 
 - Tenant-owned tables **must** include `tenant_id` and an index on it.

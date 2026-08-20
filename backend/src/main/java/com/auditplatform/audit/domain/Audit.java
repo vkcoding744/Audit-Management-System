@@ -57,8 +57,20 @@ public class Audit extends TenantAwareEntity {
     @Column(name = "planned_end_on")
     private LocalDate plannedEndOn;
 
+    @Column(name = "actual_start_on")
+    private LocalDate actualStartOn;
+
+    @Column(name = "actual_end_on")
+    private LocalDate actualEndOn;
+
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
+
+    @Column(name = "opening_notes", columnDefinition = "TEXT")
+    private String openingNotes;
+
+    @Column(name = "closing_notes", columnDefinition = "TEXT")
+    private String closingNotes;
 
     @Column(name = "deleted_at")
     private Instant deletedAt;

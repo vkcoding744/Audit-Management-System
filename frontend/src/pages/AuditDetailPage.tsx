@@ -4,16 +4,31 @@ import { AxiosError } from 'axios'
 import { useForm } from 'react-hook-form'
 import { Link, useParams } from 'react-router-dom'
 import { z } from 'zod'
-import { addAuditSite, assignAuditor, cancelAudit, fetchAudit, scheduleAudit } from '../api/audits'
+import {
+  addAuditSite,
+  assignAuditor,
+  cancelAudit,
+  completeAudit,
+  fetchAudit,
+  fetchAuditResponses,
+  scheduleAudit,
+  startAudit,
+  updateAuditItem,
+  updateExecutionNotes,
+} from '../api/audits'
 import { fetchAuditors } from '../api/auditors'
 import { fetchSites } from '../api/clients'
-import type { ApiResponse } from '../api/types'
+import type { ApiResponse, AssessmentResult } from '../api/types'
 import { useAuth } from '../auth/AuthProvider'
 
 const siteSchema = z.object({ siteId: z.string().min(1) })
 const assignSchema = z.object({
   auditorId: z.string().min(1),
   assignmentRole: z.enum(['LEAD', 'TEAM', 'TECHNICAL_EXPERT', 'TRAINEE', 'OBSERVER']),
+})
+const notesSchema = z.object({
+  openingNotes: z.string().optional(),
+  closingNotes: z.string().optional(),
 })
 
 export function AuditDetailPage() {
@@ -22,6 +37,12 @@ export function AuditDetailPage() {
   const queryClient = useQueryClient()
   const auditQuery = useQuery({ queryKey: ['audit', id], queryFn: () => fetchAudit(id!), enabled: Boolean(id) })
   const audit = auditQuery.data?.data
+  const fieldwork = audit?.status === 'IN_PROGRESS' || audit?.status === 'COMPLETED'
+  const responsesQuery = useQuery({
+    queryKey: ['audit-responses', id],
+    queryFn: () => fetchAuditResponses(id!),
+    enabled: Boolean(id) && fieldwork,
+  })
   const sitesQuery = useQuery({
     queryKey: ['client-sites', audit?.clientId],
     queryFn: () => fetchSites(audit!.clientId),
@@ -34,10 +55,15 @@ export function AuditDetailPage() {
   })
   const clientSites = sitesQuery.data?.data ?? []
   const auditors = auditorsQuery.data?.data?.content ?? []
+  const items = responsesQuery.data?.data ?? []
   const siteForm = useForm({ resolver: zodResolver(siteSchema), defaultValues: { siteId: '' } })
   const assignForm = useForm({
     resolver: zodResolver(assignSchema),
     defaultValues: { auditorId: '', assignmentRole: 'TEAM' as const },
+  })
+  const notesForm = useForm({
+    resolver: zodResolver(notesSchema),
+    values: { openingNotes: audit?.openingNotes ?? '', closingNotes: audit?.closingNotes ?? '' },
   })
   const addSite = useMutation({
     mutationFn: (values: z.infer<typeof siteSchema>) => addAuditSite(id!, values.siteId),
@@ -63,9 +89,29 @@ export function AuditDetailPage() {
     mutationFn: () => scheduleAudit(id!),
     onSuccess: () => void queryClient.invalidateQueries({ queryKey: ['audit', id] }),
   })
+  const start = useMutation({
+    mutationFn: () => startAudit(id!),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['audit', id] })
+      void queryClient.invalidateQueries({ queryKey: ['audit-responses', id] })
+    },
+  })
+  const complete = useMutation({
+    mutationFn: () => completeAudit(id!),
+    onSuccess: () => void queryClient.invalidateQueries({ queryKey: ['audit', id] }),
+  })
   const cancel = useMutation({
     mutationFn: () => cancelAudit(id!),
     onSuccess: () => void queryClient.invalidateQueries({ queryKey: ['audit', id] }),
+  })
+  const saveNotes = useMutation({
+    mutationFn: (values: z.infer<typeof notesSchema>) => updateExecutionNotes(id!, values),
+    onSuccess: () => void queryClient.invalidateQueries({ queryKey: ['audit', id] }),
+  })
+  const recordItem = useMutation({
+    mutationFn: (payload: { responseId: string; result: AssessmentResult; comment?: string }) =>
+      updateAuditItem(payload.responseId, { result: payload.result, comment: payload.comment }),
+    onSuccess: () => void queryClient.invalidateQueries({ queryKey: ['audit-responses', id] }),
   })
 
   if (auditQuery.isError || !id) {
@@ -76,6 +122,7 @@ export function AuditDetailPage() {
   }
 
   const plannable = audit.status === 'PLANNED' || audit.status === 'SCHEDULED'
+  const canCancel = audit.status !== 'COMPLETED' && audit.status !== 'CANCELLED'
 
   return (
     <section>
@@ -91,25 +138,37 @@ export function AuditDetailPage() {
       </p>
       <p className="mt-1 text-sm text-slate-500">
         Planned {audit.plannedStartOn ?? '—'} → {audit.plannedEndOn ?? '—'}
+        {audit.actualStartOn ? ` · Actual ${audit.actualStartOn} → ${audit.actualEndOn ?? 'open'}` : ''}
       </p>
-      {hasPermission('AUDIT_UPDATE') && plannable && (
-        <div className="mt-4 flex gap-2">
+      {hasPermission('AUDIT_UPDATE') && (
+        <div className="mt-4 flex flex-wrap gap-2">
           {audit.status === 'PLANNED' && (
             <button type="button" className="rounded-md bg-brand-500 px-3 py-1 text-sm text-white" onClick={() => schedule.mutate()}>
               Schedule
             </button>
           )}
-          {audit.status !== 'CANCELLED' && (
+          {audit.status === 'SCHEDULED' && (
+            <button type="button" className="rounded-md bg-brand-500 px-3 py-1 text-sm text-white" onClick={() => start.mutate()}>
+              Start fieldwork
+            </button>
+          )}
+          {audit.status === 'IN_PROGRESS' && (
+            <button type="button" className="rounded-md bg-brand-500 px-3 py-1 text-sm text-white" onClick={() => complete.mutate()}>
+              Complete audit
+            </button>
+          )}
+          {canCancel && (
             <button type="button" className="rounded-md border border-slate-300 px-3 py-1 text-sm" onClick={() => cancel.mutate()}>
               Cancel
             </button>
           )}
         </div>
       )}
-      {schedule.isError && (
+      {(schedule.isError || start.isError || complete.isError) && (
         <p className="mt-2 text-sm text-red-700">
-          {(schedule.error as AxiosError<ApiResponse<unknown>>).response?.data?.error?.message ??
-            'Schedule requires planned dates and a lead auditor.'}
+          {(
+            (schedule.error ?? start.error ?? complete.error) as AxiosError<ApiResponse<unknown>> | undefined
+          )?.response?.data?.error?.message ?? 'The status change was rejected.'}
         </p>
       )}
 
@@ -187,6 +246,120 @@ export function AuditDetailPage() {
           </button>
         </form>
       )}
+
+      {fieldwork && (
+        <>
+          <h3 className="mt-8 text-lg font-medium">Fieldwork checklist</h3>
+          <p className="mt-1 text-sm text-slate-600">
+            Items are copied when fieldwork starts so later template edits do not change this visit. Findings are recorded in a later
+            phase.
+          </p>
+          <ul className="mt-2 space-y-3">
+            {items.map((item) => (
+              <li key={item.id} className="rounded-lg border border-slate-200 bg-white p-3 text-sm">
+                <p className="font-medium">
+                  {item.title}
+                  {item.required ? ' · Required' : ''}
+                </p>
+                {item.guidance && <p className="mt-1 text-slate-500">{item.guidance}</p>}
+                {audit.status === 'IN_PROGRESS' && hasPermission('AUDIT_UPDATE') ? (
+                  <ItemForm
+                    defaultResult={item.result}
+                    defaultComment={item.comment ?? ''}
+                    pending={recordItem.isPending}
+                    error={
+                      recordItem.isError
+                        ? ((recordItem.error as AxiosError<ApiResponse<unknown>>).response?.data?.error?.message ??
+                          'Could not save result')
+                        : undefined
+                    }
+                    onSave={(result, comment) => recordItem.mutate({ responseId: item.id, result, comment })}
+                  />
+                ) : (
+                  <p className="mt-2 text-slate-600">
+                    {item.result}
+                    {item.comment ? ` · ${item.comment}` : ''}
+                  </p>
+                )}
+              </li>
+            ))}
+            {items.length === 0 && !responsesQuery.isPending && (
+              <li className="text-sm text-slate-500">No checklist was attached when this audit started.</li>
+            )}
+          </ul>
+          {audit.status === 'IN_PROGRESS' && hasPermission('AUDIT_UPDATE') && (
+            <form
+              className="mt-4 max-w-xl space-y-3 rounded-lg border border-slate-200 bg-white p-4"
+              onSubmit={notesForm.handleSubmit((values) => saveNotes.mutate(values))}
+              aria-label="Meeting notes"
+            >
+              <h4 className="text-base font-medium">Opening and closing notes</h4>
+              <textarea
+                className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+                rows={3}
+                placeholder="Opening meeting"
+                {...notesForm.register('openingNotes')}
+              />
+              <textarea
+                className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+                rows={3}
+                placeholder="Closing meeting"
+                {...notesForm.register('closingNotes')}
+              />
+              <button type="submit" className="rounded-md bg-brand-500 px-4 py-2 text-sm text-white">
+                Save notes
+              </button>
+            </form>
+          )}
+        </>
+      )}
     </section>
+  )
+}
+
+function ItemForm({
+  defaultResult,
+  defaultComment,
+  pending,
+  error,
+  onSave,
+}: {
+  defaultResult: AssessmentResult
+  defaultComment: string
+  pending: boolean
+  error?: string
+  onSave: (result: AssessmentResult, comment?: string) => void
+}) {
+  const form = useForm({
+    defaultValues: { result: defaultResult, comment: defaultComment },
+  })
+  return (
+    <form
+      className="mt-3 space-y-2"
+      onSubmit={form.handleSubmit((values) => onSave(values.result, values.comment || undefined))}
+      aria-label="Record checklist result"
+    >
+      <select className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm" {...form.register('result')}>
+        <option value="NOT_ASSESSED">Not assessed</option>
+        <option value="CONFORMING">Conforming</option>
+        <option value="NONCONFORMING">Nonconforming</option>
+        <option value="NOT_APPLICABLE">Not applicable</option>
+        <option value="OBSERVATION">Observation</option>
+      </select>
+      <textarea
+        className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+        rows={2}
+        placeholder="Comment (required for nonconformity or observation)"
+        {...form.register('comment')}
+      />
+      {error && (
+        <p className="text-sm text-red-700" role="alert">
+          {error}
+        </p>
+      )}
+      <button type="submit" disabled={pending} className="rounded-md border border-slate-300 px-3 py-1 text-sm">
+        Save result
+      </button>
+    </form>
   )
 }

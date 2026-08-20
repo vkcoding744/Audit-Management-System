@@ -23,7 +23,11 @@ public record AuditResponse(
         AuditStatus status,
         LocalDate plannedStartOn,
         LocalDate plannedEndOn,
+        LocalDate actualStartOn,
+        LocalDate actualEndOn,
         String notes,
+        String openingNotes,
+        String closingNotes,
         List<AuditSiteResponse> sites,
         List<AssignmentResponse> assignments
 ) {
@@ -43,7 +47,11 @@ public record AuditResponse(
                 audit.getStatus(),
                 audit.getPlannedStartOn(),
                 audit.getPlannedEndOn(),
+                audit.getActualStartOn(),
+                audit.getActualEndOn(),
                 audit.getNotes(),
+                audit.getOpeningNotes(),
+                audit.getClosingNotes(),
                 sites,
                 assignments
         );

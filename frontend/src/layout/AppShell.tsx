@@ -71,8 +71,8 @@ export function AppShell() {
       <div className="flex min-h-screen flex-col">
         <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
           <div>
-            <p className="text-xs text-slate-500">Planning</p>
-            <p className="text-sm font-medium">Phase 6 · Programmes, audits, and assignment</p>
+            <p className="text-xs text-slate-500">Execution</p>
+            <p className="text-sm font-medium">Phase 7 · Fieldwork and in-audit checklists</p>
           </div>
           <div className="flex items-center gap-3">
             {user?.platformAdmin && (

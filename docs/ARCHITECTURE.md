@@ -6,7 +6,7 @@
 
 ## Current phase
 
-**Phase 6** adds audit programmes, planned audits, site scope, and team assignment. Assignment calls the Phase 5 eligibility check; expired or missing competency cannot be assigned. Scheduling requires planned dates and a lead auditor.
+**Phase 7** adds fieldwork: start a scheduled audit, freeze the checklist onto that visit, record item results, and complete when required items are assessed. Findings and CAPA are still later.
 
 Phase 1 foundation remains: modular monolith, Flyway, API envelope, CORS/headers, health, tenant discriminator columns.
 
@@ -115,7 +115,7 @@ Authentication is JWT access tokens plus rotating opaque refresh tokens (Phase 2
 
 ## Frontend
 
-React 18 + Vite + TypeScript + Tailwind. The UI calls live APIs for health, identity, clients, standards, schemes, checklists, auditors, programmes, and planned audits. Client dashboard upcoming/completed audit counts come from persisted audits. Findings, CAPA, certificates, and finance still report zero. It does not mock certification data or copyrighted clause text.
+React 18 + Vite + TypeScript + Tailwind. The UI calls live APIs for health, identity, clients, standards, schemes, checklists, auditors, programmes, planned audits, and fieldwork responses. Client dashboard upcoming/completed audit counts come from persisted audits. Findings, CAPA, certificates, and finance still report zero. It does not mock certification data or copyrighted clause text.
 
 ## Infrastructure
 
@@ -123,10 +123,9 @@ Docker Compose runs MySQL 8, backend, and frontend (Nginx). Optional profiles: `
 
 AWS-ready: 12-factor config, health probes, no baked secrets, object storage SPI later (local vs S3).
 
-## Explicit non-goals for Phase 6
+## Explicit non-goals for Phase 7
 
-- Field execution, in-audit checklists, findings, CAPA
-- Certificates, documents, finance, complaints
-- Starting or completing an audit (status values exist for later phases)
+- Findings, CAPA, certificates, documents, finance, complaints
+- File evidence attachments (document module)
 - Bundled ISO/IEC clause libraries
 - AI providers, Elasticsearch, production certificate PDF templates

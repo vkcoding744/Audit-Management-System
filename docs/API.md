@@ -199,6 +199,23 @@ Create audit body (required: `programmeId`, `name`): `auditType` (`INITIAL` defa
 
 Create assignment body (required: `auditorId`): `assignmentRole` (`TEAM` default; `LEAD` \| `TEAM` \| `TECHNICAL_EXPERT` \| `TRAINEE` \| `OBSERVER`).
 
+## Phase 7 endpoints
+
+Fieldwork starts only from `SCHEDULED`. `POST .../start` copies checklist items onto `audit_checklist_responses` (title/guidance frozen). Draft checklists cannot be started. Completing requires every **required** item to have a result other than `NOT_ASSESSED`. Nonconformity and observation require a comment. Findings are not created in this phase.
+
+Results: `NOT_ASSESSED`, `CONFORMING`, `NONCONFORMING`, `NOT_APPLICABLE`, `OBSERVATION`.
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| POST | `/api/v1/audits/{id}/start` | `AUDIT_UPDATE` | `SCHEDULED` → `IN_PROGRESS`; snapshot checklist |
+| POST | `/api/v1/audits/{id}/complete` | `AUDIT_UPDATE` | `IN_PROGRESS` → `COMPLETED` |
+| PATCH | `/api/v1/audits/{id}/execution` | `AUDIT_UPDATE` | Opening/closing notes while in progress |
+| GET | `/api/v1/audits/{id}/responses` | `AUDIT_VIEW` | Frozen checklist responses |
+| GET | `/api/v1/audit-responses/{id}` | `AUDIT_VIEW` | One response |
+| PATCH | `/api/v1/audit-responses/{id}` | `AUDIT_UPDATE` | Record result while in progress |
+
+Patch response body (required: `result`): `comment`.
+
 ## Status codes
 
 | Code | Use |

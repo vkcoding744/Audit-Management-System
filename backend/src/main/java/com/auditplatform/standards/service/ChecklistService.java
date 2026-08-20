@@ -73,6 +73,15 @@ public class ChecklistService {
         return ChecklistResponse.from(checklist, items(checklist));
     }
 
+    @Transactional(readOnly = true)
+    public List<ChecklistItem> listItems(String checklistId) {
+        Checklist checklist = requireChecklist(checklistId);
+        return itemRepository.findByTenantIdAndChecklistIdAndDeletedAtIsNullOrderBySortOrderAsc(
+                checklist.getTenantId(),
+                checklist.getId()
+        );
+    }
+
     @Transactional
     public ChecklistResponse create(String schemeId, CreateChecklistRequest request) {
         Scheme scheme = schemeService.requireScheme(schemeId);

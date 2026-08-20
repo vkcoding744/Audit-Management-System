@@ -333,9 +333,32 @@ export interface AuditSummary {
   status: AuditStatus
   plannedStartOn: string | null
   plannedEndOn: string | null
+  actualStartOn: string | null
+  actualEndOn: string | null
   notes: string | null
+  openingNotes: string | null
+  closingNotes: string | null
   sites: AuditSiteSummary[]
   assignments: AssignmentSummary[]
+}
+
+export type AssessmentResult = 'NOT_ASSESSED' | 'CONFORMING' | 'NONCONFORMING' | 'NOT_APPLICABLE' | 'OBSERVATION'
+
+export interface AuditItemSummary {
+  id: string
+  tenantId: string
+  auditId: string
+  checklistItemId: string
+  clauseId: string | null
+  title: string
+  guidance: string | null
+  itemType: ChecklistItemType
+  required: boolean
+  sortOrder: number
+  result: AssessmentResult
+  comment: string | null
+  assessedBy: string | null
+  assessedAt: string | null
 }
 
 export interface AuthSession {

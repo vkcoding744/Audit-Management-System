@@ -4,6 +4,12 @@
 
 Stack: JUnit 5, Mockito, Spring MockMvc, Testcontainers MySQL 8.
 
+Phase 7 coverage:
+
+- `AUDIT_VIEW` required to list fieldwork responses; other authorities are 403
+- Tenant A cannot `get` Tenant B's checklist response
+- Completing an audit with unanswered required items is `SYS_VALIDATION`
+
 Phase 6 coverage:
 
 - `AUDIT_VIEW` required to list programmes and audits; other authorities are 403
@@ -45,7 +51,7 @@ Phase 2 coverage:
 
 ## Frontend
 
-Vitest + Testing Library for the shell, health client, login form, client directory, standards catalogue, auditor directory, and programme directory.
+Vitest + Testing Library for the shell, health client, login form, client directory, standards catalogue, auditor directory, programme directory, and scheduled-audit fieldwork action.
 
 ## Critical scenarios (later phases)
 

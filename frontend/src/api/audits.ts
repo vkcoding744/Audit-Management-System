@@ -1,7 +1,9 @@
 import { api } from './client'
 import type {
   ApiResponse,
+  AssessmentResult,
   AssignmentSummary,
+  AuditItemSummary,
   AuditSiteSummary,
   AuditStatus,
   AuditSummary,
@@ -94,5 +96,36 @@ export async function assignAuditor(
   body: { auditorId: string; assignmentRole?: string },
 ): Promise<ApiResponse<AssignmentSummary>> {
   const response = await api.post<ApiResponse<AssignmentSummary>>(`/audits/${auditId}/assignments`, body)
+  return response.data
+}
+
+export async function startAudit(id: string): Promise<ApiResponse<AuditSummary>> {
+  const response = await api.post<ApiResponse<AuditSummary>>(`/audits/${id}/start`)
+  return response.data
+}
+
+export async function completeAudit(id: string): Promise<ApiResponse<AuditSummary>> {
+  const response = await api.post<ApiResponse<AuditSummary>>(`/audits/${id}/complete`)
+  return response.data
+}
+
+export async function updateExecutionNotes(
+  id: string,
+  body: { openingNotes?: string; closingNotes?: string },
+): Promise<ApiResponse<AuditSummary>> {
+  const response = await api.patch<ApiResponse<AuditSummary>>(`/audits/${id}/execution`, body)
+  return response.data
+}
+
+export async function fetchAuditResponses(auditId: string): Promise<ApiResponse<AuditItemSummary[]>> {
+  const response = await api.get<ApiResponse<AuditItemSummary[]>>(`/audits/${auditId}/responses`)
+  return response.data
+}
+
+export async function updateAuditItem(
+  responseId: string,
+  body: { result: AssessmentResult; comment?: string },
+): Promise<ApiResponse<AuditItemSummary>> {
+  const response = await api.patch<ApiResponse<AuditItemSummary>>(`/audit-responses/${responseId}`, body)
   return response.data
 }
