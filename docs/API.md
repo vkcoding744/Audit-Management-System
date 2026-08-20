@@ -80,7 +80,7 @@ Phase 1 tenant hint: `X-Tenant-Id` is honoured **only** for platform super admin
 
 Clients, sites, and contacts are tenant-scoped. Platform super admins must send `X-Tenant-Id` to list or create. Tenant users are bound to the JWT `tid` claim. Client numbers are assigned as `CLIENT-000001` per tenant via a locked sequence.
 
-Dashboard operational counts (audits, findings, CAPA, certificates, payments, documents, complaints, appeals) come from `ClientOperationalMetricsPort`. The default adapter returns zeros until those modules persist data. Site and contact counts are live queries.
+Dashboard operational counts for audits, findings, CAPA, and certificates come from live rows via `ClientOperationalMetricsPort`. Payments, documents, complaints, and appeals remain zero until those modules persist data. Site and contact counts are live queries.
 
 `DELETE` responses are HTTP 204 with no envelope.
 
@@ -235,6 +235,25 @@ Numbers: `FIND-%06d`, `CAPA-%06d`. Severity: `MAJOR`, `MINOR`, `OBSERVATION`, `O
 Create finding body (required: `auditId`, `title`, `description`): `severity` (`MINOR` default), `siteId`, `responseId`, `clauseId`, `notes`.
 
 Create CAPA body (required: `description`, `dueOn`): `notes`.
+
+## Phase 9 endpoints
+
+Certificates are numbered `CERT-%06d` per tenant. Create a draft from a **completed** audit; client, scheme, standard, and programme are copied from that audit. Issue requires no **OPEN** `MAJOR` or `MINOR` findings on the source audit (observations and OFIs may remain open) and at most one `ACTIVE` certificate per `(tenant, client, scheme)`.
+
+Status: `DRAFT` → issue `ACTIVE` → suspend `SUSPENDED` → reinstate `ACTIVE` → withdraw `WITHDRAWN`. `expired` is `true` when status is `ACTIVE` and `expiresOn` is before today (UTC). Decisions (`ISSUE`, `SUSPEND`, `REINSTATE`, `WITHDRAW`) are append-only. Surveillance: `PLANNED`, `COMPLETED`, `CANCELLED`; planning is not allowed on `WITHDRAWN`.
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| GET/POST | `/api/v1/certificates` | `CERTIFICATE_VIEW` / `CERTIFICATE_ISSUE` | Paginated list (`clientId`/`status`) or create draft (201) |
+| GET | `/api/v1/certificates/{id}` | `CERTIFICATE_VIEW` | Detail includes decisions and surveillance |
+| POST | `/api/v1/certificates/{id}/issue` | `CERTIFICATE_ISSUE` | `DRAFT` → `ACTIVE` |
+| POST | `/api/v1/certificates/{id}/suspend` | `CERTIFICATE_SUSPEND` | `ACTIVE` → `SUSPENDED`; body `{ reason }` |
+| POST | `/api/v1/certificates/{id}/reinstate` | `CERTIFICATE_ISSUE` | `SUSPENDED` → `ACTIVE`; body `{ reason }` |
+| POST | `/api/v1/certificates/{id}/withdraw` | `CERTIFICATE_WITHDRAW` | `ACTIVE` or `SUSPENDED` → `WITHDRAWN`; body `{ reason }` |
+| POST | `/api/v1/certificates/{id}/surveillance` | `CERTIFICATE_ISSUE` | Plan a visit (201) |
+| POST | `/api/v1/surveillance/{id}/complete` | `CERTIFICATE_ISSUE` | `PLANNED` → `COMPLETED` |
+
+Create body (required: `auditId`, `expiresOn`): `validFrom` (defaults to today UTC), `scopeText`, `nextSurveillanceOn`, `notes`. `expiresOn` cannot be before `validFrom`.
 
 ## Status codes
 

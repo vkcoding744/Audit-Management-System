@@ -4,6 +4,8 @@ import { AppShell } from './layout/AppShell'
 import { AuditDetailPage } from './pages/AuditDetailPage'
 import { AuditorDetailPage } from './pages/AuditorDetailPage'
 import { AuditorsPage } from './pages/AuditorsPage'
+import { CertificateDetailPage } from './pages/CertificateDetailPage'
+import { CertificatesPage } from './pages/CertificatesPage'
 import { ChecklistDetailPage } from './pages/ChecklistDetailPage'
 import { ClientDetailPage } from './pages/ClientDetailPage'
 import { ClientsPage } from './pages/ClientsPage'
@@ -52,6 +54,8 @@ export default function App() {
         <Route path="/audits/:id" element={<AuditDetailPage />} />
         <Route path="/findings" element={<FindingsPage />} />
         <Route path="/findings/:id" element={<FindingDetailPage />} />
+        <Route path="/certificates" element={<CertificatesPage />} />
+        <Route path="/certificates/:id" element={<CertificateDetailPage />} />
         <Route path="/users" element={<UsersPage />} />
         <Route path="/roles" element={<RolesPage />} />
         <Route path="/tenants" element={<TenantsPage />} />
