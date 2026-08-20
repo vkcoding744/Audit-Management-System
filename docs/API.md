@@ -107,6 +107,42 @@ Create site body (required: `name`): address fields, `scope`, `employeeCount`, `
 
 Create contact body (required: `firstName`, `lastName`): `designation`, `email`, `phone`, `department`, `siteId`, `primaryContact`. Setting `primaryContact` true clears the flag on other contacts for that client.
 
+## Phase 4 endpoints
+
+Standards, schemes, clauses, and checklists are tenant-scoped. Platform super admins must send `X-Tenant-Id`. Tenants supply their own codes and clause text; nothing copyrighted is seeded.
+
+Standards: `DRAFT` (editable) → `PUBLISHED` → `SUPERSEDED` or `WITHDRAWN`. Clauses can be added only while `DRAFT`.
+
+Schemes: `DRAFT` → `ACTIVE` (from draft or suspended) → `SUSPENDED` / `RETIRED`. Link standards with `POST .../standards`.
+
+Checklists belong to a scheme. Optional `standardId` must already be linked. Items are editable only in `DRAFT`. Activate requires at least one item.
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| GET/POST | `/api/v1/standards` | `STANDARD_VIEW` / `STANDARD_CREATE` | List (paginated, `q`/`status`) or create (201) |
+| GET/PATCH | `/api/v1/standards/{id}` | `STANDARD_VIEW` / `STANDARD_UPDATE` | Detail; patch only in `DRAFT` |
+| POST | `/api/v1/standards/{id}/publish` | `STANDARD_UPDATE` | `DRAFT` → `PUBLISHED` |
+| POST | `/api/v1/standards/{id}/supersede` | `STANDARD_UPDATE` | `PUBLISHED` → `SUPERSEDED` |
+| POST | `/api/v1/standards/{id}/withdraw` | `STANDARD_UPDATE` | `PUBLISHED`/`SUPERSEDED` → `WITHDRAWN` |
+| DELETE | `/api/v1/standards/{id}` | `STANDARD_DELETE` | Soft-delete if unused by checklists (204) |
+| GET/POST | `/api/v1/standards/{id}/clauses` | `STANDARD_VIEW` / `STANDARD_UPDATE` | Clause tree (flat list) |
+| PATCH/DELETE | `/api/v1/clauses/{id}` | `STANDARD_UPDATE` | Update or soft-delete tree |
+| GET/POST | `/api/v1/schemes` | `SCHEME_VIEW` / `SCHEME_CREATE` | List or create |
+| GET/PATCH | `/api/v1/schemes/{id}` | `SCHEME_VIEW` / `SCHEME_UPDATE` | Detail includes linked standards |
+| POST | `/api/v1/schemes/{id}/activate` | `SCHEME_UPDATE` | Activate |
+| POST | `/api/v1/schemes/{id}/suspend` | `SCHEME_UPDATE` | Suspend |
+| POST | `/api/v1/schemes/{id}/retire` | `SCHEME_UPDATE` | Retire |
+| POST | `/api/v1/schemes/{id}/standards` | `SCHEME_UPDATE` | Link `{ standardId }` |
+| DELETE | `/api/v1/schemes/{id}/standards/{standardId}` | `SCHEME_UPDATE` | Unlink |
+| DELETE | `/api/v1/schemes/{id}` | `SCHEME_DELETE` | Soft-delete if no checklists |
+| GET/POST | `/api/v1/schemes/{id}/checklists` | `CHECKLIST_VIEW` / `CHECKLIST_CREATE` | List or create |
+| GET/PATCH | `/api/v1/checklists/{id}` | `CHECKLIST_VIEW` / `CHECKLIST_UPDATE` | Detail with items |
+| POST | `/api/v1/checklists/{id}/activate` | `CHECKLIST_UPDATE` | `DRAFT` → `ACTIVE` |
+| POST | `/api/v1/checklists/{id}/archive` | `CHECKLIST_UPDATE` | `ACTIVE` → `ARCHIVED` |
+| DELETE | `/api/v1/checklists/{id}` | `CHECKLIST_DELETE` | Soft-delete checklist and items |
+| POST | `/api/v1/checklists/{id}/items` | `CHECKLIST_UPDATE` | Add item (201) |
+| PATCH/DELETE | `/api/v1/checklist-items/{id}` | `CHECKLIST_UPDATE` | Update or soft-delete item |
+
 ## Status codes
 
 | Code | Use |

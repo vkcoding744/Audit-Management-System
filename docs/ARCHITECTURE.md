@@ -6,7 +6,7 @@
 
 ## Current phase
 
-**Phase 3** adds organisation and client management: clients, sites, contacts, and a client dashboard. Counts for audits, CAPA, certificates, finance, documents, complaints, and appeals are live queries via a metrics port; they stay at zero until those modules persist data.
+**Phase 4** adds a tenant-owned standards catalogue: standards, hierarchical clauses, certification schemes, and versioned audit checklists. Clause and checklist text is entered by the tenant. The product does not ship copyrighted standard bodies.
 
 Phase 1 foundation remains: modular monolith, Flyway, API envelope, CORS/headers, health, tenant discriminator columns.
 
@@ -115,7 +115,7 @@ Authentication is JWT access tokens plus rotating opaque refresh tokens (Phase 2
 
 ## Frontend
 
-React 18 + Vite + TypeScript + Tailwind. The UI calls live APIs for health, identity, and clients. Dashboard cards for audits and certificates show zero until those modules exist. It does not mock certification data.
+React 18 + Vite + TypeScript + Tailwind. The UI calls live APIs for health, identity, clients, standards, schemes, and checklists. Dashboard cards for audits and certificates show zero until those modules exist. It does not mock certification data or copyrighted clause text.
 
 ## Infrastructure
 
@@ -123,8 +123,9 @@ Docker Compose runs MySQL 8, backend, and frontend (Nginx). Optional profiles: `
 
 AWS-ready: 12-factor config, health probes, no baked secrets, object storage SPI later (local vs S3).
 
-## Explicit non-goals for Phase 3
+## Explicit non-goals for Phase 4
 
-- Standards/schemes, auditor competency, audit execution
-- Certificates, documents, finance, complaints (dashboard counts stay at zero)
+- Auditor competency, audit execution, certificates
+- Bundled ISO/IEC (or other) clause libraries
+- Documents, finance, complaints
 - AI providers, Elasticsearch, production certificate PDF templates

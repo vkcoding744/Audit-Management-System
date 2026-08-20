@@ -148,6 +148,73 @@ export interface ClientDashboard {
   openAppeals: number
 }
 
+export type StandardStatus = 'DRAFT' | 'PUBLISHED' | 'SUPERSEDED' | 'WITHDRAWN'
+export type SchemeStatus = 'DRAFT' | 'ACTIVE' | 'SUSPENDED' | 'RETIRED'
+export type ChecklistStatus = 'DRAFT' | 'ACTIVE' | 'ARCHIVED'
+export type ChecklistItemType = 'QUESTION' | 'EVIDENCE' | 'GUIDANCE'
+
+export interface StandardSummary {
+  id: string
+  tenantId: string
+  code: string
+  name: string
+  publisher: string | null
+  edition: string | null
+  description: string | null
+  status: StandardStatus
+  publishedAt: string | null
+  notes: string | null
+}
+
+export interface ClauseSummary {
+  id: string
+  tenantId: string
+  standardId: string
+  parentId: string | null
+  clauseCode: string
+  title: string
+  requirementText: string | null
+  sortOrder: number
+}
+
+export interface SchemeSummary {
+  id: string
+  tenantId: string
+  code: string
+  name: string
+  description: string | null
+  accreditationBody: string | null
+  cycleMonths: number | null
+  surveillanceIntervalMonths: number | null
+  status: SchemeStatus
+  notes: string | null
+  standards: StandardSummary[]
+}
+
+export interface ChecklistItemSummary {
+  id: string
+  tenantId: string
+  checklistId: string
+  clauseId: string | null
+  title: string
+  guidance: string | null
+  itemType: ChecklistItemType
+  required: boolean
+  sortOrder: number
+}
+
+export interface ChecklistSummary {
+  id: string
+  tenantId: string
+  schemeId: string
+  standardId: string | null
+  name: string
+  versionLabel: string
+  status: ChecklistStatus
+  notes: string | null
+  items: ChecklistItemSummary[]
+}
+
 export interface AuthSession {
   id: string
   ipAddress: string | null

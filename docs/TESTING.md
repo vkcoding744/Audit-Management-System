@@ -4,6 +4,12 @@
 
 Stack: JUnit 5, Mockito, Spring MockMvc, Testcontainers MySQL 8.
 
+Phase 4 coverage:
+
+- `STANDARD_VIEW` / `SCHEME_VIEW` required to list; other authorities are 403
+- Tenant A cannot `get` Tenant B's standard
+- Published standards cannot be patched
+
 Phase 3 coverage:
 
 - `CLIENT_VIEW` required to list clients; other authorities are 403
@@ -27,7 +33,7 @@ Phase 2 coverage:
 
 ## Frontend
 
-Vitest + Testing Library for the shell, health client, login form, and client directory/create form.
+Vitest + Testing Library for the shell, health client, login form, client directory, and standards catalogue.
 
 ## Critical scenarios (later phases)
 

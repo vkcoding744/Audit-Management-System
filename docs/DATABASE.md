@@ -63,6 +63,32 @@ Per-tenant named counters (`CLIENT`) used to allocate `CLIENT-%06d` numbers unde
 
 V3 also inserts site/contact/client-delete permissions and grants them to admin, sales, and viewer roles as appropriate. Existing `PLATFORM_SUPER_ADMIN` rows receive the new codes via `role_permissions` inserts.
 
+## Phase 4 standards schema
+
+Flyway `V4__standards_schemes_checklists.sql` adds:
+
+### `standards`
+
+Tenant-owned normative documents. Unique `(tenant_id, code)`. Status: `DRAFT`, `PUBLISHED`, `SUPERSEDED`, `WITHDRAWN`.
+
+### `standard_clauses`
+
+Hierarchical clauses (`parent_id`). Unique `(standard_id, clause_code)`.
+
+### `schemes`
+
+Certification/inspection programmes. Unique `(tenant_id, code)`. Status: `DRAFT`, `ACTIVE`, `SUSPENDED`, `RETIRED`. Optional cycle and surveillance interval in months.
+
+### `scheme_standards`
+
+Many-to-many link between a scheme and standards.
+
+### `checklists` / `checklist_items`
+
+Versioned checklists (`version_label`) under a scheme, optional `standard_id`. Item types: `QUESTION`, `EVIDENCE`, `GUIDANCE`. Unique `(scheme_id, name, version_label)`.
+
+No ISO/IEC (or other) clause libraries are inserted. Tenants enter their own text.
+
 ## Isolation rules
 
 - Tenant-owned tables **must** include `tenant_id` and an index on it.
