@@ -6,7 +6,7 @@
 
 ## Current phase
 
-**Phase 7** adds fieldwork: start a scheduled audit, freeze the checklist onto that visit, record item results, and complete when required items are assessed. Findings and CAPA are still later.
+**Phase 8** adds findings and CAPA. Findings can be raised on in-progress or completed audits. Closed findings cannot be edited. Major and minor findings require completed CAPA before close. Client dashboard open-finding and overdue-CAPA counts are live.
 
 Phase 1 foundation remains: modular monolith, Flyway, API envelope, CORS/headers, health, tenant discriminator columns.
 
@@ -115,7 +115,7 @@ Authentication is JWT access tokens plus rotating opaque refresh tokens (Phase 2
 
 ## Frontend
 
-React 18 + Vite + TypeScript + Tailwind. The UI calls live APIs for health, identity, clients, standards, schemes, checklists, auditors, programmes, planned audits, and fieldwork responses. Client dashboard upcoming/completed audit counts come from persisted audits. Findings, CAPA, certificates, and finance still report zero. It does not mock certification data or copyrighted clause text.
+React 18 + Vite + TypeScript + Tailwind. The UI calls live APIs for health, identity, clients, standards, schemes, checklists, auditors, programmes, audits, fieldwork, findings, and CAPA. Client dashboard upcoming/completed audit counts and open findings / overdue CAPA come from persisted rows. Certificates and finance still report zero. It does not mock certification data or copyrighted clause text.
 
 ## Infrastructure
 
@@ -123,9 +123,9 @@ Docker Compose runs MySQL 8, backend, and frontend (Nginx). Optional profiles: `
 
 AWS-ready: 12-factor config, health probes, no baked secrets, object storage SPI later (local vs S3).
 
-## Explicit non-goals for Phase 7
+## Explicit non-goals for Phase 8
 
-- Findings, CAPA, certificates, documents, finance, complaints
+- Certificates, documents, finance, complaints
 - File evidence attachments (document module)
 - Bundled ISO/IEC clause libraries
 - AI providers, Elasticsearch, production certificate PDF templates

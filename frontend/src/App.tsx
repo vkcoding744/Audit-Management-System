@@ -7,6 +7,8 @@ import { AuditorsPage } from './pages/AuditorsPage'
 import { ChecklistDetailPage } from './pages/ChecklistDetailPage'
 import { ClientDetailPage } from './pages/ClientDetailPage'
 import { ClientsPage } from './pages/ClientsPage'
+import { FindingDetailPage } from './pages/FindingDetailPage'
+import { FindingsPage } from './pages/FindingsPage'
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage'
 import { LoginPage } from './pages/LoginPage'
 import { ResetPasswordPage } from './pages/ResetPasswordPage'
@@ -48,6 +50,8 @@ export default function App() {
         <Route path="/programmes" element={<ProgrammesPage />} />
         <Route path="/programmes/:id" element={<ProgrammeDetailPage />} />
         <Route path="/audits/:id" element={<AuditDetailPage />} />
+        <Route path="/findings" element={<FindingsPage />} />
+        <Route path="/findings/:id" element={<FindingDetailPage />} />
         <Route path="/users" element={<UsersPage />} />
         <Route path="/roles" element={<RolesPage />} />
         <Route path="/tenants" element={<TenantsPage />} />

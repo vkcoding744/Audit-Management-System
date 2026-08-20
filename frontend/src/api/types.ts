@@ -361,6 +361,40 @@ export interface AuditItemSummary {
   assessedAt: string | null
 }
 
+export type FindingSeverity = 'MAJOR' | 'MINOR' | 'OBSERVATION' | 'OFI'
+export type FindingStatus = 'OPEN' | 'CLOSED'
+export type CapaStatus = 'OPEN' | 'COMPLETED' | 'CANCELLED'
+
+export interface CapaSummary {
+  id: string
+  tenantId: string
+  capaNumber: string
+  findingId: string
+  description: string
+  dueOn: string
+  completedOn: string | null
+  status: CapaStatus
+  notes: string | null
+}
+
+export interface FindingSummary {
+  id: string
+  tenantId: string
+  findingNumber: string
+  auditId: string
+  clientId: string
+  siteId: string | null
+  responseId: string | null
+  clauseId: string | null
+  title: string
+  description: string
+  severity: FindingSeverity
+  status: FindingStatus
+  closedOn: string | null
+  notes: string | null
+  capa: CapaSummary[]
+}
+
 export interface AuthSession {
   id: string
   ipAddress: string | null

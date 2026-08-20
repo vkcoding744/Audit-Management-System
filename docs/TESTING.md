@@ -4,6 +4,12 @@
 
 Stack: JUnit 5, Mockito, Spring MockMvc, Testcontainers MySQL 8.
 
+Phase 8 coverage:
+
+- `AUDIT_VIEW` required to list findings; other authorities are 403
+- Tenant A cannot `get` Tenant B's finding
+- Closed findings cannot be patched (`SYS_VALIDATION`)
+
 Phase 7 coverage:
 
 - `AUDIT_VIEW` required to list fieldwork responses; other authorities are 403
@@ -51,7 +57,7 @@ Phase 2 coverage:
 
 ## Frontend
 
-Vitest + Testing Library for the shell, health client, login form, client directory, standards catalogue, auditor directory, programme directory, and scheduled-audit fieldwork action.
+Vitest + Testing Library for the shell, health client, login form, client directory, standards catalogue, auditor directory, programme directory, scheduled-audit fieldwork action, and findings directory.
 
 ## Critical scenarios (later phases)
 
@@ -61,7 +67,7 @@ Documented here so they are not lost:
 - Tenant A cannot access Tenant B
 - Missing permission denied
 - Expired auditor competency blocks assignment (Phase 5 eligibility API and Phase 6 assign)
-- Closed finding cannot be edited outside workflow
+- Closed finding cannot be edited outside workflow (Phase 8)
 - Certificate issue requires approvals
 - Expired certificate identified
 - Overdue payment calculated
