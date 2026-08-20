@@ -179,10 +179,10 @@ function Directory({
   titleKey,
   to,
 }: {
-  rows: { id: string; status: string; [key: string]: unknown }[]
+  rows: { id: string; status: string }[]
   empty: string
-  numberKey: string
-  titleKey?: string
+  numberKey: 'complaintNumber' | 'appealNumber' | 'riskNumber' | 'impartialityNumber'
+  titleKey?: 'title' | 'subject'
   to: (id: string) => string
 }) {
   return (
@@ -196,17 +196,20 @@ function Directory({
           </tr>
         </thead>
         <tbody>
-          {rows.map((row) => (
-            <tr key={row.id} className="border-t border-slate-100">
-              <td className="px-4 py-2 font-mono text-xs">
-                <Link className="text-brand-500 underline" to={to(row.id)}>
-                  {String(row[numberKey])}
-                </Link>
-              </td>
-              {titleKey && <td className="px-4 py-2">{String(row[titleKey] ?? '')}</td>}
-              <td className="px-4 py-2">{row.status}</td>
-            </tr>
-          ))}
+          {rows.map((row) => {
+            const record = row as Record<string, string>
+            return (
+              <tr key={row.id} className="border-t border-slate-100">
+                <td className="px-4 py-2 font-mono text-xs">
+                  <Link className="text-brand-500 underline" to={to(row.id)}>
+                    {record[numberKey]}
+                  </Link>
+                </td>
+                {titleKey && <td className="px-4 py-2">{record[titleKey] ?? ''}</td>}
+                <td className="px-4 py-2">{row.status}</td>
+              </tr>
+            )
+          })}
           {rows.length === 0 && (
             <tr>
               <td className="px-4 py-6 text-slate-500" colSpan={titleKey ? 3 : 2}>
