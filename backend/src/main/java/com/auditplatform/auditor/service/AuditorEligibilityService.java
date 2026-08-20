@@ -55,7 +55,7 @@ public class AuditorEligibilityService {
         }
 
         List<AuditorCompetency> matching = competencyRepository
-                .findByTenantIdAndAuditorIdAndDeletedAtIsNullOrderByValidFromDesc(auditor.getTenantId(), auditor.getId())
+                .findByTenantIdAndAuditorIdAndDeletedAtIsNullOrderByValidFromDesc(auditor.getTenantId(), auditorId)
                 .stream()
                 .filter(item -> item.covers(blankToNull(standardId), blankToNull(schemeId)))
                 .toList();
@@ -70,7 +70,7 @@ public class AuditorEligibilityService {
         }
 
         boolean unavailable = availabilityRepository
-                .findByTenantIdAndAuditorIdAndDeletedAtIsNullOrderByStartOnAsc(auditor.getTenantId(), auditor.getId())
+                .findByTenantIdAndAuditorIdAndDeletedAtIsNullOrderByStartOnAsc(auditor.getTenantId(), auditorId)
                 .stream()
                 .anyMatch(item -> item.getKind() == AvailabilityKind.UNAVAILABLE && item.covers(date));
         if (unavailable) {
@@ -78,7 +78,7 @@ public class AuditorEligibilityService {
         }
 
         return new EligibilityResponse(
-                auditor.getId(),
+                auditorId,
                 blankToNull(standardId),
                 blankToNull(schemeId),
                 date,
