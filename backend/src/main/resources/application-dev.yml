@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: ${AUDIT_PLATFORM_DATASOURCE_URL:jdbc:mysql://localhost:3306/audit_platform?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=utf8}
+    username: ${AUDIT_PLATFORM_DATASOURCE_USERNAME:audit_platform}
+    password: ${AUDIT_PLATFORM_DATASOURCE_PASSWORD:change-me}
+    hikari:
+      pool-name: audit-platform-dev
+      maximum-pool-size: 10
+      minimum-idle: 2
+  jpa:
+    show-sql: false

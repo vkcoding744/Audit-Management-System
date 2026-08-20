@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    hikari:
+      pool-name: audit-platform-test
+      maximum-pool-size: 4
+
+logging:
+  level:
+    root: WARN
+    com.auditplatform: INFO
