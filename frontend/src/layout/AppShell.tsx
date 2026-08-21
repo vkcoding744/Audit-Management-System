@@ -27,6 +27,7 @@ const nav = [
   { to: '/roles', label: 'Roles', permission: 'ROLE_VIEW' },
   { to: '/tenants', label: 'Tenants', permission: 'TENANT_VIEW' },
   { to: '/sessions', label: 'Sessions', permission: null },
+  { to: '/audit-logs', label: 'Audit logs', permission: 'AUDIT_LOG_VIEW' },
 ]
 
 const upcoming: string[] = []
@@ -87,7 +88,7 @@ export function AppShell() {
         <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
           <div>
             <p className="text-xs text-slate-500">Certification</p>
-            <p className="text-sm font-medium">Phase 18 · Tenant operations dashboard</p>
+            <p className="text-sm font-medium">Phase 19 · Tenant-scoped audit log viewer</p>
           </div>
           <div className="flex items-center gap-3">
             {user?.platformAdmin && (

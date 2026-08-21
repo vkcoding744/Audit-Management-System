@@ -49,6 +49,7 @@ import { ReportExportDetailPage } from './pages/ReportExportDetailPage'
 import { AiPage } from './pages/AiPage'
 import { AiGenerationDetailPage } from './pages/AiGenerationDetailPage'
 import { DashboardPage } from './pages/DashboardPage'
+import { AuditLogsPage } from './pages/AuditLogsPage'
 
 export default function App() {
   return (
@@ -108,6 +109,7 @@ export default function App() {
         <Route path="/roles" element={<RolesPage />} />
         <Route path="/tenants" element={<TenantsPage />} />
         <Route path="/sessions" element={<SessionsPage />} />
+        <Route path="/audit-logs" element={<AuditLogsPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

@@ -424,6 +424,15 @@ Tenant-scoped operational counts from live rows. Requires an effective tenant (J
 
 Fields: `clients`, `upcomingAudits`, `completedAudits`, `openFindings`, `overdueCapa`, `activeCertificates`, `certificatesExpiringSoon` (90 days), `outstandingInvoices`, `openComplaints`, `openAppeals`, `pendingAiReviews`.
 
+## Phase 19 endpoints
+
+Append-only `audit_logs` from Phase 2. Tenant filter always comes from the principal. Optional query: `action`, `entityType`.
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| GET | `/api/v1/audit-logs` | `AUDIT_LOG_VIEW` | Paginated list, newest first |
+| GET | `/api/v1/audit-logs/{id}` | `AUDIT_LOG_VIEW` | Detail |
+
 ## Status codes
 
 | Code | Use |
