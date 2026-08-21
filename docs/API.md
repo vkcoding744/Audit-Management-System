@@ -401,6 +401,19 @@ Definitions `RPT-%06d`. Exports `EXP-%06d`. Datasets: `CLIENTS`, `AUDITS`, `FIND
 
 Report create body (required: `name`, `dataset`): `description`, `format` (default `CSV`), `statusFilter` (dataset status enum name, or omitted for all rows). Exports are capped at 1000 rows.
 
+## Phase 17 endpoints
+
+Generations `AIG-%06d`. Purposes: `GENERIC`, `FINDING_SUMMARY`, `AUDIT_NARRATIVE`, `COMPLAINT_RESPONSE`. Status: create → `PENDING_REVIEW` (or `FAILED`), then human `APPROVE`/`REJECT`. Patch of output is allowed only while `PENDING_REVIEW`. Approve does not mutate certificates or findings. Default provider is `stub` (`audit.ai.provider`).
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| GET/POST | `/api/v1/ai-generations` | `AI_VIEW` / `AI_UPDATE` | Paginated list (`status`) or generate (201) |
+| GET/PATCH | `/api/v1/ai-generations/{id}` | `AI_VIEW` / `AI_UPDATE` | Detail; patch output only while pending review |
+| POST | `/api/v1/ai-generations/{id}/approve` | `AI_UPDATE` | Human approve |
+| POST | `/api/v1/ai-generations/{id}/reject` | `AI_UPDATE` | Human reject |
+
+Create body (required: `prompt`): `purpose`, `linkedType` (`FINDING`, `AUDIT`, `COMPLAINT`) with `linkedId`.
+
 ## Status codes
 
 | Code | Use |

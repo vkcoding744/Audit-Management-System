@@ -4,7 +4,7 @@ Multi-tenant SaaS for professional audit, inspection, testing, and certification
 
 This repository is a **modular monolith**: Spring Boot 3 / Java 21 API, React + TypeScript SPA, MySQL 8, Flyway, and Docker Compose.
 
-Phase 16 (current) adds report definitions and CSV/JSON exports generated on run. Phases 2–15 remain. Set `AUDIT_PLATFORM_BOOTSTRAP_ADMIN_EMAIL` and `AUDIT_PLATFORM_BOOTSTRAP_ADMIN_PASSWORD` before first start to create the platform super admin. Platform admins must choose a tenant (header `X-Tenant-Id`) before creating clients, standards, auditors, or programmes.
+Phase 17 (current) adds provider-agnostic AI drafts with mandatory human review. Approving a draft does not issue certificates or close findings. Phases 2–16 remain. Set `AUDIT_PLATFORM_BOOTSTRAP_ADMIN_EMAIL` and `AUDIT_PLATFORM_BOOTSTRAP_ADMIN_PASSWORD` before first start to create the platform super admin. Platform admins must choose a tenant (header `X-Tenant-Id`) before creating clients, standards, auditors, or programmes.
 
 ## Documentation
 

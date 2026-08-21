@@ -59,7 +59,7 @@ springdoc:
 audit:
   api:
     docs-enabled: ${AUDIT_PLATFORM_API_DOCS_ENABLED:false}
-    version: 0.16.0
+    version: 0.17.0
   cors:
     allowed-origins: ${AUDIT_PLATFORM_CORS_ORIGINS:http://localhost:5173}
   rate-limit:
@@ -76,6 +76,10 @@ audit:
     from: ${AUDIT_PLATFORM_MAIL_FROM:noreply@localhost}
     smtp-host: ${AUDIT_PLATFORM_SMTP_HOST:}
     smtp-port: ${AUDIT_PLATFORM_SMTP_PORT:1025}
+  ai:
+    provider: ${AUDIT_PLATFORM_AI_PROVIDER:stub}
+    model: ${AUDIT_PLATFORM_AI_MODEL:stub-v1}
+    prompt-version: ${AUDIT_PLATFORM_AI_PROMPT_VERSION:v1}
   auth:
     jwt-secret: ${AUDIT_PLATFORM_JWT_SECRET:change-me-in-env-jwt-secret-32b!!}
     access-token-minutes: ${AUDIT_PLATFORM_ACCESS_TOKEN_MINUTES:15}
@@ -101,7 +105,7 @@ logging:
 audit:
   api:
     docs-enabled: true
-    version: 0.16.0
+    version: 0.17.0
   auth:
     expose-dev-tokens: true
 

@@ -46,6 +46,8 @@ import { NotificationJobDetailPage } from './pages/NotificationJobDetailPage'
 import { ReportsPage } from './pages/ReportsPage'
 import { ReportDetailPage } from './pages/ReportDetailPage'
 import { ReportExportDetailPage } from './pages/ReportExportDetailPage'
+import { AiPage } from './pages/AiPage'
+import { AiGenerationDetailPage } from './pages/AiGenerationDetailPage'
 
 export default function App() {
   return (
@@ -98,6 +100,8 @@ export default function App() {
         <Route path="/reports" element={<ReportsPage />} />
         <Route path="/reports/:id" element={<ReportDetailPage />} />
         <Route path="/report-exports/:id" element={<ReportExportDetailPage />} />
+        <Route path="/ai" element={<AiPage />} />
+        <Route path="/ai-generations/:id" element={<AiGenerationDetailPage />} />
         <Route path="/users" element={<UsersPage />} />
         <Route path="/roles" element={<RolesPage />} />
         <Route path="/tenants" element={<TenantsPage />} />

@@ -717,6 +717,29 @@ export interface ReportExportSummary {
   completedAt: string | null
 }
 
+export type AiPurpose = 'GENERIC' | 'FINDING_SUMMARY' | 'AUDIT_NARRATIVE' | 'COMPLAINT_RESPONSE'
+export type AiGenerationStatus = 'PENDING_REVIEW' | 'APPROVED' | 'REJECTED' | 'FAILED'
+export type AiLinkedType = 'FINDING' | 'AUDIT' | 'COMPLAINT'
+
+export interface AiGenerationSummary {
+  id: string
+  tenantId: string
+  generationNumber: string
+  purpose: AiPurpose
+  prompt: string
+  output: string
+  provider: string
+  model: string
+  promptVersion: string
+  linkedType: AiLinkedType | null
+  linkedId: string | null
+  status: AiGenerationStatus
+  errorMessage: string | null
+  reviewedBy: string | null
+  reviewedAt: string | null
+  reviewNotes: string | null
+}
+
 export interface AuthSession {
   id: string
   ipAddress: string | null

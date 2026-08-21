@@ -22,6 +22,8 @@ docker compose up --build
 
 Optional MailHog (`docker compose --profile mailhog up`): SMTP 1025, UI 8025. Set `AUDIT_PLATFORM_MAIL_PROVIDER=smtp` and `AUDIT_PLATFORM_SMTP_HOST=localhost`.
 
+AI drafts default to `AUDIT_PLATFORM_AI_PROVIDER=stub`. Vendor keys belong in the environment, not MySQL.
+
 ## Backend only
 
 ```bash
