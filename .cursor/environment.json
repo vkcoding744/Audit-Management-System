@@ -1,0 +1,32 @@
+{
+  "name": "Audit Management System",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "."
+  },
+  "user": "ubuntu",
+  "install": "./scripts/cloud-agent-install.sh",
+  "start": "./scripts/cloud-agent-start.sh",
+  "ports": [
+    {
+      "name": "frontend",
+      "port": 5173
+    },
+    {
+      "name": "backend",
+      "port": 8081
+    }
+  ],
+  "terminals": [
+    {
+      "name": "backend",
+      "command": "bash -lc 'set -a && source /workspace/.env && set +a && cd /workspace/backend && ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev'",
+      "description": "Spring Boot API (port 8081)"
+    },
+    {
+      "name": "frontend",
+      "command": "bash -lc 'cd /workspace/frontend && npm run dev -- --host 0.0.0.0 --port 5173'",
+      "description": "Vite dev server (port 5173)"
+    }
+  ]
+}

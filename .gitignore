@@ -41,7 +41,9 @@ uploads/
 data/mysql/
 
 # OS / tooling
-.cursor/
+.cursor/*
+!.cursor/environment.json
+!.cursor/Dockerfile
 .mvn/wrapper/maven-wrapper.jar.download
 coverage/
 .nyc_output/
