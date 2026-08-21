@@ -25,6 +25,8 @@ public interface FindingRepository extends JpaRepository<Finding, String> {
 
     long countByTenantIdAndClientIdAndStatusAndDeletedAtIsNull(String tenantId, String clientId, FindingStatus status);
 
+    long countByTenantIdAndStatusAndDeletedAtIsNull(String tenantId, FindingStatus status);
+
     long countByAuditIdAndStatusAndSeverityInAndDeletedAtIsNull(
             String auditId,
             FindingStatus status,

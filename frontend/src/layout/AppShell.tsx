@@ -7,6 +7,7 @@ import { useState } from 'react'
 
 const nav = [
   { to: '/', label: 'System status', permission: null },
+  { to: '/dashboard', label: 'Dashboard', permission: 'DASHBOARD_VIEW' },
   { to: '/clients', label: 'Clients', permission: 'CLIENT_VIEW' },
   { to: '/leads', label: 'Leads', permission: 'LEAD_VIEW' },
   { to: '/standards', label: 'Standards', permission: 'STANDARD_VIEW' },
@@ -26,9 +27,10 @@ const nav = [
   { to: '/roles', label: 'Roles', permission: 'ROLE_VIEW' },
   { to: '/tenants', label: 'Tenants', permission: 'TENANT_VIEW' },
   { to: '/sessions', label: 'Sessions', permission: null },
+  { to: '/audit-logs', label: 'Audit logs', permission: 'AUDIT_LOG_VIEW' },
 ]
 
-const upcoming = ['Dashboard']
+const upcoming: string[] = []
 
 export function AppShell() {
   const { user, logout, hasPermission } = useAuth()
@@ -70,19 +72,23 @@ export function AppShell() {
                 {item.label}
               </NavLink>
             ))}
-          <p className="mt-6 px-3 text-xs uppercase tracking-wide text-brand-100">Later phases</p>
-          <ul className="mt-2 space-y-1 px-3 text-sm text-brand-100/70">
-            {upcoming.map((label) => (
-              <li key={label}>{label}</li>
-            ))}
-          </ul>
+          {upcoming.length > 0 && (
+            <>
+              <p className="mt-6 px-3 text-xs uppercase tracking-wide text-brand-100">Later phases</p>
+              <ul className="mt-2 space-y-1 px-3 text-sm text-brand-100/70">
+                {upcoming.map((label) => (
+                  <li key={label}>{label}</li>
+                ))}
+              </ul>
+            </>
+          )}
         </nav>
       </aside>
       <div className="flex min-h-screen flex-col">
         <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
           <div>
             <p className="text-xs text-slate-500">Certification</p>
-            <p className="text-sm font-medium">Phase 17 · Provider-agnostic AI drafts with human review</p>
+            <p className="text-sm font-medium">Phase 19 · Tenant-scoped audit log viewer</p>
           </div>
           <div className="flex items-center gap-3">
             {user?.platformAdmin && (

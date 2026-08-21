@@ -24,4 +24,6 @@ public interface AppealRepository extends JpaRepository<Appeal, String> {
             String clientId,
             Collection<AppealStatus> statuses
     );
+
+    long countByTenantIdAndStatusInAndDeletedAtIsNull(String tenantId, Collection<AppealStatus> statuses);
 }

@@ -26,4 +26,6 @@ public interface InvoiceRepository extends JpaRepository<Invoice, String> {
             String clientId,
             Collection<InvoiceStatus> statuses
     );
+
+    long countByTenantIdAndStatusInAndDeletedAtIsNull(String tenantId, Collection<InvoiceStatus> statuses);
 }

@@ -48,6 +48,8 @@ import { ReportDetailPage } from './pages/ReportDetailPage'
 import { ReportExportDetailPage } from './pages/ReportExportDetailPage'
 import { AiPage } from './pages/AiPage'
 import { AiGenerationDetailPage } from './pages/AiGenerationDetailPage'
+import { DashboardPage } from './pages/DashboardPage'
+import { AuditLogsPage } from './pages/AuditLogsPage'
 
 export default function App() {
   return (
@@ -63,6 +65,7 @@ export default function App() {
         }
       >
         <Route path="/" element={<SystemStatusPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/clients" element={<ClientsPage />} />
         <Route path="/clients/:id" element={<ClientDetailPage />} />
         <Route path="/leads" element={<LeadsPage />} />
@@ -106,6 +109,7 @@ export default function App() {
         <Route path="/roles" element={<RolesPage />} />
         <Route path="/tenants" element={<TenantsPage />} />
         <Route path="/sessions" element={<SessionsPage />} />
+        <Route path="/audit-logs" element={<AuditLogsPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
