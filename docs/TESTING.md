@@ -4,6 +4,13 @@
 
 Stack: JUnit 5, Mockito, Spring MockMvc, Testcontainers MySQL 8.
 
+Phase 20 coverage:
+
+- RFC 6238 TOTP SHA-1 vectors (`59` → `287082`)
+- Login with MFA enabled: missing code is `AUTH_MFA_REQUIRED`; bad code is `AUTH_MFA_INVALID`
+- In-memory rate limiter denies after the per-minute cap
+- Isolation service no-arg constructor still works without JPA; filter is skipped when the EntityManager is not in a transaction
+
 Phase 19 coverage:
 
 - `AUDIT_LOG_VIEW` required to list audit logs; other authorities are 403; unauthenticated is 401
@@ -131,7 +138,7 @@ Phase 2 coverage:
 
 ## Frontend
 
-Vitest + Testing Library for the shell, health client, login form, client directory, leads directory, standards catalogue, auditor directory, programme directory, scheduled-audit fieldwork action, findings directory, certificates directory, documents directory, finance directory, training directory, governance directory, notifications directory, reports directory, AI drafts directory, operations dashboard, and audit log directory.
+Vitest + Testing Library for the shell, health client, login form, client directory, leads directory, standards catalogue, auditor directory, programme directory, scheduled-audit fieldwork action, findings directory, certificates directory, documents directory, finance directory, training directory, governance directory, notifications directory, reports directory, AI drafts directory, operations dashboard, audit log directory, and MFA controls on sessions.
 
 ## Critical scenarios (later phases)
 
@@ -153,6 +160,7 @@ Documented here so they are not lost:
 - Approved AI draft cannot be approved again; stub output requires human review (Phase 17)
 - Tenant dashboard requires `DASHBOARD_VIEW` and an effective tenant (Phase 18)
 - Tenant A cannot read Tenant B's audit log (Phase 19)
+- MFA login requires a valid TOTP when enabled (Phase 20)
 
 ## Running
 

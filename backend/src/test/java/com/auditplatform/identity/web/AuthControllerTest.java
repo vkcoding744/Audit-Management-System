@@ -14,6 +14,7 @@ import com.auditplatform.identity.api.TokenResponse;
 import com.auditplatform.identity.api.UserSummaryResponse;
 import com.auditplatform.identity.service.AuthService;
 import com.auditplatform.identity.service.JwtService;
+import com.auditplatform.identity.service.MfaService;
 import com.auditplatform.identity.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -71,7 +72,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "audit.auth.expose-dev-tokens=false",
         "audit.auth.require-email-verified=false",
         "audit.auth.bootstrap-admin-email=",
-        "audit.auth.bootstrap-admin-password="
+        "audit.auth.bootstrap-admin-password=",
+        "audit.auth.mfa-encrypt-key=",
+        "audit.rate-limit.provider=memory"
 })
 class AuthControllerTest {
 
@@ -86,6 +89,9 @@ class AuthControllerTest {
 
     @MockBean
     private UserService userService;
+
+    @MockBean
+    private MfaService mfaService;
 
     @Test
     void loginIsPublic() throws Exception {
@@ -108,6 +114,13 @@ class AuthControllerTest {
     @Test
     void meRequiresAuthentication() throws Exception {
         mockMvc.perform(get("/api/v1/auth/me"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error.code").value("SYS_UNAUTHORIZED"));
+    }
+
+    @Test
+    void mfaSetupRequiresAuthentication() throws Exception {
+        mockMvc.perform(post("/api/v1/auth/mfa/setup"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.error.code").value("SYS_UNAUTHORIZED"));
     }

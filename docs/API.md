@@ -68,6 +68,10 @@ Phase 1 tenant hint: `X-Tenant-Id` is honoured **only** for platform super admin
 | GET | `/api/v1/auth/me` | Authenticated | Current user |
 | GET | `/api/v1/auth/sessions` | Authenticated | Device sessions |
 | DELETE | `/api/v1/auth/sessions/{id}` | Authenticated | Revoke a session |
+| GET | `/api/v1/auth/mfa` | Authenticated | MFA enabled flag |
+| POST | `/api/v1/auth/mfa/setup` | Authenticated | Generate TOTP secret (once; not yet enabled) |
+| POST | `/api/v1/auth/mfa/enable` | Authenticated | Confirm TOTP and set `mfaEnabled` |
+| POST | `/api/v1/auth/mfa/disable` | Authenticated | Disable MFA (code + password) |
 | GET/POST | `/api/v1/users` | `USER_VIEW` / `USER_CREATE` | User directory |
 | PATCH | `/api/v1/users/{id}` | `USER_UPDATE` | Update profile/roles |
 | POST | `/api/v1/users/{id}/activate` | `USER_DEACTIVATE` | Enable account |
@@ -432,6 +436,19 @@ Append-only `audit_logs` from Phase 2. Tenant filter always comes from the princ
 | --- | --- | --- | --- |
 | GET | `/api/v1/audit-logs` | `AUDIT_LOG_VIEW` | Paginated list, newest first |
 | GET | `/api/v1/audit-logs/{id}` | `AUDIT_LOG_VIEW` | Detail |
+
+## Phase 20 endpoints
+
+TOTP (RFC 6238, 6 digits, 30s, ±1 window). Setup returns `secret` and `otpauthUri` once. Login with `mfaEnabled` users must send `mfaCode`.
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| GET | `/api/v1/auth/mfa` | Authenticated | `{ mfaEnabled }` |
+| POST | `/api/v1/auth/mfa/setup` | Authenticated | Generate encrypted secret; MFA stays off until enable |
+| POST | `/api/v1/auth/mfa/enable` | Authenticated | Body `{ code }` |
+| POST | `/api/v1/auth/mfa/disable` | Authenticated | Body `{ code, password }` |
+
+Rate limiting remains off until `AUDIT_PLATFORM_RATE_LIMIT_ENABLED=true`. Set `AUDIT_PLATFORM_RATE_LIMIT_PROVIDER=redis` and `AUDIT_PLATFORM_REDIS_URI` for multi-instance.
 
 ## Status codes
 

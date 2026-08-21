@@ -18,7 +18,7 @@
 | Login lockout | Phase 2 |
 | Password reset / email verification tokens (hashed) | Phase 2 |
 | Session/device list + revoke | Phase 2 |
-| MFA columns + login hook | Ready; TOTP not issued yet |
+| MFA columns + TOTP setup/enable/disable and login verification | Phase 20 |
 | CORS allowlist / security headers | Phase 1 |
 | CSRF | Disabled: Bearer API, no cookie session |
 | Default Spring user | Disabled |
@@ -28,10 +28,13 @@
 | AI drafts require human review; vendor keys stay in the environment | Phase 17 |
 | Tenant dashboard counts filtered by authenticated tenant | Phase 18 |
 | Audit log list is tenant-scoped; `AUDIT_LOG_VIEW` required | Phase 19 |
+| Redis-backed rate limit adapter (`audit.rate-limit.provider=redis`) | Phase 20 |
+| Hibernate tenant query filter on `TenantAwareEntity` | Phase 20 |
 
 ## Authentication
 
-- Login: `POST /api/v1/auth/login` with email + password.
+- Login: `POST /api/v1/auth/login` with email + password. If `mfaEnabled`, a 6-digit TOTP is required (`AUTH_MFA_REQUIRED` then `AUTH_MFA_INVALID` on mismatch).
+- MFA: `POST /api/v1/auth/mfa/setup` stores an AES-GCM encrypted secret (`AUDIT_PLATFORM_MFA_ENCRYPT_KEY`, else derived from the JWT secret — set a dedicated key in production). Enable with a valid code; disable with code + password.
 - Access token: HMAC-SHA256 JWT, short TTL (default 15 minutes), claims: `sub` (user id), `tid`, `sid`, `plat`, `perms`.
 - Refresh token: opaque, stored as SHA-256, rotated on use. Reuse of a revoked token in the same family revokes the family.
 - Logout revokes the current session; logout-all revokes every session for the user.

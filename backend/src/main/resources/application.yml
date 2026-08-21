@@ -59,12 +59,14 @@ springdoc:
 audit:
   api:
     docs-enabled: ${AUDIT_PLATFORM_API_DOCS_ENABLED:false}
-    version: 0.19.0
+    version: 0.20.0
   cors:
     allowed-origins: ${AUDIT_PLATFORM_CORS_ORIGINS:http://localhost:5173}
   rate-limit:
     enabled: ${AUDIT_PLATFORM_RATE_LIMIT_ENABLED:false}
     requests-per-minute: ${AUDIT_PLATFORM_RATE_LIMIT_REQUESTS_PER_MINUTE:120}
+    provider: ${AUDIT_PLATFORM_RATE_LIMIT_PROVIDER:memory}
+    redis-uri: ${AUDIT_PLATFORM_REDIS_URI:redis://localhost:6379}
   storage:
     provider: ${AUDIT_PLATFORM_STORAGE_PROVIDER:local}
     local-root: ${AUDIT_PLATFORM_STORAGE_LOCAL_ROOT:${java.io.tmpdir}/audit-platform-files}
@@ -90,6 +92,7 @@ audit:
     require-email-verified: false
     bootstrap-admin-email: ${AUDIT_PLATFORM_BOOTSTRAP_ADMIN_EMAIL:}
     bootstrap-admin-password: ${AUDIT_PLATFORM_BOOTSTRAP_ADMIN_PASSWORD:}
+    mfa-encrypt-key: ${AUDIT_PLATFORM_MFA_ENCRYPT_KEY:}
 ---
 spring:
   config:
@@ -105,7 +108,7 @@ logging:
 audit:
   api:
     docs-enabled: true
-    version: 0.19.0
+    version: 0.20.0
   auth:
     expose-dev-tokens: true
 

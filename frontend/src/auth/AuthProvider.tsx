@@ -6,7 +6,7 @@ import { tokenStore } from './tokenStore'
 type AuthContextValue = {
   user: UserSummary | null
   loading: boolean
-  login: (email: string, password: string) => Promise<void>
+  login: (email: string, password: string, mfaCode?: string) => Promise<void>
   logout: () => Promise<void>
   hasPermission: (code: string) => boolean
 }
@@ -38,8 +38,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     void hydrate()
   }, [hydrate])
 
-  const login = useCallback(async (email: string, password: string) => {
-    const response = await loginApi(email, password)
+  const login = useCallback(async (email: string, password: string, mfaCode?: string) => {
+    const response = await loginApi(email, password, mfaCode)
     if (!response.success || !response.data) {
       throw new Error(response.error?.message ?? 'Sign in failed')
     }

@@ -315,6 +315,10 @@ Flyway `V18__dashboard.sql` adds `DASHBOARD_VIEW`. There is no new fact table; `
 
 No new table. `GET /api/v1/audit-logs` reads Phase 2 `audit_logs` with tenant isolation. `AUDIT_LOG_VIEW` already exists in V2.
 
+## Phase 20 hardening
+
+No new Flyway version. TOTP secrets use existing `users.mfa_secret_encrypted` (AES-GCM). Hibernate filter `tenantIsolation` applies to `TenantAwareEntity` tables only.
+
 ## Isolation rules
 
 - Tenant-owned tables **must** include `tenant_id` and an index on it.
