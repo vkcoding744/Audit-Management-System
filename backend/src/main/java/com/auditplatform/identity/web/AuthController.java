@@ -8,6 +8,10 @@ import com.auditplatform.identity.api.ForgotPasswordRequest;
 import com.auditplatform.identity.api.ForgotPasswordResponse;
 import com.auditplatform.identity.api.LoginRequest;
 import com.auditplatform.identity.api.LogoutRequest;
+import com.auditplatform.identity.api.MfaDisableRequest;
+import com.auditplatform.identity.api.MfaEnableRequest;
+import com.auditplatform.identity.api.MfaSetupResponse;
+import com.auditplatform.identity.api.MfaStatusResponse;
 import com.auditplatform.identity.api.RefreshRequest;
 import com.auditplatform.identity.api.ResetPasswordRequest;
 import com.auditplatform.identity.api.SessionResponse;
@@ -16,6 +20,7 @@ import com.auditplatform.identity.api.UserSummaryResponse;
 import com.auditplatform.identity.api.VerifyEmailIssueResponse;
 import com.auditplatform.identity.api.VerifyEmailRequest;
 import com.auditplatform.identity.service.AuthService;
+import com.auditplatform.identity.service.MfaService;
 import com.auditplatform.identity.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -40,10 +45,12 @@ public class AuthController {
 
     private final AuthService authService;
     private final UserService userService;
+    private final MfaService mfaService;
 
-    public AuthController(AuthService authService, UserService userService) {
+    public AuthController(AuthService authService, UserService userService, MfaService mfaService) {
         this.authService = authService;
         this.userService = userService;
+        this.mfaService = mfaService;
     }
 
     @PostMapping("/login")
@@ -103,6 +110,35 @@ public class AuthController {
     @GetMapping("/me")
     public ApiResponse<UserSummaryResponse> me(@AuthenticationPrincipal PlatformPrincipal principal) {
         return ApiResponse.ok(authService.me(principal.userId()), MDC.get(CorrelationId.MDC_KEY));
+    }
+
+    @GetMapping("/mfa")
+    public ApiResponse<MfaStatusResponse> mfaStatus(@AuthenticationPrincipal PlatformPrincipal principal) {
+        return ApiResponse.ok(mfaService.status(principal.userId()), MDC.get(CorrelationId.MDC_KEY));
+    }
+
+    @PostMapping("/mfa/setup")
+    public ApiResponse<MfaSetupResponse> mfaSetup(@AuthenticationPrincipal PlatformPrincipal principal) {
+        return ApiResponse.ok(mfaService.setup(principal.userId()), MDC.get(CorrelationId.MDC_KEY));
+    }
+
+    @PostMapping("/mfa/enable")
+    public ApiResponse<MfaStatusResponse> mfaEnable(
+            @AuthenticationPrincipal PlatformPrincipal principal,
+            @Valid @RequestBody MfaEnableRequest request
+    ) {
+        return ApiResponse.ok(mfaService.enable(principal.userId(), request.code()), MDC.get(CorrelationId.MDC_KEY));
+    }
+
+    @PostMapping("/mfa/disable")
+    public ApiResponse<MfaStatusResponse> mfaDisable(
+            @AuthenticationPrincipal PlatformPrincipal principal,
+            @Valid @RequestBody MfaDisableRequest request
+    ) {
+        return ApiResponse.ok(
+                mfaService.disable(principal.userId(), request.code(), request.password()),
+                MDC.get(CorrelationId.MDC_KEY)
+        );
     }
 
     @GetMapping("/sessions")

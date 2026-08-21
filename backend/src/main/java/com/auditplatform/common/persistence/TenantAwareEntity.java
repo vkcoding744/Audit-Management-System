@@ -4,9 +4,19 @@ import com.auditplatform.common.tenant.TenantContext;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 
 @MappedSuperclass
+@FilterDef(
+        name = TenantAwareEntity.TENANT_FILTER,
+        parameters = @ParamDef(name = "tenantId", type = String.class)
+)
+@Filter(name = TenantAwareEntity.TENANT_FILTER, condition = "tenant_id = :tenantId")
 public abstract class TenantAwareEntity extends AuditableEntity {
+
+    public static final String TENANT_FILTER = "tenantIsolation";
 
     @Column(name = "tenant_id", length = 36, nullable = false, updatable = false)
     private String tenantId;

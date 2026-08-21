@@ -20,6 +20,8 @@ docker compose up --build
 - Swagger (dev): http://localhost:8081/swagger-ui.html
 - MySQL: localhost:3306
 
+Optional Redis (`docker compose --profile redis up`): set `AUDIT_PLATFORM_RATE_LIMIT_PROVIDER=redis`, `AUDIT_PLATFORM_REDIS_URI=redis://localhost:6379` (or `redis://redis:6379` from the backend container), and `AUDIT_PLATFORM_RATE_LIMIT_ENABLED=true` for multi-instance limiting.
+
 Optional MailHog (`docker compose --profile mailhog up`): SMTP 1025, UI 8025. Set `AUDIT_PLATFORM_MAIL_PROVIDER=smtp` and `AUDIT_PLATFORM_SMTP_HOST=localhost`.
 
 AI drafts default to `AUDIT_PLATFORM_AI_PROVIDER=stub`. Vendor keys belong in the environment, not MySQL.

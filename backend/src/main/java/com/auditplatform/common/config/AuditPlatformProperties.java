@@ -1,6 +1,7 @@
 package com.auditplatform.common.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.util.List;
 
@@ -27,7 +28,18 @@ public record AuditPlatformProperties(
         }
     }
 
-    public record RateLimit(boolean enabled, int requestsPerMinute) {
+    public record RateLimit(
+            boolean enabled,
+            int requestsPerMinute,
+            @DefaultValue("memory") String provider,
+            @DefaultValue("redis://localhost:6379") String redisUri
+    ) {
+        public String providerOrMemory() {
+            if (provider == null || provider.isBlank()) {
+                return "memory";
+            }
+            return provider.trim().toLowerCase();
+        }
     }
 
     public record Auth(
@@ -39,7 +51,8 @@ public record AuditPlatformProperties(
             boolean exposeDevTokens,
             boolean requireEmailVerified,
             String bootstrapAdminEmail,
-            String bootstrapAdminPassword
+            String bootstrapAdminPassword,
+            @DefaultValue("") String mfaEncryptKey
     ) {
     }
 }

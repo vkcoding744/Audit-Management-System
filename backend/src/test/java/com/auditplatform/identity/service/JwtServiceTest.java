@@ -15,7 +15,7 @@ class JwtServiceTest {
         AuditPlatformProperties properties = new AuditPlatformProperties(
                 new AuditPlatformProperties.Api(false, "0.2.0"),
                 new AuditPlatformProperties.Cors("http://localhost:5173"),
-                new AuditPlatformProperties.RateLimit(false, 120),
+                new AuditPlatformProperties.RateLimit(false, 120, "memory", "redis://localhost:6379"),
                 new AuditPlatformProperties.Auth(
                         "unit-test-jwt-secret-key-32chars!!",
                         15,
@@ -24,6 +24,7 @@ class JwtServiceTest {
                         15,
                         false,
                         false,
+                        "",
                         "",
                         ""
                 )

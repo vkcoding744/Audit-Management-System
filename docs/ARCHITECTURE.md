@@ -6,9 +6,9 @@
 
 ## Current phase
 
-**Phase 19** adds a tenant-scoped audit log viewer for the `audit_logs` table that has existed since Phase 2. `GET /api/v1/audit-logs` requires `AUDIT_LOG_VIEW` and an effective tenant. Entries are append-only; Tenant A cannot read Tenant B.
+**Phase 20** hardens authentication and tenancy: RFC 6238 TOTP MFA (encrypted secrets), a `RateLimitPort` with in-memory default and Redis adapter, and Hibernate `tenantIsolation` filters on `TenantAwareEntity` when a tenant is in scope.
 
-Phase 1 foundation remains: modular monolith, Flyway, API envelope, CORS/headers, health, tenant discriminator columns.
+Phase 19 remains: tenant-scoped audit log viewer. Phase 1 foundation remains: modular monolith, Flyway, API envelope, CORS/headers, health, tenant discriminator columns.
 
 ## Style of architecture
 
@@ -21,7 +21,7 @@ Bounded contexts live as Java packages under `com.auditplatform`. Package bounda
 | `common` | API envelope, errors, tenancy, persistence, logging, security filters | 1 |
 | `system` | Platform health/info (no business data) | 1 |
 | `tenant` | Tenant registry | 1 (schema + entity), 2+ (admin APIs) |
-| `identity` | Users, roles, permissions, sessions | 2 |
+| `identity` | Users, roles, permissions, sessions, TOTP MFA | 2, 20 |
 | `crm` | Clients, sites, contacts, leads | 3, 11 |
 | `standards` | Standards, schemes, clauses, checklists | 4 |
 | `auditor` | Auditor profiles, competency, availability | 5 |
@@ -46,7 +46,7 @@ Rationale for Phase 1:
 
 - Fits a single modular monolith and Flyway.
 - Lowest operational cost for early SaaS.
-- Isolation is enforced in application services and (later) query filters, not by trusting the client.
+- Isolation is enforced in application services (`IsolationService.assertCanAccessTenant` / `requireTenantScope`) and, from Phase 20, Hibernate filter `tenantIsolation` (`tenant_id = :tenantId`) on `TenantAwareEntity` when an `EntityManager` is joined to a transaction and a tenant is bound. Platform admins with no `X-Tenant-Id` leave the filter off. The `tenants`, `permissions`, and `audit_logs` tables are not `TenantAwareEntity` and are not filtered this way.
 
 Every tenant-owned row includes `tenant_id`. Platform-level rows (the `tenants` table itself, global settings) have no tenant owner.
 
@@ -109,13 +109,13 @@ All other `/api/v1/**` routes require authentication and permission checks.
 - Security headers (CSP for API is limited; nosniff; deny frames)
 - Default Spring user **disabled**
 - Secrets only from environment variables
-- Rate limiting filter exists as an in-memory strategy, **off by default** (Redis-backed limiter in a later phase)
+- Rate limiting filter exists; **off by default**. Provider `memory` (single node) or `redis` (`audit.rate-limit.provider`) for multi-instance production.
 
-Authentication is JWT access tokens plus rotating opaque refresh tokens (Phase 2). MFA columns exist; TOTP is not enforced yet.
+Authentication is JWT access tokens plus rotating opaque refresh tokens (Phase 2). MFA columns exist; TOTP setup/enable/disable and login verification are Phase 20.
 
 ## Frontend
 
-React 18 + Vite + TypeScript + Tailwind. The UI calls live APIs for health, identity, clients, leads, standards, schemes, checklists, auditors, programmes, audits, fieldwork, findings, CAPA, certificates, decisions, surveillance, documents, quotes, invoices, payments, training records, competency assessments, complaints, appeals, risks, impartiality, notification templates, channels, jobs, report definitions, exports, AI drafts, the tenant operations dashboard, and audit logs. Client dashboard upcoming/completed audit counts, open findings, overdue CAPA, active certificates, certificates expiring within 90 days, documents, outstanding invoices, open complaints, and open appeals come from persisted rows. It does not mock certification data or copyrighted clause text.
+React 18 + Vite + TypeScript + Tailwind. The UI calls live APIs for health, identity (including TOTP MFA on sessions), clients, leads, standards, schemes, checklists, auditors, programmes, audits, fieldwork, findings, CAPA, certificates, decisions, surveillance, documents, quotes, invoices, payments, training records, competency assessments, complaints, appeals, risks, impartiality, notification templates, channels, jobs, report definitions, exports, AI drafts, the tenant operations dashboard, and audit logs. Client dashboard upcoming/completed audit counts, open findings, overdue CAPA, active certificates, certificates expiring within 90 days, documents, outstanding invoices, open complaints, and open appeals come from persisted rows. It does not mock certification data or copyrighted clause text.
 
 ## Infrastructure
 
@@ -123,9 +123,8 @@ Docker Compose runs MySQL 8, backend, and frontend (Nginx). Optional profiles: `
 
 AWS-ready: 12-factor config, health probes, no baked secrets, object storage SPI (local filesystem or S3).
 
-## Explicit non-goals for Phase 19
+## Explicit non-goals for Phase 20
 
-- TOTP MFA issuance (columns exist; not enforced)
-- Redis-backed rate limiting
-- Hibernate automatic tenant query filters
 - BI cubes and Elasticsearch
+- Bundled copyrighted ISO/IEC text
+- httpOnly cookie sessions (Bearer tokens remain; CSRF stays disabled for the API)

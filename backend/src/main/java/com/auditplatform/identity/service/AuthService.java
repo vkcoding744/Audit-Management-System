@@ -10,7 +10,9 @@ import com.auditplatform.identity.api.SessionResponse;
 import com.auditplatform.identity.api.TokenResponse;
 import com.auditplatform.identity.api.UserSummaryResponse;
 import com.auditplatform.common.tenant.TenantContext;
+import com.auditplatform.identity.crypto.MfaCryptoService;
 import com.auditplatform.identity.crypto.TokenHash;
+import com.auditplatform.identity.crypto.TotpService;
 import com.auditplatform.identity.domain.AuthSession;
 import com.auditplatform.identity.domain.EmailVerificationToken;
 import com.auditplatform.identity.domain.PasswordResetToken;
@@ -42,6 +44,8 @@ public class AuthService {
     private final AuditPlatformProperties properties;
     private final AuditLogService auditLogService;
     private final OutboundEmailPort outboundEmailPort;
+    private final TotpService totpService;
+    private final MfaCryptoService mfaCryptoService;
     private final String dummyPasswordHash;
 
     public AuthService(
@@ -53,7 +57,9 @@ public class AuthService {
             JwtService jwtService,
             AuditPlatformProperties properties,
             AuditLogService auditLogService,
-            OutboundEmailPort outboundEmailPort
+            OutboundEmailPort outboundEmailPort,
+            TotpService totpService,
+            MfaCryptoService mfaCryptoService
     ) {
         this.userAccountRepository = userAccountRepository;
         this.authSessionRepository = authSessionRepository;
@@ -64,6 +70,8 @@ public class AuthService {
         this.properties = properties;
         this.auditLogService = auditLogService;
         this.outboundEmailPort = outboundEmailPort;
+        this.totpService = totpService;
+        this.mfaCryptoService = mfaCryptoService;
         this.dummyPasswordHash = passwordEncoder.encode("not-a-valid-login-attempt");
     }
 
@@ -87,11 +95,14 @@ public class AuthService {
             registerFailure(user);
             throw new ApiException(ErrorCode.AUTH_INVALID_CREDENTIALS, "Invalid email or password");
         }
-        if (user.isMfaEnabled() && (mfaCode == null || mfaCode.isBlank())) {
-            throw new ApiException(ErrorCode.AUTH_MFA_REQUIRED, "MFA challenge is required");
-        }
         if (user.isMfaEnabled()) {
-            throw new ApiException(ErrorCode.AUTH_MFA_REQUIRED, "MFA is enabled but TOTP verification is not configured");
+            if (mfaCode == null || mfaCode.isBlank()) {
+                throw new ApiException(ErrorCode.AUTH_MFA_REQUIRED, "MFA challenge is required");
+            }
+            if (!verifyMfa(user, mfaCode)) {
+                registerFailure(user);
+                throw new ApiException(ErrorCode.AUTH_MFA_INVALID, "Invalid MFA code");
+            }
         }
         if (properties.auth().requireEmailVerified() && user.getEmailVerifiedAt() == null) {
             throw new ApiException(ErrorCode.AUTH_EMAIL_NOT_VERIFIED, "Email is not verified");
@@ -257,6 +268,18 @@ public class AuthService {
         UserAccount user = userAccountRepository.findByIdWithRoles(userId)
                 .orElseThrow(() -> new ApiException(ErrorCode.SYS_NOT_FOUND, "User not found"));
         return UserMapper.toSummary(user);
+    }
+
+    private boolean verifyMfa(UserAccount user, String mfaCode) {
+        if (user.getMfaSecretEncrypted() == null || user.getMfaSecretEncrypted().isBlank()) {
+            return false;
+        }
+        try {
+            String secret = mfaCryptoService.decrypt(user.getMfaSecretEncrypted());
+            return totpService.verify(secret, mfaCode.trim());
+        } catch (RuntimeException ex) {
+            return false;
+        }
     }
 
     private void registerFailure(UserAccount user) {

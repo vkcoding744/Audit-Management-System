@@ -1,8 +1,22 @@
 import { api } from './client'
 import type { ApiResponse, AuthSession, TokenPayload, UserSummary } from './types'
 
-export async function login(email: string, password: string): Promise<ApiResponse<TokenPayload>> {
-  const response = await api.post<ApiResponse<TokenPayload>>('/auth/login', { email, password })
+export interface MfaStatus {
+  mfaEnabled: boolean
+}
+
+export interface MfaSetup {
+  secret: string
+  otpauthUri: string
+  mfaEnabled: boolean
+}
+
+export async function login(email: string, password: string, mfaCode?: string): Promise<ApiResponse<TokenPayload>> {
+  const response = await api.post<ApiResponse<TokenPayload>>('/auth/login', {
+    email,
+    password,
+    mfaCode: mfaCode || undefined,
+  })
   return response.data
 }
 
@@ -27,5 +41,25 @@ export async function resetPassword(token: string, newPassword: string): Promise
 
 export async function fetchSessions(): Promise<ApiResponse<AuthSession[]>> {
   const response = await api.get<ApiResponse<AuthSession[]>>('/auth/sessions')
+  return response.data
+}
+
+export async function fetchMfaStatus(): Promise<ApiResponse<MfaStatus>> {
+  const response = await api.get<ApiResponse<MfaStatus>>('/auth/mfa')
+  return response.data
+}
+
+export async function setupMfa(): Promise<ApiResponse<MfaSetup>> {
+  const response = await api.post<ApiResponse<MfaSetup>>('/auth/mfa/setup')
+  return response.data
+}
+
+export async function enableMfa(code: string): Promise<ApiResponse<MfaStatus>> {
+  const response = await api.post<ApiResponse<MfaStatus>>('/auth/mfa/enable', { code })
+  return response.data
+}
+
+export async function disableMfa(code: string, password: string): Promise<ApiResponse<MfaStatus>> {
+  const response = await api.post<ApiResponse<MfaStatus>>('/auth/mfa/disable', { code, password })
   return response.data
 }
