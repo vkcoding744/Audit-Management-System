@@ -5,6 +5,8 @@ import com.auditplatform.certification.domain.CertificateStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -53,4 +55,14 @@ public interface CertificateRepository extends JpaRepository<Certificate, String
             LocalDate from,
             LocalDate to
     );
+
+    @Query("""
+            select c from Certificate c
+            where c.tenantId = :tenantId and c.deletedAt is null
+              and (
+                lower(c.certificateNumber) like lower(concat('%', :q, '%')) escape '\\'
+                or lower(coalesce(c.scopeText, '')) like lower(concat('%', :q, '%')) escape '\\'
+              )
+            """)
+    Page<Certificate> search(@Param("tenantId") String tenantId, @Param("q") String q, Pageable pageable);
 }

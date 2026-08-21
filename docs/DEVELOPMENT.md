@@ -26,6 +26,8 @@ Optional MailHog (`docker compose --profile mailhog up`): SMTP 1025, UI 8025. Se
 
 AI drafts default to `AUDIT_PLATFORM_AI_PROVIDER=stub`. Vendor keys belong in the environment, not MySQL.
 
+Search defaults to `AUDIT_PLATFORM_SEARCH_PROVIDER=mysql`. Elasticsearch is not started by Compose.
+
 ## Backend only
 
 ```bash

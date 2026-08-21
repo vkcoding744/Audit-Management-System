@@ -31,6 +31,7 @@
 | Redis-backed rate limit adapter (`audit.rate-limit.provider=redis`) | Phase 20 |
 | Hibernate tenant query filter on `TenantAwareEntity` | Phase 20 |
 | Optional httpOnly `AP-ACCESS` / `AP-REFRESH` cookies + CSRF | Phase 21 |
+| Tenant search always scoped by authenticated tenant; `SEARCH_VIEW` | Phase 22 |
 
 ## Authentication
 

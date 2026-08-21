@@ -22,6 +22,7 @@ Set secrets in `.env`. Never bake them into images.
 | Cache / rate limit | ElastiCache Redis via `RateLimitPort` (`audit.rate-limit.provider=redis`) |
 | Email | SES via `OutboundEmailPort` (`audit.mail.provider=smtp`) or logging adapter locally |
 | AI | `AiGenerationPort` (`audit.ai.provider=stub` default); vendor keys in Secrets Manager, never MySQL |
+| Search | `SearchPort` (`audit.search.provider=mysql` default); OpenSearch/ES optional later |
 | Logs / metrics | CloudWatch; Actuator + future OTel |
 
 ## Health

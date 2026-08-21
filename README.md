@@ -4,7 +4,7 @@ Multi-tenant SaaS for professional audit, inspection, testing, and certification
 
 This repository is a **modular monolith**: Spring Boot 3 / Java 21 API, React + TypeScript SPA, MySQL 8, Flyway, and Docker Compose.
 
-Phase 21 (current) adds optional httpOnly cookie sessions with CSRF. Bearer tokens remain the default. Phases 2–20 remain. Set `AUDIT_PLATFORM_BOOTSTRAP_ADMIN_EMAIL` and `AUDIT_PLATFORM_BOOTSTRAP_ADMIN_PASSWORD` before first start to create the platform super admin. Platform admins must choose a tenant (header `X-Tenant-Id`) before creating clients, standards, auditors, or programmes.
+Phase 22 (current) adds tenant-scoped operational search (`GET /api/v1/search`, `SEARCH_VIEW`). Default provider is MySQL. Phases 2–21 remain. Set `AUDIT_PLATFORM_BOOTSTRAP_ADMIN_EMAIL` and `AUDIT_PLATFORM_BOOTSTRAP_ADMIN_PASSWORD` before first start to create the platform super admin. Platform admins must choose a tenant (header `X-Tenant-Id`) before creating clients, standards, auditors, or programmes.
 
 ## Documentation
 

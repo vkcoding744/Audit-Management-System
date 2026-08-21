@@ -6,9 +6,9 @@
 
 ## Current phase
 
-**Phase 21** adds optional httpOnly cookie sessions (`audit.auth.cookie-sessions`). When enabled, access and refresh tokens are issued as `AP-ACCESS` / `AP-REFRESH` cookies (not in the JSON body) and mutating requests require a double-submit CSRF token (`XSRF-TOKEN` cookie + `X-XSRF-TOKEN` header). Bearer tokens remain the default for API clients.
+**Phase 22** adds tenant-scoped operational search (`GET /api/v1/search`) via `SearchPort`. Default adapter is MySQL `LIKE` (wildcards escaped) across clients, leads, audits, findings, certificates, documents, and complaints. An Elasticsearch query builder is included so a cluster can be wired later without changing controllers. This is not a BI cube and does not bundle copyrighted clause text.
 
-Phase 20 remains: TOTP MFA, Redis rate limits, Hibernate tenant filters.
+Phase 21 remains: optional httpOnly cookie sessions.
 
 ## Style of architecture
 
@@ -35,6 +35,7 @@ Bounded contexts live as Java packages under `com.auditplatform`. Package bounda
 | `reporting` | Report builder, exports | 16 |
 | `ai` | Provider-agnostic AI SPI | 17 |
 | `dashboard` | Aggregated metrics | 18 |
+| `search` | Tenant-scoped operational search | 22 |
 
 Controllers never contain business rules. Persistence entities are never returned from HTTP APIs.
 
@@ -115,7 +116,7 @@ Authentication is JWT access tokens plus rotating opaque refresh tokens (Phase 2
 
 ## Frontend
 
-React 18 + Vite + TypeScript + Tailwind. The UI calls live APIs for health, identity (including TOTP MFA on sessions), clients, leads, standards, schemes, checklists, auditors, programmes, audits, fieldwork, findings, CAPA, certificates, decisions, surveillance, documents, quotes, invoices, payments, training records, competency assessments, complaints, appeals, risks, impartiality, notification templates, channels, jobs, report definitions, exports, AI drafts, the tenant operations dashboard, and audit logs. Client dashboard upcoming/completed audit counts, open findings, overdue CAPA, active certificates, certificates expiring within 90 days, documents, outstanding invoices, open complaints, and open appeals come from persisted rows. It does not mock certification data or copyrighted clause text.
+React 18 + Vite + TypeScript + Tailwind. The UI calls live APIs for health, identity (including TOTP MFA on sessions), clients, leads, standards, schemes, checklists, auditors, programmes, audits, fieldwork, findings, CAPA, certificates, decisions, surveillance, documents, quotes, invoices, payments, training records, competency assessments, complaints, appeals, risks, impartiality, notification templates, channels, jobs, report definitions, exports, AI drafts, the tenant operations dashboard, audit logs, and tenant search. Client dashboard upcoming/completed audit counts, open findings, overdue CAPA, active certificates, certificates expiring within 90 days, documents, outstanding invoices, open complaints, and open appeals come from persisted rows. It does not mock certification data or copyrighted clause text.
 
 ## Infrastructure
 
@@ -123,7 +124,8 @@ Docker Compose runs MySQL 8, backend, and frontend (Nginx). Optional profiles: `
 
 AWS-ready: 12-factor config, health probes, no baked secrets, object storage SPI (local filesystem or S3).
 
-## Explicit non-goals for Phase 21
+## Explicit non-goals for Phase 22
 
-- BI cubes and Elasticsearch
+- BI cubes / OLAP warehouses
 - Bundled copyrighted ISO/IEC text
+- Running Elasticsearch in the default Compose stack (query builder only; `audit.search.provider=mysql`)

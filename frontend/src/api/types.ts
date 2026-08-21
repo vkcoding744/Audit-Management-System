@@ -769,6 +769,20 @@ export interface AuditLogSummary {
   createdAt: string
 }
 
+export interface SearchHit {
+  type: string
+  id: string
+  title: string
+  subtitle: string | null
+  path: string
+}
+
+export interface SearchResult {
+  provider: string
+  query: string
+  hits: SearchHit[]
+}
+
 export interface AuthSession {
   id: string
   ipAddress: string | null
