@@ -740,6 +740,20 @@ export interface AiGenerationSummary {
   reviewNotes: string | null
 }
 
+export interface TenantDashboardSummary {
+  clients: number
+  upcomingAudits: number
+  completedAudits: number
+  openFindings: number
+  overdueCapa: number
+  activeCertificates: number
+  certificatesExpiringSoon: number
+  outstandingInvoices: number
+  openComplaints: number
+  openAppeals: number
+  pendingAiReviews: number
+}
+
 export interface AuthSession {
   id: string
   ipAddress: string | null

@@ -24,4 +24,6 @@ public interface ComplaintRepository extends JpaRepository<Complaint, String> {
             String clientId,
             Collection<ComplaintStatus> statuses
     );
+
+    long countByTenantIdAndStatusInAndDeletedAtIsNull(String tenantId, Collection<ComplaintStatus> statuses);
 }

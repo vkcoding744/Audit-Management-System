@@ -29,4 +29,6 @@ public interface AuditRepository extends JpaRepository<Audit, String> {
             String clientId,
             Collection<AuditStatus> statuses
     );
+
+    long countByTenantIdAndStatusInAndDeletedAtIsNull(String tenantId, Collection<AuditStatus> statuses);
 }

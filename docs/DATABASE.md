@@ -307,6 +307,10 @@ Numbers reuse `crm_sequences` (`AI` → `AIG-%06d`).
 
 `AI_VIEW` and `AI_UPDATE` are granted in V17.
 
+## Phase 18 dashboard
+
+Flyway `V18__dashboard.sql` adds `DASHBOARD_VIEW`. There is no new fact table; `GET /api/v1/dashboard` aggregates live tenant-scoped counts from existing modules.
+
 ## Isolation rules
 
 - Tenant-owned tables **must** include `tenant_id` and an index on it.

@@ -4,6 +4,12 @@
 
 Stack: JUnit 5, Mockito, Spring MockMvc, Testcontainers MySQL 8.
 
+Phase 18 coverage:
+
+- `DASHBOARD_VIEW` required to read the tenant dashboard; other authorities are 403; unauthenticated is 401
+- Platform admin without tenant scope cannot load the dashboard (`SYS_VALIDATION`)
+- Summary maps authenticated tenant repository counts
+
 Phase 17 coverage:
 
 - `AI_VIEW` required to list generations; other authorities are 403; unauthenticated is 401
@@ -120,7 +126,7 @@ Phase 2 coverage:
 
 ## Frontend
 
-Vitest + Testing Library for the shell, health client, login form, client directory, leads directory, standards catalogue, auditor directory, programme directory, scheduled-audit fieldwork action, findings directory, certificates directory, documents directory, finance directory, training directory, governance directory, notifications directory, reports directory, and AI drafts directory.
+Vitest + Testing Library for the shell, health client, login form, client directory, leads directory, standards catalogue, auditor directory, programme directory, scheduled-audit fieldwork action, findings directory, certificates directory, documents directory, finance directory, training directory, governance directory, notifications directory, reports directory, AI drafts directory, and operations dashboard.
 
 ## Critical scenarios (later phases)
 
@@ -140,6 +146,7 @@ Documented here so they are not lost:
 - Sent notification job cannot be sent again; queued job past `scheduledFor` is `due` (Phase 15)
 - Archived report cannot be run; CSV fields with commas are quoted (Phase 16)
 - Approved AI draft cannot be approved again; stub output requires human review (Phase 17)
+- Tenant dashboard requires `DASHBOARD_VIEW` and an effective tenant (Phase 18)
 
 ## Running
 

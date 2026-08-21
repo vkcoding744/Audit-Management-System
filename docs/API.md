@@ -414,6 +414,16 @@ Generations `AIG-%06d`. Purposes: `GENERIC`, `FINDING_SUMMARY`, `AUDIT_NARRATIVE
 
 Create body (required: `prompt`): `purpose`, `linkedType` (`FINDING`, `AUDIT`, `COMPLAINT`) with `linkedId`.
 
+## Phase 18 endpoints
+
+Tenant-scoped operational counts from live rows. Requires an effective tenant (JWT `tid` or `X-Tenant-Id` for platform admins).
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| GET | `/api/v1/dashboard` | `DASHBOARD_VIEW` | Tenant summary counts |
+
+Fields: `clients`, `upcomingAudits`, `completedAudits`, `openFindings`, `overdueCapa`, `activeCertificates`, `certificatesExpiringSoon` (90 days), `outstandingInvoices`, `openComplaints`, `openAppeals`, `pendingAiReviews`.
+
 ## Status codes
 
 | Code | Use |

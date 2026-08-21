@@ -36,4 +36,17 @@ public interface CapaActionRepository extends JpaRepository<CapaAction, String> 
             @Param("status") CapaStatus status,
             @Param("today") LocalDate today
     );
+
+    @Query("""
+            select count(c) from CapaAction c
+            where c.tenantId = :tenantId
+              and c.status = :status
+              and c.dueOn < :today
+              and c.deletedAt is null
+            """)
+    long countOverdueForTenant(
+            @Param("tenantId") String tenantId,
+            @Param("status") CapaStatus status,
+            @Param("today") LocalDate today
+    );
 }

@@ -28,4 +28,6 @@ public interface ClientRepository extends JpaRepository<Client, String> {
               )
             """)
     Page<Client> search(@Param("tenantId") String tenantId, @Param("q") String q, Pageable pageable);
+
+    long countByTenantIdAndDeletedAtIsNull(String tenantId);
 }

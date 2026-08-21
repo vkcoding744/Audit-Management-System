@@ -40,4 +40,17 @@ public interface CertificateRepository extends JpaRepository<Certificate, String
             LocalDate from,
             LocalDate to
     );
+
+    long countByTenantIdAndStatusAndExpiresOnGreaterThanEqualAndDeletedAtIsNull(
+            String tenantId,
+            CertificateStatus status,
+            LocalDate expiresOn
+    );
+
+    long countByTenantIdAndStatusAndExpiresOnGreaterThanEqualAndExpiresOnLessThanEqualAndDeletedAtIsNull(
+            String tenantId,
+            CertificateStatus status,
+            LocalDate from,
+            LocalDate to
+    );
 }
