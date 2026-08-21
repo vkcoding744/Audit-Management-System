@@ -362,6 +362,27 @@ Risk create body (required: `title`): `category`, `likelihood`, `impact`, `descr
 
 Impartiality create body (required: `title`): `auditorId`, `clientId`, `identifiedOn`, `description`.
 
+## Phase 15 endpoints
+
+Jobs `NTF-%06d`. Template placeholders are `{{name}}`. Channel types: `EMAIL`, `IN_APP`. Job status: `QUEUED` → send `SENT` or `FAILED`, or cancel `CANCELLED`. Inactive templates cannot create jobs. Sending requires the matching channel to be enabled. `due` is true when status is `QUEUED` and `scheduledFor` is before now. Email delivery uses `OutboundEmailPort` (`audit.mail.provider=logging` default, `smtp` for MailHog/SES). There is no background dispatcher.
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| GET/POST | `/api/v1/notification-templates` | `NOTIFICATION_VIEW` / `NOTIFICATION_UPDATE` | Paginated list (`status`) or create (201) |
+| GET/PATCH | `/api/v1/notification-templates/{id}` | `NOTIFICATION_VIEW` / `NOTIFICATION_UPDATE` | Detail or patch |
+| POST | `/api/v1/notification-templates/{id}/activate` | `NOTIFICATION_UPDATE` | `INACTIVE` → `ACTIVE` |
+| POST | `/api/v1/notification-templates/{id}/deactivate` | `NOTIFICATION_UPDATE` | `ACTIVE` → `INACTIVE` |
+| GET | `/api/v1/notification-channels` | `NOTIFICATION_VIEW` | EMAIL and IN_APP (created on first access) |
+| PATCH | `/api/v1/notification-channels/{id}` | `NOTIFICATION_UPDATE` | Enable/disable; optional `fromAddress` |
+| GET/POST | `/api/v1/notification-jobs` | `NOTIFICATION_VIEW` / `NOTIFICATION_UPDATE` | Paginated list (`status`) or create (201) |
+| GET | `/api/v1/notification-jobs/{id}` | `NOTIFICATION_VIEW` | Detail |
+| POST | `/api/v1/notification-jobs/{id}/send` | `NOTIFICATION_UPDATE` | Send queued job |
+| POST | `/api/v1/notification-jobs/{id}/cancel` | `NOTIFICATION_UPDATE` | Cancel queued job |
+
+Template create body (required: `code`, `name`, `subject`, `body`): `channel`, `eventType`.
+
+Job create body (required: `toAddress`). Either `templateId` plus optional `variables`, or ad-hoc `subject` and `body` (and optional `channel`). Optional `scheduledFor`.
+
 ## Status codes
 
 | Code | Use |

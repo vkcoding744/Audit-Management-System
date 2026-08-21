@@ -259,6 +259,26 @@ Numbers reuse `crm_sequences` (`COMPLAINT` → `CMP-%06d`, `APPEAL` → `APL-%06
 
 `COMPLAINT_UPDATE`, `APPEAL_UPDATE`, and `RISK_UPDATE` are granted in V14; the matching `*_VIEW` permissions already exist in V2.
 
+## Phase 15 notification schema
+
+Flyway `V15__notifications.sql` adds:
+
+### `notification_templates`
+
+Tenant-owned message templates. Unique `(tenant_id, code)`. Channel: `EMAIL`, `IN_APP`. Status: `ACTIVE`, `INACTIVE`. Event type: `GENERIC`, `PASSWORD_RESET`, `CERTIFICATE_EXPIRING`, `CAPA_OVERDUE`, `COMPLAINT_OPEN`, `AUDIT_SCHEDULED`.
+
+### `notification_channels`
+
+One row per tenant and channel type. Unique `(tenant_id, channel)`. `enabled` gates send.
+
+### `notification_jobs`
+
+Outbound queue. Unique `(tenant_id, job_number)`. Status: `QUEUED`, `SENT`, `FAILED`, `CANCELLED`. Optional `template_id`.
+
+Job numbers reuse `crm_sequences` (`NOTIFICATION` → `NTF-%06d`).
+
+`NOTIFICATION_VIEW` and `NOTIFICATION_UPDATE` are granted in V15.
+
 ## Isolation rules
 
 - Tenant-owned tables **must** include `tenant_id` and an index on it.
