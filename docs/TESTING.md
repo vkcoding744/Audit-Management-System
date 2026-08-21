@@ -4,6 +4,13 @@
 
 Stack: JUnit 5, Mockito, Spring MockMvc, Testcontainers MySQL 8.
 
+Phase 17 coverage:
+
+- `AI_VIEW` required to list generations; other authorities are 403; unauthenticated is 401
+- Tenant A cannot `get` Tenant B's AI generation (`AUTH_TENANT_MISMATCH`)
+- Approving an already `APPROVED` generation is `SYS_VALIDATION`
+- Stub adapter output requires human review and states it must not issue a certificate or close a finding
+
 Phase 16 coverage:
 
 - `REPORT_VIEW` required to list reports; other authorities are 403; unauthenticated is 401
@@ -113,7 +120,7 @@ Phase 2 coverage:
 
 ## Frontend
 
-Vitest + Testing Library for the shell, health client, login form, client directory, leads directory, standards catalogue, auditor directory, programme directory, scheduled-audit fieldwork action, findings directory, certificates directory, documents directory, finance directory, training directory, governance directory, notifications directory, and reports directory.
+Vitest + Testing Library for the shell, health client, login form, client directory, leads directory, standards catalogue, auditor directory, programme directory, scheduled-audit fieldwork action, findings directory, certificates directory, documents directory, finance directory, training directory, governance directory, notifications directory, reports directory, and AI drafts directory.
 
 ## Critical scenarios (later phases)
 
@@ -132,6 +139,7 @@ Documented here so they are not lost:
 - Closed complaint cannot be changed; decided appeal cannot be re-decided (Phase 14)
 - Sent notification job cannot be sent again; queued job past `scheduledFor` is `due` (Phase 15)
 - Archived report cannot be run; CSV fields with commas are quoted (Phase 16)
+- Approved AI draft cannot be approved again; stub output requires human review (Phase 17)
 
 ## Running
 

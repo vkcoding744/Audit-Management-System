@@ -25,6 +25,7 @@
 | Object storage keys namespaced by tenant; downloads authenticated | Phase 10 |
 | Outbound email recipient redacted in logs; SMTP optional | Phase 15 |
 | Report export downloads authenticated; files namespaced by tenant | Phase 16 |
+| AI drafts require human review; vendor keys stay in the environment | Phase 17 |
 
 ## Authentication
 

@@ -295,6 +295,18 @@ Numbers reuse `crm_sequences` (`REPORT` → `RPT-%06d`, `EXPORT` → `EXP-%06d`)
 
 `REPORT_VIEW` is granted in V16. `REPORT_EXPORT` already exists in V2.
 
+## Phase 17 AI schema
+
+Flyway `V17__ai_generations.sql` adds:
+
+### `ai_generations`
+
+Tenant-owned drafts. Unique `(tenant_id, generation_number)`. Status: `PENDING_REVIEW`, `APPROVED`, `REJECTED`, `FAILED`. Purpose: `GENERIC`, `FINDING_SUMMARY`, `AUDIT_NARRATIVE`, `COMPLAINT_RESPONSE`. Stores provider, model, prompt version, optional linked record, reviewer, and review notes. Does not store vendor API keys.
+
+Numbers reuse `crm_sequences` (`AI` → `AIG-%06d`).
+
+`AI_VIEW` and `AI_UPDATE` are granted in V17.
+
 ## Isolation rules
 
 - Tenant-owned tables **must** include `tenant_id` and an index on it.

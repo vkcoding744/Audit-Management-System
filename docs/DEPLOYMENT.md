@@ -21,6 +21,7 @@ Set secrets in `.env`. Never bake them into images.
 | TLS / HTTP | ALB + ACM |
 | Cache / rate limit | ElastiCache Redis (later) |
 | Email | SES via `OutboundEmailPort` (`audit.mail.provider=smtp`) or logging adapter locally |
+| AI | `AiGenerationPort` (`audit.ai.provider=stub` default); vendor keys in Secrets Manager, never MySQL |
 | Logs / metrics | CloudWatch; Actuator + future OTel |
 
 ## Health
