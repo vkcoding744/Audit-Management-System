@@ -52,7 +52,9 @@ public record AuditPlatformProperties(
             boolean requireEmailVerified,
             String bootstrapAdminEmail,
             String bootstrapAdminPassword,
-            @DefaultValue("") String mfaEncryptKey
+            @DefaultValue("") String mfaEncryptKey,
+            @DefaultValue("false") boolean cookieSessions,
+            @DefaultValue("false") boolean cookieSecure
     ) {
     }
 }

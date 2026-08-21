@@ -49,8 +49,8 @@ export interface UserSummary {
 }
 
 export interface TokenPayload {
-  accessToken: string
-  refreshToken: string
+  accessToken: string | null
+  refreshToken: string | null
   tokenType: string
   expiresIn: number
   user: UserSummary
@@ -767,6 +767,20 @@ export interface AuditLogSummary {
   userAgent: string | null
   correlationId: string | null
   createdAt: string
+}
+
+export interface SearchHit {
+  type: string
+  id: string
+  title: string
+  subtitle: string | null
+  path: string
+}
+
+export interface SearchResult {
+  provider: string
+  query: string
+  hits: SearchHit[]
 }
 
 export interface AuthSession {

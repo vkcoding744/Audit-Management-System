@@ -319,6 +319,14 @@ No new table. `GET /api/v1/audit-logs` reads Phase 2 `audit_logs` with tenant is
 
 No new Flyway version. TOTP secrets use existing `users.mfa_secret_encrypted` (AES-GCM). Hibernate filter `tenantIsolation` applies to `TenantAwareEntity` tables only.
 
+## Phase 21 cookie sessions
+
+No new table. `AP-ACCESS` and `AP-REFRESH` are HTTP cookies only.
+
+## Phase 22 search
+
+Flyway `V19__search.sql` adds `SEARCH_VIEW`. There is no search index table; MySQL queries existing tenant-owned rows.
+
 ## Isolation rules
 
 - Tenant-owned tables **must** include `tenant_id` and an index on it.

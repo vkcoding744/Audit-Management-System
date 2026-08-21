@@ -24,6 +24,11 @@ export async function logout(refreshToken: string | null): Promise<void> {
   await api.post('/auth/logout', { refreshToken })
 }
 
+export async function fetchCsrf(): Promise<ApiResponse<{ enabled: boolean; headerName: string | null; token: string | null }>> {
+  const response = await api.get('/auth/csrf')
+  return response.data
+}
+
 export async function fetchMe(): Promise<ApiResponse<UserSummary>> {
   const response = await api.get<ApiResponse<UserSummary>>('/auth/me')
   return response.data

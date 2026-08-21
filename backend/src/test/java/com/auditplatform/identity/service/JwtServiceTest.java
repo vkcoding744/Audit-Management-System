@@ -26,7 +26,9 @@ class JwtServiceTest {
                         false,
                         "",
                         "",
-                        ""
+                        "",
+                        false,
+                        false
                 )
         );
         JwtService jwtService = new JwtService(properties);

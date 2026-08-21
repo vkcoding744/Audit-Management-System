@@ -4,6 +4,19 @@
 
 Stack: JUnit 5, Mockito, Spring MockMvc, Testcontainers MySQL 8.
 
+Phase 22 coverage:
+
+- `SEARCH_VIEW` required to search; other authorities are 403; unauthenticated is 401
+- Platform admin without tenant scope cannot search (`SYS_VALIDATION`)
+- MySQL adapter searches only the requested tenant and escapes `LIKE` wildcards
+- Elasticsearch query JSON always includes a `tenantId` filter
+
+Phase 21 coverage:
+
+- Login without CSRF is forbidden when cookie sessions are enabled
+- Login with CSRF sets httpOnly cookies and omits tokens from JSON
+- `AP-ACCESS` cookie authenticates `GET /auth/me`
+
 Phase 20 coverage:
 
 - RFC 6238 TOTP SHA-1 vectors (`59` → `287082`)
@@ -138,7 +151,7 @@ Phase 2 coverage:
 
 ## Frontend
 
-Vitest + Testing Library for the shell, health client, login form, client directory, leads directory, standards catalogue, auditor directory, programme directory, scheduled-audit fieldwork action, findings directory, certificates directory, documents directory, finance directory, training directory, governance directory, notifications directory, reports directory, AI drafts directory, operations dashboard, audit log directory, and MFA controls on sessions.
+Vitest + Testing Library for the shell, health client, login form, client directory, leads directory, standards catalogue, auditor directory, programme directory, scheduled-audit fieldwork action, findings directory, certificates directory, documents directory, finance directory, training directory, governance directory, notifications directory, reports directory, AI drafts directory, operations dashboard, audit log directory, MFA controls on sessions, cookie helpers, and tenant search.
 
 ## Critical scenarios (later phases)
 
@@ -161,6 +174,8 @@ Documented here so they are not lost:
 - Tenant dashboard requires `DASHBOARD_VIEW` and an effective tenant (Phase 18)
 - Tenant A cannot read Tenant B's audit log (Phase 19)
 - MFA login requires a valid TOTP when enabled (Phase 20)
+- Cookie-session login requires CSRF; tokens stay out of JSON (Phase 21)
+- Tenant search requires `SEARCH_VIEW` and an effective tenant (Phase 22)
 
 ## Running
 

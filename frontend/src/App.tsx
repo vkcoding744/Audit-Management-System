@@ -49,6 +49,7 @@ import { ReportExportDetailPage } from './pages/ReportExportDetailPage'
 import { AiPage } from './pages/AiPage'
 import { AiGenerationDetailPage } from './pages/AiGenerationDetailPage'
 import { DashboardPage } from './pages/DashboardPage'
+import { SearchPage } from './pages/SearchPage'
 import { AuditLogsPage } from './pages/AuditLogsPage'
 
 export default function App() {
@@ -66,6 +67,7 @@ export default function App() {
       >
         <Route path="/" element={<SystemStatusPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/search" element={<SearchPage />} />
         <Route path="/clients" element={<ClientsPage />} />
         <Route path="/clients/:id" element={<ClientDetailPage />} />
         <Route path="/leads" element={<LeadsPage />} />

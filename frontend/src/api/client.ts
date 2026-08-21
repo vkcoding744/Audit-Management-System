@@ -1,10 +1,12 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios'
+import { cookieSessionsEnabled, readCookie } from '../auth/cookieSessions'
 import { tenantScope } from '../auth/tenantScope'
 import { tokenStore } from '../auth/tokenStore'
 import type { ApiResponse, TokenPayload } from './types'
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || '/api/v1',
+  withCredentials: cookieSessionsEnabled,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -13,9 +15,16 @@ export const api = axios.create({
 api.interceptors.request.use((config) => {
   const correlationId = crypto.randomUUID()
   config.headers.set('X-Correlation-Id', correlationId)
-  const session = tokenStore.get()
-  if (session?.accessToken) {
-    config.headers.set('Authorization', `Bearer ${session.accessToken}`)
+  if (!cookieSessionsEnabled) {
+    const session = tokenStore.get()
+    if (session?.accessToken) {
+      config.headers.set('Authorization', `Bearer ${session.accessToken}`)
+    }
+  } else {
+    const xsrf = readCookie('XSRF-TOKEN')
+    if (xsrf) {
+      config.headers.set('X-XSRF-TOKEN', xsrf)
+    }
   }
   const tenantId = tenantScope.get()
   if (tenantId) {
@@ -30,6 +39,14 @@ api.interceptors.request.use((config) => {
 let refreshInFlight: Promise<string | null> | null = null
 
 async function refreshAccessToken(): Promise<string | null> {
+  if (cookieSessionsEnabled) {
+    const response = await axios.post<ApiResponse<TokenPayload>>(
+      `${api.defaults.baseURL}/auth/refresh`,
+      {},
+      { withCredentials: true, headers: { 'X-XSRF-TOKEN': readCookie('XSRF-TOKEN') ?? '' } },
+    )
+    return response.data.success ? 'cookie' : null
+  }
   const session = tokenStore.get()
   if (!session?.refreshToken) {
     return null
@@ -39,7 +56,7 @@ async function refreshAccessToken(): Promise<string | null> {
     { refreshToken: session.refreshToken },
   )
   const payload = response.data.data
-  if (!payload) {
+  if (!payload?.accessToken || !payload.refreshToken) {
     tokenStore.clear()
     return null
   }
@@ -66,7 +83,9 @@ api.interceptors.response.use(
       tokenStore.clear()
       return Promise.reject(error)
     }
-    original.headers.set('Authorization', `Bearer ${access}`)
+    if (!cookieSessionsEnabled) {
+      original.headers.set('Authorization', `Bearer ${access}`)
+    }
     return api.request(original)
   },
 )

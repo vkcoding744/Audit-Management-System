@@ -17,3 +17,5 @@ server:
 audit:
   api:
     docs-enabled: false
+  auth:
+    cookie-secure: true

@@ -8,6 +8,7 @@ import { useState } from 'react'
 const nav = [
   { to: '/', label: 'System status', permission: null },
   { to: '/dashboard', label: 'Dashboard', permission: 'DASHBOARD_VIEW' },
+  { to: '/search', label: 'Search', permission: 'SEARCH_VIEW' },
   { to: '/clients', label: 'Clients', permission: 'CLIENT_VIEW' },
   { to: '/leads', label: 'Leads', permission: 'LEAD_VIEW' },
   { to: '/standards', label: 'Standards', permission: 'STANDARD_VIEW' },
@@ -88,7 +89,7 @@ export function AppShell() {
         <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
           <div>
             <p className="text-xs text-slate-500">Certification</p>
-            <p className="text-sm font-medium">Phase 20 · MFA, Redis rate limits, tenant query filters</p>
+            <p className="text-sm font-medium">Phase 22 · Tenant-scoped search</p>
           </div>
           <div className="flex items-center gap-3">
             {user?.platformAdmin && (

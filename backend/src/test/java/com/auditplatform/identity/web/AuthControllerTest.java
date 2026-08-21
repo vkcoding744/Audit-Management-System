@@ -16,6 +16,7 @@ import com.auditplatform.identity.service.AuthService;
 import com.auditplatform.identity.service.JwtService;
 import com.auditplatform.identity.service.MfaService;
 import com.auditplatform.identity.service.UserService;
+import com.auditplatform.identity.session.AuthCookieService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,6 +94,9 @@ class AuthControllerTest {
     @MockBean
     private MfaService mfaService;
 
+    @MockBean
+    private AuthCookieService authCookieService;
+
     @Test
     void loginIsPublic() throws Exception {
         UserSummaryResponse user = new UserSummaryResponse(
@@ -123,5 +127,12 @@ class AuthControllerTest {
         mockMvc.perform(post("/api/v1/auth/mfa/setup"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.error.code").value("SYS_UNAUTHORIZED"));
+    }
+
+    @Test
+    void csrfIsPublicWhenCookieSessionsDisabled() throws Exception {
+        mockMvc.perform(get("/api/v1/auth/csrf"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.enabled").value(false));
     }
 }

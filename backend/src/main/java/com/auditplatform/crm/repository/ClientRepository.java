@@ -22,9 +22,9 @@ public interface ClientRepository extends JpaRepository<Client, String> {
             select c from Client c
             where c.tenantId = :tenantId and c.deletedAt is null
               and (
-                lower(c.legalName) like lower(concat('%', :q, '%'))
-                or lower(coalesce(c.tradingName, '')) like lower(concat('%', :q, '%'))
-                or lower(c.clientNumber) like lower(concat('%', :q, '%'))
+                lower(c.legalName) like lower(concat('%', :q, '%')) escape '\\'
+                or lower(coalesce(c.tradingName, '')) like lower(concat('%', :q, '%')) escape '\\'
+                or lower(c.clientNumber) like lower(concat('%', :q, '%')) escape '\\'
               )
             """)
     Page<Client> search(@Param("tenantId") String tenantId, @Param("q") String q, Pageable pageable);

@@ -6,9 +6,9 @@
 
 ## Current phase
 
-**Phase 20** hardens authentication and tenancy: RFC 6238 TOTP MFA (encrypted secrets), a `RateLimitPort` with in-memory default and Redis adapter, and Hibernate `tenantIsolation` filters on `TenantAwareEntity` when a tenant is in scope.
+**Phase 22** adds tenant-scoped operational search (`GET /api/v1/search`) via `SearchPort`. Default adapter is MySQL `LIKE` (wildcards escaped) across clients, leads, audits, findings, certificates, documents, and complaints. An Elasticsearch query builder is included so a cluster can be wired later without changing controllers. This is not a BI cube and does not bundle copyrighted clause text.
 
-Phase 19 remains: tenant-scoped audit log viewer. Phase 1 foundation remains: modular monolith, Flyway, API envelope, CORS/headers, health, tenant discriminator columns.
+Phase 21 remains: optional httpOnly cookie sessions.
 
 ## Style of architecture
 
@@ -21,7 +21,7 @@ Bounded contexts live as Java packages under `com.auditplatform`. Package bounda
 | `common` | API envelope, errors, tenancy, persistence, logging, security filters | 1 |
 | `system` | Platform health/info (no business data) | 1 |
 | `tenant` | Tenant registry | 1 (schema + entity), 2+ (admin APIs) |
-| `identity` | Users, roles, permissions, sessions, TOTP MFA | 2, 20 |
+| `identity` | Users, roles, permissions, sessions, TOTP MFA, optional cookie sessions | 2, 20, 21 |
 | `crm` | Clients, sites, contacts, leads | 3, 11 |
 | `standards` | Standards, schemes, clauses, checklists | 4 |
 | `auditor` | Auditor profiles, competency, availability | 5 |
@@ -35,6 +35,7 @@ Bounded contexts live as Java packages under `com.auditplatform`. Package bounda
 | `reporting` | Report builder, exports | 16 |
 | `ai` | Provider-agnostic AI SPI | 17 |
 | `dashboard` | Aggregated metrics | 18 |
+| `search` | Tenant-scoped operational search | 22 |
 
 Controllers never contain business rules. Persistence entities are never returned from HTTP APIs.
 
@@ -104,7 +105,7 @@ All other `/api/v1/**` routes require authentication and permission checks.
 ## Security baseline (Phase 1)
 
 - Stateless sessions (`SessionCreationPolicy.STATELESS`)
-- CSRF disabled for the Bearer-token API (documented; cookie session login is not used)
+- CSRF disabled for the Bearer-token API; **enabled** when `audit.auth.cookie-sessions=true` (cookie + header)
 - CORS origins from configuration, not `*`
 - Security headers (CSP for API is limited; nosniff; deny frames)
 - Default Spring user **disabled**
@@ -115,7 +116,7 @@ Authentication is JWT access tokens plus rotating opaque refresh tokens (Phase 2
 
 ## Frontend
 
-React 18 + Vite + TypeScript + Tailwind. The UI calls live APIs for health, identity (including TOTP MFA on sessions), clients, leads, standards, schemes, checklists, auditors, programmes, audits, fieldwork, findings, CAPA, certificates, decisions, surveillance, documents, quotes, invoices, payments, training records, competency assessments, complaints, appeals, risks, impartiality, notification templates, channels, jobs, report definitions, exports, AI drafts, the tenant operations dashboard, and audit logs. Client dashboard upcoming/completed audit counts, open findings, overdue CAPA, active certificates, certificates expiring within 90 days, documents, outstanding invoices, open complaints, and open appeals come from persisted rows. It does not mock certification data or copyrighted clause text.
+React 18 + Vite + TypeScript + Tailwind. The UI calls live APIs for health, identity (including TOTP MFA on sessions), clients, leads, standards, schemes, checklists, auditors, programmes, audits, fieldwork, findings, CAPA, certificates, decisions, surveillance, documents, quotes, invoices, payments, training records, competency assessments, complaints, appeals, risks, impartiality, notification templates, channels, jobs, report definitions, exports, AI drafts, the tenant operations dashboard, audit logs, and tenant search. Client dashboard upcoming/completed audit counts, open findings, overdue CAPA, active certificates, certificates expiring within 90 days, documents, outstanding invoices, open complaints, and open appeals come from persisted rows. It does not mock certification data or copyrighted clause text.
 
 ## Infrastructure
 
@@ -123,8 +124,8 @@ Docker Compose runs MySQL 8, backend, and frontend (Nginx). Optional profiles: `
 
 AWS-ready: 12-factor config, health probes, no baked secrets, object storage SPI (local filesystem or S3).
 
-## Explicit non-goals for Phase 20
+## Explicit non-goals for Phase 22
 
-- BI cubes and Elasticsearch
+- BI cubes / OLAP warehouses
 - Bundled copyrighted ISO/IEC text
-- httpOnly cookie sessions (Bearer tokens remain; CSRF stays disabled for the API)
+- Running Elasticsearch in the default Compose stack (query builder only; `audit.search.provider=mysql`)
