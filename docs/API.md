@@ -458,6 +458,14 @@ Optional cookie sessions (`AUDIT_PLATFORM_COOKIE_SESSIONS=true`). CSRF applies t
 | --- | --- | --- | --- |
 | GET | `/api/v1/auth/csrf` | Public | `{ enabled, headerName, token }`; sets `XSRF-TOKEN` when cookie sessions are on |
 
+## Phase 22 endpoints
+
+Tenant-scoped search. Query `q` (2–80 chars). Optional `type`: `CLIENT`, `LEAD`, `AUDIT`, `FINDING`, `CERTIFICATE`, `DOCUMENT`, `COMPLAINT`. Default provider `mysql` (`audit.search.provider`). Hits include `path` for the SPA. Elasticsearch is not required; `ElasticsearchQueryBuilder` always embeds `tenantId`.
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| GET | `/api/v1/search` | `SEARCH_VIEW` | `{ provider, query, hits[] }` |
+
 ## Status codes
 
 | Code | Use |

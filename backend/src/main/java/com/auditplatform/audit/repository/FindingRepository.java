@@ -6,6 +6,8 @@ import com.auditplatform.audit.domain.FindingStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Collection;
 import java.util.List;
@@ -32,4 +34,14 @@ public interface FindingRepository extends JpaRepository<Finding, String> {
             FindingStatus status,
             Collection<FindingSeverity> severities
     );
+
+    @Query("""
+            select f from Finding f
+            where f.tenantId = :tenantId and f.deletedAt is null
+              and (
+                lower(f.title) like lower(concat('%', :q, '%')) escape '\\'
+                or lower(f.findingNumber) like lower(concat('%', :q, '%')) escape '\\'
+              )
+            """)
+    Page<Finding> search(@Param("tenantId") String tenantId, @Param("q") String q, Pageable pageable);
 }

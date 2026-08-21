@@ -59,7 +59,7 @@ springdoc:
 audit:
   api:
     docs-enabled: ${AUDIT_PLATFORM_API_DOCS_ENABLED:false}
-    version: 0.21.0
+    version: 0.22.0
   cors:
     allowed-origins: ${AUDIT_PLATFORM_CORS_ORIGINS:http://localhost:5173}
   rate-limit:
@@ -82,6 +82,10 @@ audit:
     provider: ${AUDIT_PLATFORM_AI_PROVIDER:stub}
     model: ${AUDIT_PLATFORM_AI_MODEL:stub-v1}
     prompt-version: ${AUDIT_PLATFORM_AI_PROMPT_VERSION:v1}
+  search:
+    provider: ${AUDIT_PLATFORM_SEARCH_PROVIDER:mysql}
+    elasticsearch-uri: ${AUDIT_PLATFORM_ELASTICSEARCH_URI:}
+    per-type: ${AUDIT_PLATFORM_SEARCH_PER_TYPE:5}
   auth:
     jwt-secret: ${AUDIT_PLATFORM_JWT_SECRET:change-me-in-env-jwt-secret-32b!!}
     access-token-minutes: ${AUDIT_PLATFORM_ACCESS_TOKEN_MINUTES:15}
@@ -110,7 +114,7 @@ logging:
 audit:
   api:
     docs-enabled: true
-    version: 0.21.0
+    version: 0.22.0
   auth:
     expose-dev-tokens: true
 

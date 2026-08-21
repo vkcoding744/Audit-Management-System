@@ -5,6 +5,8 @@ import com.auditplatform.audit.domain.AuditStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Collection;
 import java.util.List;
@@ -31,4 +33,14 @@ public interface AuditRepository extends JpaRepository<Audit, String> {
     );
 
     long countByTenantIdAndStatusInAndDeletedAtIsNull(String tenantId, Collection<AuditStatus> statuses);
+
+    @Query("""
+            select a from Audit a
+            where a.tenantId = :tenantId and a.deletedAt is null
+              and (
+                lower(a.name) like lower(concat('%', :q, '%')) escape '\\'
+                or lower(a.auditNumber) like lower(concat('%', :q, '%')) escape '\\'
+              )
+            """)
+    Page<Audit> search(@Param("tenantId") String tenantId, @Param("q") String q, Pageable pageable);
 }

@@ -323,6 +323,10 @@ No new Flyway version. TOTP secrets use existing `users.mfa_secret_encrypted` (A
 
 No new table. `AP-ACCESS` and `AP-REFRESH` are HTTP cookies only.
 
+## Phase 22 search
+
+Flyway `V19__search.sql` adds `SEARCH_VIEW`. There is no search index table; MySQL queries existing tenant-owned rows.
+
 ## Isolation rules
 
 - Tenant-owned tables **must** include `tenant_id` and an index on it.
