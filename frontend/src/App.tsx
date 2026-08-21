@@ -43,6 +43,9 @@ import { ImpartialityDetailPage } from './pages/ImpartialityDetailPage'
 import { NotificationsPage } from './pages/NotificationsPage'
 import { NotificationTemplateDetailPage } from './pages/NotificationTemplateDetailPage'
 import { NotificationJobDetailPage } from './pages/NotificationJobDetailPage'
+import { ReportsPage } from './pages/ReportsPage'
+import { ReportDetailPage } from './pages/ReportDetailPage'
+import { ReportExportDetailPage } from './pages/ReportExportDetailPage'
 
 export default function App() {
   return (
@@ -92,6 +95,9 @@ export default function App() {
         <Route path="/notifications" element={<NotificationsPage />} />
         <Route path="/notification-templates/:id" element={<NotificationTemplateDetailPage />} />
         <Route path="/notification-jobs/:id" element={<NotificationJobDetailPage />} />
+        <Route path="/reports" element={<ReportsPage />} />
+        <Route path="/reports/:id" element={<ReportDetailPage />} />
+        <Route path="/report-exports/:id" element={<ReportExportDetailPage />} />
         <Route path="/users" element={<UsersPage />} />
         <Route path="/roles" element={<RolesPage />} />
         <Route path="/tenants" element={<TenantsPage />} />

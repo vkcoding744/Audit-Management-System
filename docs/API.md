@@ -383,6 +383,24 @@ Template create body (required: `code`, `name`, `subject`, `body`): `channel`, `
 
 Job create body (required: `toAddress`). Either `templateId` plus optional `variables`, or ad-hoc `subject` and `body` (and optional `channel`). Optional `scheduledFor`.
 
+## Phase 16 endpoints
+
+Definitions `RPT-%06d`. Exports `EXP-%06d`. Datasets: `CLIENTS`, `AUDITS`, `FINDINGS`, `CERTIFICATES`, `INVOICES`, `COMPLAINTS`. Formats: `CSV`, `JSON`. Definition status: `DRAFT` → publish `ACTIVE` → archive `ARCHIVED`. Patch only while `DRAFT`. Run is allowed on `DRAFT` or `ACTIVE` and generates the file in the same request (no worker). Archived definitions cannot be run. Export status: `QUEUED` → `COMPLETED` or `FAILED`, or cancel `CANCELLED`. Download returns the raw file (not the JSON envelope) and requires `REPORT_EXPORT`. Tenant filter always comes from the principal.
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| GET/POST | `/api/v1/reports` | `REPORT_VIEW` / `REPORT_EXPORT` | Paginated list (`status`, `dataset`) or create (201) |
+| GET/PATCH | `/api/v1/reports/{id}` | `REPORT_VIEW` / `REPORT_EXPORT` | Detail; patch only while `DRAFT` |
+| POST | `/api/v1/reports/{id}/publish` | `REPORT_EXPORT` | `DRAFT` → `ACTIVE` |
+| POST | `/api/v1/reports/{id}/archive` | `REPORT_EXPORT` | Archive |
+| POST | `/api/v1/reports/{id}/run` | `REPORT_EXPORT` | Generate export (201) |
+| GET | `/api/v1/report-exports` | `REPORT_VIEW` | Paginated list (`status`) |
+| GET | `/api/v1/report-exports/{id}` | `REPORT_VIEW` | Detail |
+| GET | `/api/v1/report-exports/{id}/download` | `REPORT_EXPORT` | Raw CSV/JSON file |
+| POST | `/api/v1/report-exports/{id}/cancel` | `REPORT_EXPORT` | Cancel queued export |
+
+Report create body (required: `name`, `dataset`): `description`, `format` (default `CSV`), `statusFilter` (dataset status enum name, or omitted for all rows). Exports are capped at 1000 rows.
+
 ## Status codes
 
 | Code | Use |

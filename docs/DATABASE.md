@@ -279,6 +279,22 @@ Job numbers reuse `crm_sequences` (`NOTIFICATION` → `NTF-%06d`).
 
 `NOTIFICATION_VIEW` and `NOTIFICATION_UPDATE` are granted in V15.
 
+## Phase 16 reporting schema
+
+Flyway `V16__reporting.sql` adds:
+
+### `report_definitions`
+
+Tenant-owned report builder rows. Unique `(tenant_id, report_number)`. Dataset: `CLIENTS`, `AUDITS`, `FINDINGS`, `CERTIFICATES`, `INVOICES`, `COMPLAINTS`. Format: `CSV`, `JSON`. Status: `DRAFT`, `ACTIVE`, `ARCHIVED`. Optional `status_filter`.
+
+### `report_exports`
+
+Generated files stored through `ObjectStoragePort`. Unique `(tenant_id, export_number)`. Status: `QUEUED`, `COMPLETED`, `FAILED`, `CANCELLED`. Optional `storage_key`, `row_count`, `byte_size`, `error_message`.
+
+Numbers reuse `crm_sequences` (`REPORT` → `RPT-%06d`, `EXPORT` → `EXP-%06d`).
+
+`REPORT_VIEW` is granted in V16. `REPORT_EXPORT` already exists in V2.
+
 ## Isolation rules
 
 - Tenant-owned tables **must** include `tenant_id` and an index on it.
