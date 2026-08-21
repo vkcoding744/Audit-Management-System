@@ -68,6 +68,7 @@ vi.mock('../api/notifications', () => ({
   createNotificationTemplate: vi.fn(),
   createNotificationJob: vi.fn(),
   updateNotificationChannel: vi.fn(),
+  dispatchDueNotificationJobs: vi.fn(),
 }))
 
 describe('NotificationsPage', () => {
@@ -84,5 +85,6 @@ describe('NotificationsPage', () => {
     expect(screen.getByText('NTF-000001')).toBeInTheDocument()
     expect(screen.getByRole('form', { name: 'Create template' })).toBeInTheDocument()
     expect(screen.getByRole('form', { name: 'Create job' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Dispatch due jobs' })).toBeInTheDocument()
   })
 })

@@ -11,6 +11,8 @@ import com.auditplatform.common.security.TenantBindingFilter;
 import com.auditplatform.common.tenant.TenantContextFilter;
 import com.auditplatform.common.web.CorrelationIdFilter;
 import com.auditplatform.identity.service.JwtService;
+import com.auditplatform.notification.api.NotificationDispatchResponse;
+import com.auditplatform.notification.service.NotificationDispatchService;
 import com.auditplatform.notification.service.NotificationJobService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -76,6 +79,9 @@ class NotificationJobControllerSecurityTest {
     @MockBean
     private NotificationJobService jobService;
 
+    @MockBean
+    private NotificationDispatchService dispatchService;
+
     @Test
     void listJobsUnauthorizedWithoutToken() throws Exception {
         mockMvc.perform(get("/api/v1/notification-jobs")).andExpect(status().isUnauthorized());
@@ -96,5 +102,28 @@ class NotificationJobControllerSecurityTest {
         mockMvc.perform(get("/api/v1/notification-jobs"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true));
+    }
+
+    @Test
+    void dispatchUnauthorizedWithoutToken() throws Exception {
+        mockMvc.perform(post("/api/v1/notification-jobs/dispatch")).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser(authorities = "NOTIFICATION_VIEW")
+    void dispatchForbiddenWithoutUpdatePermission() throws Exception {
+        mockMvc.perform(post("/api/v1/notification-jobs/dispatch"))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.error.code").value("SYS_FORBIDDEN"));
+    }
+
+    @Test
+    @WithMockUser(authorities = "NOTIFICATION_UPDATE")
+    void dispatchAllowedWithUpdatePermission() throws Exception {
+        when(dispatchService.dispatchForCurrentTenant()).thenReturn(new NotificationDispatchResponse(1, 0, 0, 1));
+        mockMvc.perform(post("/api/v1/notification-jobs/dispatch"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.sent").value(1));
     }
 }

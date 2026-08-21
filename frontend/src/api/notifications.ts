@@ -2,6 +2,7 @@ import { api } from './client'
 import type {
   ApiResponse,
   NotificationChannelSummary,
+  NotificationDispatchResult,
   NotificationJobSummary,
   NotificationTemplateSummary,
   PageResponse,
@@ -68,6 +69,11 @@ export async function createNotificationJob(body: {
   body?: string
 }): Promise<ApiResponse<NotificationJobSummary>> {
   const response = await api.post<ApiResponse<NotificationJobSummary>>('/notification-jobs', body)
+  return response.data
+}
+
+export async function dispatchDueNotificationJobs(): Promise<ApiResponse<NotificationDispatchResult>> {
+  const response = await api.post<ApiResponse<NotificationDispatchResult>>('/notification-jobs/dispatch')
   return response.data
 }
 

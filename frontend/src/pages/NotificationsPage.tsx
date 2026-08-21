@@ -7,6 +7,7 @@ import { z } from 'zod'
 import {
   createNotificationJob,
   createNotificationTemplate,
+  dispatchDueNotificationJobs,
   fetchNotificationChannels,
   fetchNotificationJobs,
   fetchNotificationTemplates,
@@ -71,13 +72,21 @@ export function NotificationsPage() {
       void queryClient.invalidateQueries({ queryKey: ['notification-channels'] })
     },
   })
+  const dispatchDue = useMutation({
+    mutationFn: dispatchDueNotificationJobs,
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['notification-jobs'] })
+    },
+  })
 
   return (
     <section>
       <h2 className="text-2xl font-semibold">Notifications</h2>
       <p className="mt-1 text-sm text-slate-600">
         Templates, channels, and outbound jobs. Email defaults to a logging adapter; set the mail provider to smtp for
-        MailHog or SES. Placeholders use {'{{name}}'} syntax. Sending is explicit — there is no background worker yet.
+        MailHog or SES. Placeholders use {'{{name}}'} syntax. Queued jobs with a past <code>scheduledFor</code> are due:
+        the scheduler sends them when dispatch is enabled, or you can dispatch this tenant now. Jobs without a schedule
+        still need an explicit send.
       </p>
       {(templatesQuery.isError || jobsQuery.isError) && (
         <p className="mt-4 text-sm text-red-700">
@@ -156,6 +165,15 @@ export function NotificationsPage() {
       )}
 
       <h3 className="mt-8 text-lg font-medium">Jobs</h3>
+      {hasPermission('NOTIFICATION_UPDATE') && (
+        <button
+          type="button"
+          className="mt-2 rounded-md border border-slate-300 bg-white px-4 py-2 text-sm"
+          onClick={() => dispatchDue.mutate()}
+        >
+          Dispatch due jobs
+        </button>
+      )}
       <div className="mt-2 overflow-x-auto rounded-lg border border-slate-200 bg-white">
         <table className="min-w-full text-left text-sm">
           <thead className="bg-slate-50 text-slate-600">

@@ -8,3 +8,7 @@ logging:
   level:
     root: WARN
     com.auditplatform: INFO
+
+audit:
+  notifications:
+    dispatch-enabled: false

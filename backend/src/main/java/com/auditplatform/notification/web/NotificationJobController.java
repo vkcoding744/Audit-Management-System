@@ -4,8 +4,10 @@ import com.auditplatform.common.api.ApiResponse;
 import com.auditplatform.common.api.PageResponse;
 import com.auditplatform.common.web.CorrelationId;
 import com.auditplatform.notification.api.CreateJobRequest;
+import com.auditplatform.notification.api.NotificationDispatchResponse;
 import com.auditplatform.notification.api.NotificationJobResponse;
 import com.auditplatform.notification.domain.NotificationJobStatus;
+import com.auditplatform.notification.service.NotificationDispatchService;
 import com.auditplatform.notification.service.NotificationJobService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -29,9 +31,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class NotificationJobController {
 
     private final NotificationJobService jobService;
+    private final NotificationDispatchService dispatchService;
 
-    public NotificationJobController(NotificationJobService jobService) {
+    public NotificationJobController(
+            NotificationJobService jobService,
+            NotificationDispatchService dispatchService
+    ) {
         this.jobService = jobService;
+        this.dispatchService = dispatchService;
     }
 
     @GetMapping
@@ -48,6 +55,12 @@ public class NotificationJobController {
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<NotificationJobResponse> create(@Valid @RequestBody CreateJobRequest request) {
         return ApiResponse.ok(jobService.create(request), MDC.get(CorrelationId.MDC_KEY));
+    }
+
+    @PostMapping("/dispatch")
+    @PreAuthorize("hasAuthority('NOTIFICATION_UPDATE')")
+    public ApiResponse<NotificationDispatchResponse> dispatch() {
+        return ApiResponse.ok(dispatchService.dispatchForCurrentTenant(), MDC.get(CorrelationId.MDC_KEY));
     }
 
     @GetMapping("/{id}")
