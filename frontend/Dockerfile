@@ -1,5 +1,7 @@
 FROM node:22-alpine AS build
 WORKDIR /app
+ARG VITE_COOKIE_SESSIONS=false
+ENV VITE_COOKIE_SESSIONS=$VITE_COOKIE_SESSIONS
 COPY package.json package-lock.json* ./
 RUN npm ci
 COPY . .
