@@ -11,6 +11,10 @@ public final class StorageKeys {
         return requireSafe(tenantId + "/" + objectId);
     }
 
+    public static String forReportExport(String tenantId, String exportId, String extension) {
+        return requireSafe("tenants/" + tenantId + "/reports/" + exportId + "." + extension);
+    }
+
     public static String newObjectId() {
         return UUID.randomUUID().toString();
     }

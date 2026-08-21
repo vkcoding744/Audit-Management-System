@@ -687,6 +687,36 @@ export interface NotificationJobSummary {
   due: boolean
 }
 
+export type ReportDataset = 'CLIENTS' | 'AUDITS' | 'FINDINGS' | 'CERTIFICATES' | 'INVOICES' | 'COMPLAINTS'
+export type ReportFormat = 'CSV' | 'JSON'
+export type ReportDefinitionStatus = 'DRAFT' | 'ACTIVE' | 'ARCHIVED'
+export type ReportExportStatus = 'QUEUED' | 'COMPLETED' | 'FAILED' | 'CANCELLED'
+
+export interface ReportDefinitionSummary {
+  id: string
+  tenantId: string
+  reportNumber: string
+  name: string
+  description: string | null
+  dataset: ReportDataset
+  format: ReportFormat
+  statusFilter: string | null
+  status: ReportDefinitionStatus
+}
+
+export interface ReportExportSummary {
+  id: string
+  tenantId: string
+  definitionId: string
+  exportNumber: string
+  format: ReportFormat
+  status: ReportExportStatus
+  rowCount: number | null
+  byteSize: number | null
+  errorMessage: string | null
+  completedAt: string | null
+}
+
 export interface AuthSession {
   id: string
   ipAddress: string | null

@@ -20,13 +20,14 @@ const nav = [
   { to: '/training', label: 'Training', permission: 'TRAINING_VIEW' },
   { to: '/governance', label: 'Governance', permission: 'COMPLAINT_VIEW' },
   { to: '/notifications', label: 'Notifications', permission: 'NOTIFICATION_VIEW' },
+  { to: '/reports', label: 'Reports', permission: 'REPORT_VIEW' },
   { to: '/users', label: 'Users', permission: 'USER_VIEW' },
   { to: '/roles', label: 'Roles', permission: 'ROLE_VIEW' },
   { to: '/tenants', label: 'Tenants', permission: 'TENANT_VIEW' },
   { to: '/sessions', label: 'Sessions', permission: null },
 ]
 
-const upcoming = ['Reports']
+const upcoming = ['AI']
 
 export function AppShell() {
   const { user, logout, hasPermission } = useAuth()
@@ -80,7 +81,7 @@ export function AppShell() {
         <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
           <div>
             <p className="text-xs text-slate-500">Certification</p>
-            <p className="text-sm font-medium">Phase 15 · Notification templates, channels, and jobs</p>
+            <p className="text-sm font-medium">Phase 16 · Report definitions and CSV/JSON exports</p>
           </div>
           <div className="flex items-center gap-3">
             {user?.platformAdmin && (

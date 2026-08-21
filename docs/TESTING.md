@@ -4,6 +4,13 @@
 
 Stack: JUnit 5, Mockito, Spring MockMvc, Testcontainers MySQL 8.
 
+Phase 16 coverage:
+
+- `REPORT_VIEW` required to list reports; other authorities are 403; unauthenticated is 401
+- Tenant A cannot `get` Tenant B's report definition (`AUTH_TENANT_MISMATCH`)
+- Running an `ARCHIVED` definition is `SYS_VALIDATION`
+- CSV renderer quotes fields that contain commas
+
 Phase 15 coverage:
 
 - `NOTIFICATION_VIEW` required to list jobs; other authorities are 403; unauthenticated is 401
@@ -106,7 +113,7 @@ Phase 2 coverage:
 
 ## Frontend
 
-Vitest + Testing Library for the shell, health client, login form, client directory, leads directory, standards catalogue, auditor directory, programme directory, scheduled-audit fieldwork action, findings directory, certificates directory, documents directory, finance directory, training directory, governance directory, and notifications directory.
+Vitest + Testing Library for the shell, health client, login form, client directory, leads directory, standards catalogue, auditor directory, programme directory, scheduled-audit fieldwork action, findings directory, certificates directory, documents directory, finance directory, training directory, governance directory, notifications directory, and reports directory.
 
 ## Critical scenarios (later phases)
 
@@ -124,6 +131,7 @@ Documented here so they are not lost:
 - Expired completed training identified (Phase 13 `expired` flag; recorded assessments cannot be changed)
 - Closed complaint cannot be changed; decided appeal cannot be re-decided (Phase 14)
 - Sent notification job cannot be sent again; queued job past `scheduledFor` is `due` (Phase 15)
+- Archived report cannot be run; CSV fields with commas are quoted (Phase 16)
 
 ## Running
 
