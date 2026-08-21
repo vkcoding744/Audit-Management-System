@@ -6,9 +6,9 @@
 
 ## Current phase
 
-**Phase 20** hardens authentication and tenancy: RFC 6238 TOTP MFA (encrypted secrets), a `RateLimitPort` with in-memory default and Redis adapter, and Hibernate `tenantIsolation` filters on `TenantAwareEntity` when a tenant is in scope.
+**Phase 21** adds optional httpOnly cookie sessions (`audit.auth.cookie-sessions`). When enabled, access and refresh tokens are issued as `AP-ACCESS` / `AP-REFRESH` cookies (not in the JSON body) and mutating requests require a double-submit CSRF token (`XSRF-TOKEN` cookie + `X-XSRF-TOKEN` header). Bearer tokens remain the default for API clients.
 
-Phase 19 remains: tenant-scoped audit log viewer. Phase 1 foundation remains: modular monolith, Flyway, API envelope, CORS/headers, health, tenant discriminator columns.
+Phase 20 remains: TOTP MFA, Redis rate limits, Hibernate tenant filters.
 
 ## Style of architecture
 
@@ -21,7 +21,7 @@ Bounded contexts live as Java packages under `com.auditplatform`. Package bounda
 | `common` | API envelope, errors, tenancy, persistence, logging, security filters | 1 |
 | `system` | Platform health/info (no business data) | 1 |
 | `tenant` | Tenant registry | 1 (schema + entity), 2+ (admin APIs) |
-| `identity` | Users, roles, permissions, sessions, TOTP MFA | 2, 20 |
+| `identity` | Users, roles, permissions, sessions, TOTP MFA, optional cookie sessions | 2, 20, 21 |
 | `crm` | Clients, sites, contacts, leads | 3, 11 |
 | `standards` | Standards, schemes, clauses, checklists | 4 |
 | `auditor` | Auditor profiles, competency, availability | 5 |
@@ -104,7 +104,7 @@ All other `/api/v1/**` routes require authentication and permission checks.
 ## Security baseline (Phase 1)
 
 - Stateless sessions (`SessionCreationPolicy.STATELESS`)
-- CSRF disabled for the Bearer-token API (documented; cookie session login is not used)
+- CSRF disabled for the Bearer-token API; **enabled** when `audit.auth.cookie-sessions=true` (cookie + header)
 - CORS origins from configuration, not `*`
 - Security headers (CSP for API is limited; nosniff; deny frames)
 - Default Spring user **disabled**
@@ -123,8 +123,7 @@ Docker Compose runs MySQL 8, backend, and frontend (Nginx). Optional profiles: `
 
 AWS-ready: 12-factor config, health probes, no baked secrets, object storage SPI (local filesystem or S3).
 
-## Explicit non-goals for Phase 20
+## Explicit non-goals for Phase 21
 
 - BI cubes and Elasticsearch
 - Bundled copyrighted ISO/IEC text
-- httpOnly cookie sessions (Bearer tokens remain; CSRF stays disabled for the API)

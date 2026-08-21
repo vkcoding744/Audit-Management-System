@@ -450,6 +450,14 @@ TOTP (RFC 6238, 6 digits, 30s, ±1 window). Setup returns `secret` and `otpauthU
 
 Rate limiting remains off until `AUDIT_PLATFORM_RATE_LIMIT_ENABLED=true`. Set `AUDIT_PLATFORM_RATE_LIMIT_PROVIDER=redis` and `AUDIT_PLATFORM_REDIS_URI` for multi-instance.
 
+## Phase 21 endpoints
+
+Optional cookie sessions (`AUDIT_PLATFORM_COOKIE_SESSIONS=true`). CSRF applies to POST/PATCH/PUT/DELETE. Login JSON then uses `tokenType: Cookie` and null token fields.
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| GET | `/api/v1/auth/csrf` | Public | `{ enabled, headerName, token }`; sets `XSRF-TOKEN` when cookie sessions are on |
+
 ## Status codes
 
 | Code | Use |

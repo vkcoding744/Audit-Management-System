@@ -11,6 +11,8 @@ import org.slf4j.MDC;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.csrf.InvalidCsrfTokenException;
+import org.springframework.security.web.csrf.MissingCsrfTokenException;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -35,8 +37,11 @@ public class JsonAccessDeniedHandler implements AccessDeniedHandler {
         }
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        boolean csrfFailure = accessDeniedException instanceof InvalidCsrfTokenException
+                || accessDeniedException instanceof MissingCsrfTokenException;
+        String message = csrfFailure ? "CSRF token is missing or invalid" : "Access denied";
         ApiResponse<Void> body = ApiResponse.error(
-                ApiError.of(ErrorCode.SYS_FORBIDDEN.code(), "Access denied"),
+                ApiError.of(ErrorCode.SYS_FORBIDDEN.code(), message),
                 MDC.get(CorrelationId.MDC_KEY)
         );
         objectMapper.writeValue(response.getOutputStream(), body);

@@ -20,7 +20,7 @@
 | Session/device list + revoke | Phase 2 |
 | MFA columns + TOTP setup/enable/disable and login verification | Phase 20 |
 | CORS allowlist / security headers | Phase 1 |
-| CSRF | Disabled: Bearer API, no cookie session |
+| CSRF | Disabled for Bearer API; cookie+header when cookie sessions are on | Phase 21 |
 | Default Spring user | Disabled |
 | Object storage keys namespaced by tenant; downloads authenticated | Phase 10 |
 | Outbound email recipient redacted in logs; SMTP optional | Phase 15 |
@@ -30,6 +30,7 @@
 | Audit log list is tenant-scoped; `AUDIT_LOG_VIEW` required | Phase 19 |
 | Redis-backed rate limit adapter (`audit.rate-limit.provider=redis`) | Phase 20 |
 | Hibernate tenant query filter on `TenantAwareEntity` | Phase 20 |
+| Optional httpOnly `AP-ACCESS` / `AP-REFRESH` cookies + CSRF | Phase 21 |
 
 ## Authentication
 
@@ -48,7 +49,9 @@ Platform super admin receives every permission. Tenant-scoped APIs still apply i
 
 ## Tokens in the browser
 
-Phase 2 stores access and refresh tokens in `sessionStorage` and sends `Authorization: Bearer`. Platform admins also persist a selected tenant id in `sessionStorage` and send it as `X-Tenant-Id`. This is XSS-sensitive; httpOnly cookies are a later hardening option (then CSRF must be re-enabled for those routes).
+Default (Phase 2): access and refresh tokens in `sessionStorage` with `Authorization: Bearer`. XSS-sensitive.
+
+Optional (Phase 21): set `AUDIT_PLATFORM_COOKIE_SESSIONS=true` and `VITE_COOKIE_SESSIONS=true`. Login omits tokens from the JSON body and sets httpOnly `AP-ACCESS` / `AP-REFRESH` (`SameSite=Lax`; `Secure` in prod). The SPA sends credentials and `X-XSRF-TOKEN` from the `XSRF-TOKEN` cookie. `GET /api/v1/auth/csrf` issues the CSRF cookie. Bearer clients keep cookie sessions off.
 
 ## Email
 

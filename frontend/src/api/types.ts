@@ -49,8 +49,8 @@ export interface UserSummary {
 }
 
 export interface TokenPayload {
-  accessToken: string
-  refreshToken: string
+  accessToken: string | null
+  refreshToken: string | null
   tokenType: string
   expiresIn: number
   user: UserSummary

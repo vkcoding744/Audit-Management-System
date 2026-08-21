@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
-import { fetchMe, login as loginApi, logout as logoutApi } from '../api/auth'
+import { fetchCsrf, fetchMe, login as loginApi, logout as logoutApi } from '../api/auth'
 import type { UserSummary } from '../api/types'
+import { cookieSessionsEnabled } from './cookieSessions'
 import { tokenStore } from './tokenStore'
 
 type AuthContextValue = {
@@ -18,6 +19,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   const hydrate = useCallback(async () => {
+    if (cookieSessionsEnabled) {
+      try {
+        await fetchCsrf()
+        const response = await fetchMe()
+        setUser(response.data)
+      } catch {
+        setUser(null)
+      } finally {
+        setLoading(false)
+      }
+      return
+    }
     if (!tokenStore.get()) {
       setUser(null)
       setLoading(false)
@@ -39,20 +52,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [hydrate])
 
   const login = useCallback(async (email: string, password: string, mfaCode?: string) => {
+    if (cookieSessionsEnabled) {
+      await fetchCsrf()
+    }
     const response = await loginApi(email, password, mfaCode)
     if (!response.success || !response.data) {
       throw new Error(response.error?.message ?? 'Sign in failed')
     }
-    tokenStore.set({
-      accessToken: response.data.accessToken,
-      refreshToken: response.data.refreshToken,
-    })
+    if (!cookieSessionsEnabled) {
+      const accessToken = response.data.accessToken
+      const refreshToken = response.data.refreshToken
+      if (!accessToken || !refreshToken) {
+        throw new Error('Sign in failed')
+      }
+      tokenStore.set({ accessToken, refreshToken })
+    }
     setUser(response.data.user)
   }, [])
 
   const logout = useCallback(async () => {
     const session = tokenStore.get()
     try {
+      if (cookieSessionsEnabled) {
+        await fetchCsrf()
+      }
       await logoutApi(session?.refreshToken ?? null)
     } finally {
       tokenStore.clear()

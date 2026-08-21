@@ -4,6 +4,7 @@ import com.auditplatform.common.api.ApiResponse;
 import com.auditplatform.common.security.PlatformPrincipal;
 import com.auditplatform.common.web.ClientRequest;
 import com.auditplatform.common.web.CorrelationId;
+import com.auditplatform.identity.api.CsrfTokenResponse;
 import com.auditplatform.identity.api.ForgotPasswordRequest;
 import com.auditplatform.identity.api.ForgotPasswordResponse;
 import com.auditplatform.identity.api.LoginRequest;
@@ -22,12 +23,15 @@ import com.auditplatform.identity.api.VerifyEmailRequest;
 import com.auditplatform.identity.service.AuthService;
 import com.auditplatform.identity.service.MfaService;
 import com.auditplatform.identity.service.UserService;
+import com.auditplatform.identity.session.AuthCookieService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.slf4j.MDC;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,16 +50,27 @@ public class AuthController {
     private final AuthService authService;
     private final UserService userService;
     private final MfaService mfaService;
+    private final AuthCookieService authCookieService;
 
-    public AuthController(AuthService authService, UserService userService, MfaService mfaService) {
+    public AuthController(
+            AuthService authService,
+            UserService userService,
+            MfaService mfaService,
+            AuthCookieService authCookieService
+    ) {
         this.authService = authService;
         this.userService = userService;
         this.mfaService = mfaService;
+        this.authCookieService = authCookieService;
     }
 
     @PostMapping("/login")
     @Operation(summary = "Sign in with email and password")
-    public ApiResponse<TokenResponse> login(@Valid @RequestBody LoginRequest request, HttpServletRequest http) {
+    public ApiResponse<TokenResponse> login(
+            @Valid @RequestBody LoginRequest request,
+            HttpServletRequest http,
+            HttpServletResponse response
+    ) {
         TokenResponse data = authService.login(
                 request.email(),
                 request.password(),
@@ -63,26 +78,59 @@ public class AuthController {
                 ClientRequest.ipAddress(http),
                 ClientRequest.userAgent(http)
         );
-        return ApiResponse.ok(data, MDC.get(CorrelationId.MDC_KEY));
+        return ApiResponse.ok(maybeCookieSession(response, data), MDC.get(CorrelationId.MDC_KEY));
     }
 
     @PostMapping("/refresh")
-    public ApiResponse<TokenResponse> refresh(@Valid @RequestBody RefreshRequest request, HttpServletRequest http) {
-        TokenResponse data = authService.refresh(request.refreshToken(), ClientRequest.ipAddress(http), ClientRequest.userAgent(http));
-        return ApiResponse.ok(data, MDC.get(CorrelationId.MDC_KEY));
+    public ApiResponse<TokenResponse> refresh(
+            @RequestBody(required = false) RefreshRequest request,
+            HttpServletRequest http,
+            HttpServletResponse response
+    ) {
+        String refreshToken = request == null ? null : request.refreshToken();
+        if (refreshToken == null || refreshToken.isBlank()) {
+            refreshToken = authCookieService.read(http, AuthCookieService.REFRESH_COOKIE);
+        }
+        TokenResponse data = authService.refresh(refreshToken, ClientRequest.ipAddress(http), ClientRequest.userAgent(http));
+        return ApiResponse.ok(maybeCookieSession(response, data), MDC.get(CorrelationId.MDC_KEY));
     }
 
     @PostMapping("/logout")
-    public ApiResponse<Void> logout(@RequestBody(required = false) LogoutRequest request, HttpServletRequest http) {
+    public ApiResponse<Void> logout(
+            @RequestBody(required = false) LogoutRequest request,
+            HttpServletRequest http,
+            HttpServletResponse response
+    ) {
         String token = request == null ? null : request.refreshToken();
+        if (token == null || token.isBlank()) {
+            token = authCookieService.read(http, AuthCookieService.REFRESH_COOKIE);
+        }
         authService.logout(token, ClientRequest.ipAddress(http), ClientRequest.userAgent(http));
+        authCookieService.clear(response);
         return ApiResponse.ok(null, MDC.get(CorrelationId.MDC_KEY));
     }
 
     @PostMapping("/logout-all")
-    public ApiResponse<Void> logoutAll(@AuthenticationPrincipal PlatformPrincipal principal, HttpServletRequest http) {
+    public ApiResponse<Void> logoutAll(
+            @AuthenticationPrincipal PlatformPrincipal principal,
+            HttpServletRequest http,
+            HttpServletResponse response
+    ) {
         authService.logoutAll(principal.userId(), ClientRequest.ipAddress(http), ClientRequest.userAgent(http));
+        authCookieService.clear(response);
         return ApiResponse.ok(null, MDC.get(CorrelationId.MDC_KEY));
+    }
+
+    @GetMapping("/csrf")
+    public ApiResponse<CsrfTokenResponse> csrf(HttpServletRequest http) {
+        CsrfToken token = (CsrfToken) http.getAttribute(CsrfToken.class.getName());
+        if (token == null) {
+            return ApiResponse.ok(new CsrfTokenResponse(false, null, null), MDC.get(CorrelationId.MDC_KEY));
+        }
+        return ApiResponse.ok(
+                new CsrfTokenResponse(true, token.getHeaderName(), token.getToken()),
+                MDC.get(CorrelationId.MDC_KEY)
+        );
     }
 
     @PostMapping("/forgot-password")
@@ -153,5 +201,13 @@ public class AuthController {
     ) {
         authService.revokeSession(principal.userId(), id);
         return ApiResponse.ok(null, MDC.get(CorrelationId.MDC_KEY));
+    }
+
+    private TokenResponse maybeCookieSession(HttpServletResponse response, TokenResponse data) {
+        authCookieService.write(response, data.accessToken(), data.refreshToken());
+        if (authCookieService.cookieSessionsEnabled()) {
+            return data.withoutTokens();
+        }
+        return data;
     }
 }

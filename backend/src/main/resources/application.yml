@@ -59,7 +59,7 @@ springdoc:
 audit:
   api:
     docs-enabled: ${AUDIT_PLATFORM_API_DOCS_ENABLED:false}
-    version: 0.20.0
+    version: 0.21.0
   cors:
     allowed-origins: ${AUDIT_PLATFORM_CORS_ORIGINS:http://localhost:5173}
   rate-limit:
@@ -93,6 +93,8 @@ audit:
     bootstrap-admin-email: ${AUDIT_PLATFORM_BOOTSTRAP_ADMIN_EMAIL:}
     bootstrap-admin-password: ${AUDIT_PLATFORM_BOOTSTRAP_ADMIN_PASSWORD:}
     mfa-encrypt-key: ${AUDIT_PLATFORM_MFA_ENCRYPT_KEY:}
+    cookie-sessions: ${AUDIT_PLATFORM_COOKIE_SESSIONS:false}
+    cookie-secure: ${AUDIT_PLATFORM_COOKIE_SECURE:false}
 ---
 spring:
   config:
@@ -108,7 +110,7 @@ logging:
 audit:
   api:
     docs-enabled: true
-    version: 0.20.0
+    version: 0.21.0
   auth:
     expose-dev-tokens: true
 

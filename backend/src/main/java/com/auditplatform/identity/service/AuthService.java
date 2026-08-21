@@ -124,6 +124,9 @@ public class AuthService {
 
     @Transactional
     public TokenResponse refresh(String refreshToken, String ip, String userAgent) {
+        if (refreshToken == null || refreshToken.isBlank()) {
+            throw new ApiException(ErrorCode.AUTH_TOKEN_INVALID, "Invalid refresh token");
+        }
         String hash = TokenHash.sha256(refreshToken);
         AuthSession session = authSessionRepository.findByRefreshTokenHash(hash)
                 .orElseThrow(() -> new ApiException(ErrorCode.AUTH_TOKEN_INVALID, "Invalid refresh token"));

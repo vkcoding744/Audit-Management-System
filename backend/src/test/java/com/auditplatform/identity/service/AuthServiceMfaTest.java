@@ -106,7 +106,7 @@ class AuthServiceMfaTest {
                 new AuditPlatformProperties.RateLimit(false, 120, "memory", "redis://localhost:6379"),
                 new AuditPlatformProperties.Auth(
                         "unit-test-jwt-secret-key-32chars!!",
-                        15, 7, 5, 15, false, false, "", "", "mfa-key"
+                        15, 7, 5, 15, false, false, "", "", "mfa-key", false, false
                 )
         );
 

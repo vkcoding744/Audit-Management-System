@@ -12,4 +12,8 @@ public record TokenResponse(
     public static TokenResponse of(String access, String refresh, int expiresIn, UserSummaryResponse user) {
         return new TokenResponse(access, refresh, "Bearer", expiresIn, user, null, null);
     }
+
+    public TokenResponse withoutTokens() {
+        return new TokenResponse(null, null, "Cookie", expiresIn, user, resetToken, verificationToken);
+    }
 }

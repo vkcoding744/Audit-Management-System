@@ -4,6 +4,12 @@
 
 Stack: JUnit 5, Mockito, Spring MockMvc, Testcontainers MySQL 8.
 
+Phase 21 coverage:
+
+- Login without CSRF is forbidden when cookie sessions are enabled
+- Login with CSRF sets httpOnly cookies and omits tokens from JSON
+- `AP-ACCESS` cookie authenticates `GET /auth/me`
+
 Phase 20 coverage:
 
 - RFC 6238 TOTP SHA-1 vectors (`59` → `287082`)
@@ -138,7 +144,7 @@ Phase 2 coverage:
 
 ## Frontend
 
-Vitest + Testing Library for the shell, health client, login form, client directory, leads directory, standards catalogue, auditor directory, programme directory, scheduled-audit fieldwork action, findings directory, certificates directory, documents directory, finance directory, training directory, governance directory, notifications directory, reports directory, AI drafts directory, operations dashboard, audit log directory, and MFA controls on sessions.
+Vitest + Testing Library for the shell, health client, login form, client directory, leads directory, standards catalogue, auditor directory, programme directory, scheduled-audit fieldwork action, findings directory, certificates directory, documents directory, finance directory, training directory, governance directory, notifications directory, reports directory, AI drafts directory, operations dashboard, audit log directory, MFA controls on sessions, and cookie helpers.
 
 ## Critical scenarios (later phases)
 
@@ -161,6 +167,7 @@ Documented here so they are not lost:
 - Tenant dashboard requires `DASHBOARD_VIEW` and an effective tenant (Phase 18)
 - Tenant A cannot read Tenant B's audit log (Phase 19)
 - MFA login requires a valid TOTP when enabled (Phase 20)
+- Cookie-session login requires CSRF; tokens stay out of JSON (Phase 21)
 
 ## Running
 
