@@ -20,6 +20,8 @@ docker compose up --build
 - Swagger (dev): http://localhost:8081/swagger-ui.html
 - MySQL: localhost:3306
 
+Optional MailHog (`docker compose --profile mailhog up`): SMTP 1025, UI 8025. Set `AUDIT_PLATFORM_MAIL_PROVIDER=smtp` and `AUDIT_PLATFORM_SMTP_HOST=localhost`.
+
 ## Backend only
 
 ```bash

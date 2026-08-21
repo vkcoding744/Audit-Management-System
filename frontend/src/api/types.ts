@@ -640,6 +640,53 @@ export interface ImpartialitySummary {
   closedOn: string | null
 }
 
+export type NotificationChannelType = 'EMAIL' | 'IN_APP'
+export type TemplateStatus = 'ACTIVE' | 'INACTIVE'
+export type NotificationEventType =
+  | 'GENERIC'
+  | 'PASSWORD_RESET'
+  | 'CERTIFICATE_EXPIRING'
+  | 'CAPA_OVERDUE'
+  | 'COMPLAINT_OPEN'
+  | 'AUDIT_SCHEDULED'
+export type NotificationJobStatus = 'QUEUED' | 'SENT' | 'FAILED' | 'CANCELLED'
+
+export interface NotificationTemplateSummary {
+  id: string
+  tenantId: string
+  code: string
+  name: string
+  channel: NotificationChannelType
+  eventType: NotificationEventType
+  subject: string
+  body: string
+  status: TemplateStatus
+}
+
+export interface NotificationChannelSummary {
+  id: string
+  tenantId: string
+  channel: NotificationChannelType
+  enabled: boolean
+  fromAddress: string | null
+}
+
+export interface NotificationJobSummary {
+  id: string
+  tenantId: string
+  jobNumber: string
+  templateId: string | null
+  channel: NotificationChannelType
+  toAddress: string
+  subject: string
+  body: string
+  status: NotificationJobStatus
+  scheduledFor: string | null
+  sentAt: string | null
+  errorMessage: string | null
+  due: boolean
+}
+
 export interface AuthSession {
   id: string
   ipAddress: string | null

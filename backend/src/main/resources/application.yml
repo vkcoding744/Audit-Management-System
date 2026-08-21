@@ -22,6 +22,9 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
+  mail:
+    host: ${AUDIT_PLATFORM_SMTP_HOST:}
+    port: ${AUDIT_PLATFORM_SMTP_PORT:1025}
   servlet:
     multipart:
       max-file-size: 20MB
@@ -56,7 +59,7 @@ springdoc:
 audit:
   api:
     docs-enabled: ${AUDIT_PLATFORM_API_DOCS_ENABLED:false}
-    version: 0.14.0
+    version: 0.15.0
   cors:
     allowed-origins: ${AUDIT_PLATFORM_CORS_ORIGINS:http://localhost:5173}
   rate-limit:
@@ -68,6 +71,11 @@ audit:
     s3-bucket: ${AUDIT_PLATFORM_STORAGE_S3_BUCKET:}
     s3-region: ${AUDIT_PLATFORM_STORAGE_S3_REGION:us-east-1}
     s3-endpoint: ${AUDIT_PLATFORM_STORAGE_S3_ENDPOINT:}
+  mail:
+    provider: ${AUDIT_PLATFORM_MAIL_PROVIDER:logging}
+    from: ${AUDIT_PLATFORM_MAIL_FROM:noreply@localhost}
+    smtp-host: ${AUDIT_PLATFORM_SMTP_HOST:}
+    smtp-port: ${AUDIT_PLATFORM_SMTP_PORT:1025}
   auth:
     jwt-secret: ${AUDIT_PLATFORM_JWT_SECRET:change-me-in-env-jwt-secret-32b!!}
     access-token-minutes: ${AUDIT_PLATFORM_ACCESS_TOKEN_MINUTES:15}
@@ -93,7 +101,7 @@ logging:
 audit:
   api:
     docs-enabled: true
-    version: 0.14.0
+    version: 0.15.0
   auth:
     expose-dev-tokens: true
 

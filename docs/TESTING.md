@@ -4,6 +4,13 @@
 
 Stack: JUnit 5, Mockito, Spring MockMvc, Testcontainers MySQL 8.
 
+Phase 15 coverage:
+
+- `NOTIFICATION_VIEW` required to list jobs; other authorities are 403; unauthenticated is 401
+- Tenant A cannot `get` Tenant B's notification job (`AUTH_TENANT_MISMATCH`)
+- Sending an already `SENT` job is `SYS_VALIDATION`
+- `due` is true for a queued job whose `scheduledFor` is before now
+
 Phase 14 coverage:
 
 - `COMPLAINT_VIEW` required to list complaints; other authorities are 403; unauthenticated is 401
@@ -99,7 +106,7 @@ Phase 2 coverage:
 
 ## Frontend
 
-Vitest + Testing Library for the shell, health client, login form, client directory, leads directory, standards catalogue, auditor directory, programme directory, scheduled-audit fieldwork action, findings directory, certificates directory, documents directory, finance directory, training directory, and governance directory.
+Vitest + Testing Library for the shell, health client, login form, client directory, leads directory, standards catalogue, auditor directory, programme directory, scheduled-audit fieldwork action, findings directory, certificates directory, documents directory, finance directory, training directory, governance directory, and notifications directory.
 
 ## Critical scenarios (later phases)
 
@@ -116,6 +123,7 @@ Documented here so they are not lost:
 - Overdue payment identified (Phase 12 `overdue` flag; payment cannot exceed amount due)
 - Expired completed training identified (Phase 13 `expired` flag; recorded assessments cannot be changed)
 - Closed complaint cannot be changed; decided appeal cannot be re-decided (Phase 14)
+- Sent notification job cannot be sent again; queued job past `scheduledFor` is `due` (Phase 15)
 
 ## Running
 

@@ -20,7 +20,7 @@ Set secrets in `.env`. Never bake them into images.
 | Secrets | SSM Parameter Store / Secrets Manager |
 | TLS / HTTP | ALB + ACM |
 | Cache / rate limit | ElastiCache Redis (later) |
-| Email | SES (later) |
+| Email | SES via `OutboundEmailPort` (`audit.mail.provider=smtp`) or logging adapter locally |
 | Logs / metrics | CloudWatch; Actuator + future OTel |
 
 ## Health
