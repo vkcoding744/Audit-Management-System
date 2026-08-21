@@ -311,6 +311,10 @@ Numbers reuse `crm_sequences` (`AI` → `AIG-%06d`).
 
 Flyway `V18__dashboard.sql` adds `DASHBOARD_VIEW`. There is no new fact table; `GET /api/v1/dashboard` aggregates live tenant-scoped counts from existing modules.
 
+## Phase 19 audit log access
+
+No new table. `GET /api/v1/audit-logs` reads Phase 2 `audit_logs` with tenant isolation. `AUDIT_LOG_VIEW` already exists in V2.
+
 ## Isolation rules
 
 - Tenant-owned tables **must** include `tenant_id` and an index on it.

@@ -754,6 +754,21 @@ export interface TenantDashboardSummary {
   pendingAiReviews: number
 }
 
+export interface AuditLogSummary {
+  id: string
+  tenantId: string | null
+  userId: string | null
+  action: string
+  entityType: string
+  entityId: string | null
+  oldValue: string | null
+  newValue: string | null
+  ipAddress: string | null
+  userAgent: string | null
+  correlationId: string | null
+  createdAt: string
+}
+
 export interface AuthSession {
   id: string
   ipAddress: string | null

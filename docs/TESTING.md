@@ -4,6 +4,11 @@
 
 Stack: JUnit 5, Mockito, Spring MockMvc, Testcontainers MySQL 8.
 
+Phase 19 coverage:
+
+- `AUDIT_LOG_VIEW` required to list audit logs; other authorities are 403; unauthenticated is 401
+- Tenant A cannot `get` Tenant B's audit log (`AUTH_TENANT_MISMATCH`)
+
 Phase 18 coverage:
 
 - `DASHBOARD_VIEW` required to read the tenant dashboard; other authorities are 403; unauthenticated is 401
@@ -126,7 +131,7 @@ Phase 2 coverage:
 
 ## Frontend
 
-Vitest + Testing Library for the shell, health client, login form, client directory, leads directory, standards catalogue, auditor directory, programme directory, scheduled-audit fieldwork action, findings directory, certificates directory, documents directory, finance directory, training directory, governance directory, notifications directory, reports directory, AI drafts directory, and operations dashboard.
+Vitest + Testing Library for the shell, health client, login form, client directory, leads directory, standards catalogue, auditor directory, programme directory, scheduled-audit fieldwork action, findings directory, certificates directory, documents directory, finance directory, training directory, governance directory, notifications directory, reports directory, AI drafts directory, operations dashboard, and audit log directory.
 
 ## Critical scenarios (later phases)
 
@@ -147,6 +152,7 @@ Documented here so they are not lost:
 - Archived report cannot be run; CSV fields with commas are quoted (Phase 16)
 - Approved AI draft cannot be approved again; stub output requires human review (Phase 17)
 - Tenant dashboard requires `DASHBOARD_VIEW` and an effective tenant (Phase 18)
+- Tenant A cannot read Tenant B's audit log (Phase 19)
 
 ## Running
 

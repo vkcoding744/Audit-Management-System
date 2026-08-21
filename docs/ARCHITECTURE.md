@@ -6,7 +6,7 @@
 
 ## Current phase
 
-**Phase 18** adds a tenant operations dashboard (`com.auditplatform.dashboard`). `GET /api/v1/dashboard` returns live counts for clients, upcoming/completed audits, open findings, overdue CAPA, active certificates, certificates expiring within 90 days, outstanding invoices, open complaints, open appeals, and AI drafts pending review. Counts are always filtered by the authenticated tenant. Client-level dashboards from earlier phases remain on the client record.
+**Phase 19** adds a tenant-scoped audit log viewer for the `audit_logs` table that has existed since Phase 2. `GET /api/v1/audit-logs` requires `AUDIT_LOG_VIEW` and an effective tenant. Entries are append-only; Tenant A cannot read Tenant B.
 
 Phase 1 foundation remains: modular monolith, Flyway, API envelope, CORS/headers, health, tenant discriminator columns.
 
@@ -115,7 +115,7 @@ Authentication is JWT access tokens plus rotating opaque refresh tokens (Phase 2
 
 ## Frontend
 
-React 18 + Vite + TypeScript + Tailwind. The UI calls live APIs for health, identity, clients, leads, standards, schemes, checklists, auditors, programmes, audits, fieldwork, findings, CAPA, certificates, decisions, surveillance, documents, quotes, invoices, payments, training records, competency assessments, complaints, appeals, risks, impartiality, notification templates, channels, jobs, report definitions, exports, AI drafts, and the tenant operations dashboard. Client dashboard upcoming/completed audit counts, open findings, overdue CAPA, active certificates, certificates expiring within 90 days, documents, outstanding invoices, open complaints, and open appeals come from persisted rows. It does not mock certification data or copyrighted clause text.
+React 18 + Vite + TypeScript + Tailwind. The UI calls live APIs for health, identity, clients, leads, standards, schemes, checklists, auditors, programmes, audits, fieldwork, findings, CAPA, certificates, decisions, surveillance, documents, quotes, invoices, payments, training records, competency assessments, complaints, appeals, risks, impartiality, notification templates, channels, jobs, report definitions, exports, AI drafts, the tenant operations dashboard, and audit logs. Client dashboard upcoming/completed audit counts, open findings, overdue CAPA, active certificates, certificates expiring within 90 days, documents, outstanding invoices, open complaints, and open appeals come from persisted rows. It does not mock certification data or copyrighted clause text.
 
 ## Infrastructure
 
@@ -123,9 +123,9 @@ Docker Compose runs MySQL 8, backend, and frontend (Nginx). Optional profiles: `
 
 AWS-ready: 12-factor config, health probes, no baked secrets, object storage SPI (local filesystem or S3).
 
-## Explicit non-goals for Phase 18
+## Explicit non-goals for Phase 19
 
-- BI cubes, custom widget builders, and Elasticsearch
-- Real-time websockets and scheduled snapshot jobs
-- Auto-issuing certificates or auto-closing findings
-- Bundled ISO/IEC clause libraries
+- TOTP MFA issuance (columns exist; not enforced)
+- Redis-backed rate limiting
+- Hibernate automatic tenant query filters
+- BI cubes and Elasticsearch

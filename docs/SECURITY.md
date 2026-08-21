@@ -27,6 +27,7 @@
 | Report export downloads authenticated; files namespaced by tenant | Phase 16 |
 | AI drafts require human review; vendor keys stay in the environment | Phase 17 |
 | Tenant dashboard counts filtered by authenticated tenant | Phase 18 |
+| Audit log list is tenant-scoped; `AUDIT_LOG_VIEW` required | Phase 19 |
 
 ## Authentication
 
