@@ -6,7 +6,9 @@
 
 ## Current phase
 
-**Phase 22** adds tenant-scoped operational search (`GET /api/v1/search`) via `SearchPort`. Default adapter is MySQL `LIKE` (wildcards escaped) across clients, leads, audits, findings, certificates, documents, and complaints. An Elasticsearch query builder is included so a cluster can be wired later without changing controllers. This is not a BI cube and does not bundle copyrighted clause text.
+**Phase 23** adds a background dispatcher for due notification jobs. `QUEUED` jobs with `scheduledFor` at or before now are sent by a Spring scheduler (`audit.notifications.dispatch-enabled`, default on in `dev`/`prod`, off in the `test` profile). Manual `POST /api/v1/notification-jobs/dispatch` is tenant-scoped. Jobs without `scheduledFor` stay explicit-send-only. `IN_APP` is not emailed.
+
+Phase 22 remains: tenant-scoped operational search (`GET /api/v1/search`) via `SearchPort`. Default adapter is MySQL `LIKE` (wildcards escaped). Elasticsearch query builder is included; a cluster is not in default Compose.
 
 Phase 21 remains: optional httpOnly cookie sessions.
 
@@ -31,7 +33,7 @@ Bounded contexts live as Java packages under `com.auditplatform`. Package bounda
 | `finance` | Quotes, invoices, payments | 12 |
 | `training` | Training records, competency assessments | 13 |
 | `governance` | Complaints, appeals, risk, impartiality | 14 |
-| `notification` | Templates, channels, jobs | 15 |
+| `notification` | Templates, channels, jobs, due-job dispatcher | 15, 23 |
 | `reporting` | Report builder, exports | 16 |
 | `ai` | Provider-agnostic AI SPI | 17 |
 | `dashboard` | Aggregated metrics | 18 |
@@ -124,7 +126,7 @@ Docker Compose runs MySQL 8, backend, and frontend (Nginx). Optional profiles: `
 
 AWS-ready: 12-factor config, health probes, no baked secrets, object storage SPI (local filesystem or S3).
 
-## Explicit non-goals for Phase 22
+## Explicit non-goals for Phase 23
 
 - BI cubes / OLAP warehouses
 - Bundled copyrighted ISO/IEC text

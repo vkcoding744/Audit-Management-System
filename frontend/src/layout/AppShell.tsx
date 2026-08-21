@@ -89,7 +89,7 @@ export function AppShell() {
         <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
           <div>
             <p className="text-xs text-slate-500">Certification</p>
-            <p className="text-sm font-medium">Phase 22 · Tenant-scoped search</p>
+            <p className="text-sm font-medium">Phase 23 · Notification dispatch</p>
           </div>
           <div className="flex items-center gap-3">
             {user?.platformAdmin && (

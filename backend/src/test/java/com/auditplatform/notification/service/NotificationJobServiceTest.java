@@ -4,6 +4,7 @@ import com.auditplatform.auditlog.service.AuditLogService;
 import com.auditplatform.common.exception.ApiException;
 import com.auditplatform.common.exception.ErrorCode;
 import com.auditplatform.common.security.PlatformPrincipal;
+import com.auditplatform.common.tenant.TenantContext;
 import com.auditplatform.identity.service.IsolationService;
 import com.auditplatform.notification.domain.NotificationChannelType;
 import com.auditplatform.notification.domain.NotificationJob;
@@ -26,6 +27,7 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class NotificationJobServiceTest {
@@ -36,6 +38,7 @@ class NotificationJobServiceTest {
     @AfterEach
     void clear() {
         SecurityContextHolder.clearContext();
+        TenantContext.clear();
     }
 
     @Test
@@ -56,6 +59,20 @@ class NotificationJobServiceTest {
     }
 
     @Test
+    void deliverQueuedJobDoesNotRequirePrincipal() {
+        NotificationJob job = queued();
+        NotificationJobRepository jobs = mock(NotificationJobRepository.class);
+        when(jobs.findByIdAndDeletedAtIsNull("job-1")).thenReturn(Optional.of(job));
+        when(jobs.save(job)).thenReturn(job);
+        OutboundEmailPort email = mock(OutboundEmailPort.class);
+        NotificationChannelService channels = mock(NotificationChannelService.class);
+
+        assertThat(service(jobs, channels, email).deliverQueuedJob("job-1").status())
+                .isEqualTo(NotificationJobStatus.SENT);
+        verify(email).send("ops@example.com", "Hello", "Body");
+    }
+
+    @Test
     void dueIsTrueWhenQueuedJobIsPastScheduledFor() {
         bindUser();
         NotificationJob job = queued();
@@ -72,12 +89,20 @@ class NotificationJobServiceTest {
     }
 
     private NotificationJobService service(NotificationJobRepository jobs) {
+        return service(jobs, mock(NotificationChannelService.class), mock(OutboundEmailPort.class));
+    }
+
+    private NotificationJobService service(
+            NotificationJobRepository jobs,
+            NotificationChannelService channels,
+            OutboundEmailPort email
+    ) {
         return new NotificationJobService(
                 jobs,
                 mock(NotificationNumberService.class),
                 mock(NotificationTemplateService.class),
-                mock(NotificationChannelService.class),
-                mock(OutboundEmailPort.class),
+                channels,
+                email,
                 isolationService,
                 mock(AuditLogService.class),
                 clock

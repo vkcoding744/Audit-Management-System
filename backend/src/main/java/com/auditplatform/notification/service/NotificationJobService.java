@@ -4,6 +4,7 @@ import com.auditplatform.auditlog.service.AuditLogService;
 import com.auditplatform.common.api.PageResponse;
 import com.auditplatform.common.exception.ApiException;
 import com.auditplatform.common.exception.ErrorCode;
+import com.auditplatform.common.tenant.TenantContext;
 import com.auditplatform.identity.service.IsolationService;
 import com.auditplatform.notification.api.CreateJobRequest;
 import com.auditplatform.notification.api.NotificationJobResponse;
@@ -104,26 +105,46 @@ public class NotificationJobService {
 
     @Transactional
     public NotificationJobResponse send(String id) {
-        NotificationJob job = requireJob(id);
+        return deliverLoaded(requireJob(id));
+    }
+
+    /**
+     * Delivers a queued job without a security principal. Used by the scheduler and tenant dispatch.
+     * Callers must already have selected a job that is allowed for the current tenant (or the system worker).
+     */
+    @Transactional
+    public NotificationJobResponse deliverQueuedJob(String id) {
+        NotificationJob job = jobRepository.findByIdAndDeletedAtIsNull(id)
+                .orElseThrow(() -> new ApiException(ErrorCode.SYS_NOT_FOUND, "Notification job not found"));
+        return deliverLoaded(job);
+    }
+
+    private NotificationJobResponse deliverLoaded(NotificationJob job) {
         if (job.getStatus() != NotificationJobStatus.QUEUED) {
             throw new ApiException(ErrorCode.SYS_VALIDATION, "Only queued jobs can be sent");
         }
         channelService.requireEnabled(job.getTenantId(), job.getChannel());
+        String previousTenant = TenantContext.getTenantId();
         try {
-            if (job.getChannel() == NotificationChannelType.EMAIL) {
-                outboundEmailPort.send(job.getToAddress(), job.getSubject(), job.getBody());
+            TenantContext.setTenantId(job.getTenantId());
+            try {
+                if (job.getChannel() == NotificationChannelType.EMAIL) {
+                    outboundEmailPort.send(job.getToAddress(), job.getSubject(), job.getBody());
+                }
+                job.setStatus(NotificationJobStatus.SENT);
+                job.setSentAt(clock.instant());
+                job.setErrorMessage(null);
+                auditLogService.record("NOTIFICATION_JOB_SEND", "NotificationJob", job.getId(), "QUEUED", "SENT", null, null);
+            } catch (RuntimeException ex) {
+                job.setStatus(NotificationJobStatus.FAILED);
+                String message = ex.getMessage() == null ? "Send failed" : ex.getMessage();
+                job.setErrorMessage(message.length() > 512 ? message.substring(0, 512) : message);
             }
-            job.setStatus(NotificationJobStatus.SENT);
-            job.setSentAt(clock.instant());
-            job.setErrorMessage(null);
-            auditLogService.record("NOTIFICATION_JOB_SEND", "NotificationJob", job.getId(), "QUEUED", "SENT", null, null);
-        } catch (RuntimeException ex) {
-            job.setStatus(NotificationJobStatus.FAILED);
-            String message = ex.getMessage() == null ? "Send failed" : ex.getMessage();
-            job.setErrorMessage(message.length() > 512 ? message.substring(0, 512) : message);
+            jobRepository.save(job);
+            return toResponse(job);
+        } finally {
+            TenantContext.setTenantId(previousTenant);
         }
-        jobRepository.save(job);
-        return toResponse(job);
     }
 
     @Transactional
@@ -148,7 +169,7 @@ public class NotificationJobService {
     private NotificationJobResponse toResponse(NotificationJob job) {
         boolean due = job.getStatus() == NotificationJobStatus.QUEUED
                 && job.getScheduledFor() != null
-                && job.getScheduledFor().isBefore(clock.instant());
+                && !job.getScheduledFor().isAfter(clock.instant());
         return NotificationJobResponse.from(job, due);
     }
 }

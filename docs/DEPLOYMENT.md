@@ -23,6 +23,7 @@ Set secrets in `.env`. Never bake them into images.
 | Email | SES via `OutboundEmailPort` (`audit.mail.provider=smtp`) or logging adapter locally |
 | AI | `AiGenerationPort` (`audit.ai.provider=stub` default); vendor keys in Secrets Manager, never MySQL |
 | Search | `SearchPort` (`audit.search.provider=mysql` default); OpenSearch/ES optional later |
+| Notification dispatch | Spring `@Scheduled` when `AUDIT_PLATFORM_NOTIFICATION_DISPATCH_ENABLED=true` (off in `test`) |
 | Logs / metrics | CloudWatch; Actuator + future OTel |
 
 ## Health

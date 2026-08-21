@@ -32,6 +32,7 @@
 | Hibernate tenant query filter on `TenantAwareEntity` | Phase 20 |
 | Optional httpOnly `AP-ACCESS` / `AP-REFRESH` cookies + CSRF | Phase 21 |
 | Tenant search always scoped by authenticated tenant; `SEARCH_VIEW` | Phase 22 |
+| Notification scheduler is system-wide; HTTP dispatch is tenant-scoped | Phase 23 |
 
 ## Authentication
 

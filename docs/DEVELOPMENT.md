@@ -28,6 +28,8 @@ AI drafts default to `AUDIT_PLATFORM_AI_PROVIDER=stub`. Vendor keys belong in th
 
 Search defaults to `AUDIT_PLATFORM_SEARCH_PROVIDER=mysql`. Elasticsearch is not started by Compose.
 
+Due notification jobs are dispatched when `AUDIT_PLATFORM_NOTIFICATION_DISPATCH_ENABLED=true` (default). The `test` profile turns the scheduler off. Interval and batch size: `AUDIT_PLATFORM_NOTIFICATION_DISPATCH_INTERVAL_MS` (30000) and `AUDIT_PLATFORM_NOTIFICATION_DISPATCH_BATCH_SIZE` (50).
+
 ## Backend only
 
 ```bash

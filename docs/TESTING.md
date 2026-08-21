@@ -4,6 +4,13 @@
 
 Stack: JUnit 5, Mockito, Spring MockMvc, Testcontainers MySQL 8.
 
+Phase 23 coverage:
+
+- Due queued jobs are delivered without a security principal
+- Future `scheduledFor` jobs are not selected; already `SENT` jobs are not resent
+- Tenant-scoped dispatch queries only that tenant
+- `NOTIFICATION_UPDATE` required to POST dispatch; unauthenticated is 401
+
 Phase 22 coverage:
 
 - `SEARCH_VIEW` required to search; other authorities are 403; unauthenticated is 401
@@ -176,6 +183,7 @@ Documented here so they are not lost:
 - MFA login requires a valid TOTP when enabled (Phase 20)
 - Cookie-session login requires CSRF; tokens stay out of JSON (Phase 21)
 - Tenant search requires `SEARCH_VIEW` and an effective tenant (Phase 22)
+- Due notification jobs can be dispatched without a principal; HTTP dispatch is tenant-scoped (Phase 23)
 
 ## Running
 

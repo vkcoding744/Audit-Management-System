@@ -327,6 +327,10 @@ No new table. `AP-ACCESS` and `AP-REFRESH` are HTTP cookies only.
 
 Flyway `V19__search.sql` adds `SEARCH_VIEW`. There is no search index table; MySQL queries existing tenant-owned rows.
 
+## Phase 23 notification dispatch
+
+No new Flyway version. Due `QUEUED` jobs (`scheduled_for` at or before now) are selected by `NotificationJobRepository.findDueQueued`. The scheduler does not enable the Hibernate tenant filter (no tenant on the worker thread). HTTP dispatch stays on the current tenant.
+
 ## Isolation rules
 
 - Tenant-owned tables **must** include `tenant_id` and an index on it.

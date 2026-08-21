@@ -687,6 +687,13 @@ export interface NotificationJobSummary {
   due: boolean
 }
 
+export interface NotificationDispatchResult {
+  sent: number
+  skipped: number
+  failed: number
+  considered: number
+}
+
 export type ReportDataset = 'CLIENTS' | 'AUDITS' | 'FINDINGS' | 'CERTIFICATES' | 'INVOICES' | 'COMPLAINTS'
 export type ReportFormat = 'CSV' | 'JSON'
 export type ReportDefinitionStatus = 'DRAFT' | 'ACTIVE' | 'ARCHIVED'

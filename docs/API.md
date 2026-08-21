@@ -368,7 +368,7 @@ Impartiality create body (required: `title`): `auditorId`, `clientId`, `identifi
 
 ## Phase 15 endpoints
 
-Jobs `NTF-%06d`. Template placeholders are `{{name}}`. Channel types: `EMAIL`, `IN_APP`. Job status: `QUEUED` → send `SENT` or `FAILED`, or cancel `CANCELLED`. Inactive templates cannot create jobs. Sending requires the matching channel to be enabled. `due` is true when status is `QUEUED` and `scheduledFor` is before now. Email delivery uses `OutboundEmailPort` (`audit.mail.provider=logging` default, `smtp` for MailHog/SES). There is no background dispatcher.
+Jobs `NTF-%06d`. Template placeholders are `{{name}}`. Channel types: `EMAIL`, `IN_APP`. Job status: `QUEUED` → send `SENT` or `FAILED`, or cancel `CANCELLED`. Inactive templates cannot create jobs. Sending requires the matching channel to be enabled. `due` is true when status is `QUEUED` and `scheduledFor` is not after now. Email delivery uses `OutboundEmailPort` (`audit.mail.provider=logging` default, `smtp` for MailHog/SES). Due queued jobs (those with `scheduledFor` at or before now) are dispatched by the scheduler when `audit.notifications.dispatch-enabled=true`, or by tenant-scoped `POST /api/v1/notification-jobs/dispatch`. Jobs without `scheduledFor` are not auto-sent. `IN_APP` is marked sent without SMTP.
 
 | Method | Path | Auth | Description |
 | --- | --- | --- | --- |
@@ -386,6 +386,14 @@ Jobs `NTF-%06d`. Template placeholders are `{{name}}`. Channel types: `EMAIL`, `
 Template create body (required: `code`, `name`, `subject`, `body`): `channel`, `eventType`.
 
 Job create body (required: `toAddress`). Either `templateId` plus optional `variables`, or ad-hoc `subject` and `body` (and optional `channel`). Optional `scheduledFor`.
+
+## Phase 23 endpoints
+
+Scheduler is system-wide (no tenant filter on the worker thread). HTTP dispatch uses the current tenant only.
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| POST | `/api/v1/notification-jobs/dispatch` | `NOTIFICATION_UPDATE` | Send due queued jobs for the current tenant (batch) |
 
 ## Phase 16 endpoints
 
