@@ -6,6 +6,9 @@ import { SessionsPage } from './SessionsPage'
 vi.mock('../api/auth', () => ({
   fetchSessions: () => Promise.resolve({ success: true, data: [], error: null, meta: { correlationId: 'c', timestamp: 't' } }),
   fetchMfaStatus: () => Promise.resolve({ success: true, data: { mfaEnabled: false }, error: null, meta: { correlationId: 'c', timestamp: 't' } }),
+  setupMfa: vi.fn(),
+  enableMfa: vi.fn(),
+  disableMfa: vi.fn(),
 }))
 
 describe('SessionsPage', () => {
