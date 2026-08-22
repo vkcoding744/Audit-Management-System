@@ -6,7 +6,6 @@
   },
   "user": "ubuntu",
   "install": "./scripts/cloud-agent-install.sh",
-  "start": "./scripts/cloud-agent-start.sh",
   "ports": [
     {
       "name": "frontend",
